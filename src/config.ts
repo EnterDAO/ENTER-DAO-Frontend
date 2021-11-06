@@ -25,6 +25,7 @@ const config = {
     sushi: toLowerCase(process.env.REACT_APP_TOKEN_SUSHI_ADDR),
     axs: toLowerCase(process.env.REACT_APP_TOKEN_AXS_ADDR),
     ilv: toLowerCase(process.env.REACT_APP_TOKEN_ILV_ADDR),
+    leag: toLowerCase(process.env.REACT_APP_TOKEN_LEAG_ADDR),
     usdcEntrSLP: toLowerCase(process.env.REACT_APP_TOKEN_USDC_ENTR_SUSHI_LP),
   },
   contracts: {
@@ -37,6 +38,7 @@ const config = {
       sushi: toLowerCase(process.env.REACT_APP_CONTRACT_YF_SUSHI_ADDR),
       axs: toLowerCase(process.env.REACT_APP_CONTRACT_YF_AXS_ADDR),
       ilv: toLowerCase(process.env.REACT_APP_CONTRACT_YF_ILV_ADDR),
+      leag: toLowerCase(process.env.REACT_APP_CONTRACT_YF_LEAG_ADDR),
       usdcEntrSLP: toLowerCase(process.env.REACT_APP_CONTRACT_YF_USDC_ENTR_SUSHI_LP),
     },
     dao: {
