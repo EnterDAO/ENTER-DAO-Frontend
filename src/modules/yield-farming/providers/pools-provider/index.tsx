@@ -15,6 +15,7 @@ import {
   TokenMeta,
   UsdcEntrSLPToken,
   useKnownTokens,
+  LeagToken,
 } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import { useReload } from 'hooks/useReload';
@@ -30,6 +31,7 @@ export enum YFPoolID {
   SUSHI = 'sushi',
   AXS = 'axs',
   ILV = 'ilv',
+  LEAG = 'leag',
   USDC_ENTR_SLP = 'usdc-entr-slp',
 }
 
@@ -105,6 +107,15 @@ export const IlvYfPool: YFPoolMeta = {
   contract: new YfPoolContract(config.contracts.yf.ilv),
 };
 
+export const LeagYfPool: YFPoolMeta = {
+  name: YFPoolID.LEAG,
+  label: 'LEAG',
+  icons: ['png/leag'],
+  colors: ['var(--theme-red-color)'],
+  tokens: [LeagToken],
+  contract: new YfPoolContract(config.contracts.yf.leag),
+};
+
 export const UsdcEntrSLPYfPool: YFPoolMeta = {
   name: YFPoolID.USDC_ENTR_SLP,
   label: 'USDC_ENTR_SUSHI_LP',
@@ -122,6 +133,7 @@ const KNOWN_POOLS: YFPoolMeta[] = [
   SushiYfPool,
   AxsYfPool,
   IlvYfPool,
+  LeagYfPool,
   UsdcEntrSLPYfPool,
 ];
 

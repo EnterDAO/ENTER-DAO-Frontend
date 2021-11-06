@@ -22,6 +22,7 @@ export enum KnownTokens {
   SUSHI = 'SUSHI',
   AXS = 'AXS',
   ILV = 'ILV',
+  LEAG = 'LEAG',
   USDC_ENTR_SLP = 'USDC_ENTR_SUSHI_LP',
 }
 
@@ -134,6 +135,16 @@ export const IlvToken: TokenMeta = {
   contract: new Erc20Contract([], config.tokens.ilv),
 };
 
+export const LeagToken: TokenMeta = {
+  address: config.tokens.leag,
+  symbol: KnownTokens.LEAG,
+  name: 'LeagueDAO Governance Token',
+  decimals: 18,
+  icon: 'png/leag',
+  coinGeckoId: 'leaguedao-governance-token',
+  contract: new Erc20Contract([], config.tokens.leag),
+};
+
 export const UsdcEntrSLPToken: TokenMeta = {
   address: config.tokens.usdcEntrSLP,
   symbol: KnownTokens.USDC_ENTR_SLP,
@@ -154,6 +165,7 @@ const KNOWN_TOKENS: TokenMeta[] = [
   SushiToken,
   AxsToken,
   IlvToken,
+  LeagToken,
   UsdcEntrSLPToken,
 ];
 
