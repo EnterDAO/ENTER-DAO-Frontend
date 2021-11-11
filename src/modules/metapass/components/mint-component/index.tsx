@@ -5,6 +5,7 @@ import { utils } from 'ethers';
 import Button from 'components/antd/button';
 
 import { useMetapass } from '../../providers/metapass-provider';
+import Countdwon from '../countdown';
 import HorizontalSlider from '../horizontal-slider/index';
 import QuantityDropdown from '../quantity-dropdown';
 import PriceETHIconWhite from './assets/ethereum-white.svg';
@@ -61,6 +62,14 @@ const MintComponent: FC = () => {
             </p>
           </Col>
         </Row>
+
+        {totalSupply !== maxSupply && (
+          <Row justify="center">
+            <Col>
+              <Countdwon preSaleStartDate={Date.now() + 10000} publicSaleStartDate={Date.now() + 20000} />
+            </Col>
+          </Row>
+        )}
 
         <Row justify="center">
           <Col xs={24} md={24}>

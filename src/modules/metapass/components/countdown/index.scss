@@ -1,0 +1,21 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/utils.scss";
+
+.countdown-container {
+    text-align: center;
+    margin-bottom: 50px;
+
+
+    .counter-state {
+        font-size: 20px;
+        color: $white;
+        font-weight: $h1-bold;
+        color: #DD3DCB;
+    }
+
+    .countdown {
+        font-size: $h2;
+        color: $white;
+        font-weight: $h1-bold;
+    }
+}
