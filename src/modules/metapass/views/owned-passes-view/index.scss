@@ -2,14 +2,15 @@
 @import "../../../../styles/text.scss";
 
 #owned-container {
-  margin-top: 59px;
-  margin-bottom: 50px;
+  // margin-top: 59px;
+  // margin-bottom: 50px;
 
   #header {
     font-size: 42px;
     font-weight: 700;
     color: $black;
     margin-bottom: 40px;
+    margin-top: 20px;
     line-height: 42px;
   }
   #filters {
@@ -35,4 +36,34 @@
   }
 }
 
+.my-nfts-pagination {
+  margin-top: 60px;
+
+  .ant-pagination-options-size-changer {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .ant-pagination-item, .ant-pagination-item-link, .ant-select-selector {
+    border-radius: 10px;
+    color: $black;
+    font-weight: 700;
+  }
+
+  .ant-select-selector {
+    border: 1px solid #F2EDF1 !important;
+  }
+
+  .ant-pagination-item-active {
+    border: 1px solid #E255CF;
+    a {
+      color: $black !important;
+    }
+  }
+
+  .ant-pagination-options {
+    display: inline-block;
+  }
+}
 

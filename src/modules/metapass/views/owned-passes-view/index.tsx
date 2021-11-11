@@ -56,41 +56,51 @@ const OwnedPasses: React.FC = () => {
   }, [sortDir, searchText, page, pageSize]);
 
   return (
-    <Col xl={{ offset: 3 }} md={{ offset: 1 }} sm={{ offset: 1 }} xs={{ offset: 1 }} id="owned-container">
-      <Row id="header">My NFTs</Row>
-      <Row id="filters">
-        <Col xl={10} md={13} sm={18} xs={19}>
-          <Input
-            prefix={<SearchOutlined />}
-            id="metapass-search-input"
-            value={searchText}
-            size={'small'}
-            placeholder="Search items"
-            onChange={searchItems}
-          />
-        </Col>
-        <Col offset={1}>
-          <MetapassSorter sortDir={sortDir} onSortDirectionChange={onSortDirectionChange} />
-        </Col>
-      </Row>
-      <Row id="metapasses">
-        {passes.map(pass => (
-          <MetapassCard key={pass.id} pass={pass} />
-        ))}
-      </Row>
-      <Row id="pagination">
-        <Col>
-          <Pagination
-            current={page}
-            total={totalPasses}
-            defaultPageSize={pageSize}
-            showSizeChanger
-            pageSizeOptions={pageSizeOptions}
-            onChange={onPaginationChange}
-          />
-        </Col>
-      </Row>
-    </Col>
+    <>
+      <div className="content-container">
+        <Row>
+          <Col span={24} id="owned-container">
+            <Row id="header">My NFTs</Row>
+            <Row id="filters">
+              <Col xl={10} md={13} sm={18} xs={19}>
+                <Input
+                  prefix={<SearchOutlined />}
+                  id="metapass-search-input"
+                  value={searchText}
+                  size={'small'}
+                  placeholder="Search items"
+                  onChange={searchItems}
+                />
+              </Col>
+              <Col offset={1}>
+                <MetapassSorter sortDir={sortDir} onSortDirectionChange={onSortDirectionChange} />
+              </Col>
+            </Row>
+            <Row
+              id="metapasses"
+              gutter={[
+                { sm: 16, md: 16, lg: 32 },
+                { sm: 16, md: 16, lg: 32 },
+              ]}>
+              {passes.map(pass => (
+                <MetapassCard key={pass.id} pass={pass} />
+              ))}
+            </Row>
+          </Col>
+          <Col span={24} className="my-nfts-pagination">
+            <Pagination
+              locale={{ items_per_page: '' }}
+              current={page}
+              total={totalPasses}
+              defaultPageSize={pageSize}
+              showSizeChanger
+              pageSizeOptions={pageSizeOptions}
+              onChange={onPaginationChange}
+            />
+          </Col>
+        </Row>
+      </div>
+    </>
   );
 };
 
