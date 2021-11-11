@@ -1,7 +1,7 @@
 @import "../../../../styles/variables.scss";
 @import "../../../../styles/utils.scss";
 
-.jumbotronContainer {
+.jumbotron-container {
     max-height: 691px; // Desktop
     position: relative;
 
@@ -17,47 +17,60 @@
         opacity: 0.03;
   }
 
-  .jumbotronRow {
+  .jumbotron-row {
       height: 100%;
 
-      .jumbotronMyNFTsContainer {
-
-        @include md {
+      .jumbotron-myNFTs-container {
+        @include mobile {
           display: flex;
           flex-direction: column;
           align-items: center;
         }
 
-        .wearSuitsHeading {
-          color: $pinkish;
-          font-size: $text-sm;
-
-          @include md {
-            font-size: $text-sm-mobile;
+        .main-heading {
+          @include mobile {
+            font-size: 26px;
           }
         }
 
-        .myNFTsButton {
+        .sub-heading {
+          color: $pinkish;
+          font-size: $text-sm;
+
+          @include mobile {
+            font-size: 14px;
+            font-weight: 600;
+          }
+        }
+
+        .myNFTs-button {
+          width: 140px;
           margin-top: 25px;
 
-          @include md {
+          @include mobile {
             margin-top: 20px;
           }
         }
       }
 
-      .jumbotronImageContainer {
+      .jumbotron-image-container {
           display: flex;
           justify-content: center;
 
           img {
             width: 604px;
+          }
 
-            @include md {
-              width: 400px
-            }
+          @include mobile {
+            margin-top: 44px;
+
+              img {
+                width: 400px;
+                max-width: 100%;
+              }
           }
       }
-
   }
+
+
 }

@@ -6,21 +6,21 @@ import Button from 'components/antd/button';
 
 import jumbotronImage from './assets/jumbotron.png';
 
-import s from './s.module.scss';
+import './index.scss';
 
 const JumbotronComponent: FC = () => {
   const history = useHistory();
 
   return (
-    <div className={s.jumbotronContainer}>
+    <div className="jumbotron-container">
       <div className="content-container">
-        <Row className={s.jumbotronRow} align="middle">
-          <Col xs={24} md={10}>
-            <div className={s.jumbotronMyNFTsContainer}>
-              <p className="h1-bold">EnterDAO NFT</p>
-              <p className={s.wearSuitsHeading}>THEY WEAR SUITS, SO WE DON'T HAVE TO.</p>
+        <Row className="jumbotron-row" align="middle">
+          <Col xs={24} md={24} lg={10}>
+            <div className="jumbotron-myNFTs-container">
+              <p className="h1-bold main-heading">EnterDAO NFT</p>
+              <p className="sub-heading">THEY WEAR SUITS, SO WE DON'T HAVE TO.</p>
               <Button
-                className={s.myNFTsButton}
+                className="myNFTs-button"
                 type="primary"
                 onClick={() => {
                   history.push('/metapass/owned');
@@ -29,7 +29,7 @@ const JumbotronComponent: FC = () => {
               </Button>
             </div>
           </Col>
-          <Col xs={24} md={14} className={s.jumbotronImageContainer}>
+          <Col xs={24} md={24} lg={14} className="jumbotron-image-container">
             <img src={jumbotronImage} alt="jumbotron"></img>
           </Col>
         </Row>
