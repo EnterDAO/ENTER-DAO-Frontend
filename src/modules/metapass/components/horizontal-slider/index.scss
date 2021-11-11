@@ -13,13 +13,12 @@
   display: flex;
   align-items: center;
   position: relative;
-  margin: 40px 0;
+  margin: 30px 0 40px 0;
   @include sm {
       margin: 20px 0;
   }
   .child--horizontall--slider {
       min-height: 34px;
-      // width: 50% !important;
       display: flex;
       align-items: center;
       justify-content: center;

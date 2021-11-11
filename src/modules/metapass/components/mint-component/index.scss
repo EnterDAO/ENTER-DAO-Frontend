@@ -29,4 +29,41 @@
             margin: 0px 10px;
         }
     }
+
+    .mint-btn-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+
+        .mint-btn {
+            height: 40px;
+            box-shadow: 0px 4px 8px 0px rgba(221, 61, 203, 0.38);
+            border-radius: 4px;
+            font-size: $text;
+        }
+    }
+
+    .description {
+        margin-bottom: 100px;
+    }
+
+    // Mobile styles
+    @include sm {
+        justify-content: center;
+        height: 100%;
+
+        .controller-container {
+            height: 180px;
+        }
+
+        .price-block {
+            justify-content: center;
+        }
+
+        .description {
+            margin-bottom: 50px;
+        }
+    }
+
 }
