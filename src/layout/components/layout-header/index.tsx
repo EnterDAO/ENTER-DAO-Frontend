@@ -52,6 +52,7 @@ const LayoutHeader: React.FC = () => {
   }, [window.innerWidth]);
 
   const isGovernancePage = useRouteMatch('/governance');
+  const isMetapassPage = useRouteMatch('/metapass');
 
   async function handleAddProjectToken() {
     if (wallet.connector?.id === 'metamask') {
@@ -78,7 +79,7 @@ const LayoutHeader: React.FC = () => {
         <Icon name="png/enterdao" width="auto" height="auto" className={s.logo} />
       </ExternalLink>
       <div className={s.titleDelimiter} />
-      <h1 className={s.title}>{isGovernancePage ? 'Governance' : 'Yield Farming'}</h1>
+      <h1 className={s.title}>{isGovernancePage ? 'Governance' : isMetapassPage ? 'EnterDAO' : 'Yield Farming'}</h1>
 
       <nav className={s.nav}>
         <Popover
