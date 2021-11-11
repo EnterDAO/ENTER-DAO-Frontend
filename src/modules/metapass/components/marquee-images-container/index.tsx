@@ -12,9 +12,9 @@ import MarqueImageFive from './assets/5.png';
 
 import './index.scss';
 
-const MarqueeComponent: FC = () => {
+const MarqueeImagesComponent: FC = () => {
   return (
-    <Row>
+    <Row className="marquee-images">
       <Col span={3}>
         <img src={MarqueImageOne} alt="nft" />
       </Col>
@@ -43,4 +43,4 @@ const MarqueeComponent: FC = () => {
   );
 };
 
-export default MarqueeComponent;
+export default MarqueeImagesComponent;
