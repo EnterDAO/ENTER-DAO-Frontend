@@ -6,18 +6,18 @@ import config from 'config';
 import { useReload } from 'hooks/useReload';
 import { useWallet } from 'wallets/wallet';
 
-import { getNftMeta } from '../../api';
+import { getNftMeta, getNftMetaType } from '../../api';
 import MintSuccessComponent from '../../components/mint-success-preview';
 import MetapassErc721Contract from '../../contracts/MetapassErc721Contract';
 
 export type MetapassType = {
   metapassContract?: MetapassErc721Contract;
-  getNftMeta?: (id: string | number) => any | undefined;
+  getNftMeta: getNftMetaType;
 };
 
 const MetapassContext = createContext<MetapassType>({
   metapassContract: undefined,
-  getNftMeta: () => undefined,
+  getNftMeta,
 });
 
 export function useMetapass(): MetapassType {
