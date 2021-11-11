@@ -1,0 +1,23 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/text.scss";
+
+#metapass-metadata-container {
+  margin: 37px 0px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+ .metapass-metadata-prop {
+    color: $black;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding: 15px;
+    background: $lightPink;
+    border: 1px solid $pink;
+    box-sizing: border-box;
+    border-radius: 12px;
+  } 
+}

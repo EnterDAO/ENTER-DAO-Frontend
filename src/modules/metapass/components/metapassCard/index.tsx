@@ -2,6 +2,8 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Card, Col, Image, Row } from 'antd';
 
+import { padMetapassTokenId } from 'modules/metapass/helpers/helpers';
+
 import enterDaoImage from '../../../../resources/png/enterdao.png';
 import loadingWomanImage from './assets/loadingWoman.png';
 
@@ -13,13 +15,9 @@ interface IMetapassCardProps {
 const MetapassCard: React.FC<IMetapassCardProps> = ({ pass }) => {
   const history = useHistory();
 
-  const padId = (id: string) => {
-    return id.padStart(4, '0');
-  };
-
   return (
     <Col className="metapass-card-wrapper" xl={5} md={7} sm={10} xs={23}>
-      <Card className="metapass-card" onClick={() => history.push(`./metapass/${pass.id}`)}>
+      <Card className="metapass-card" onClick={() => history.push(`./${pass.id}`)}>
         {/* <Row className="metapass-ranking-row" justify="space-between">
           <Col span={1}>
             <span className="metapass-rank">#1</span>
@@ -41,7 +39,7 @@ const MetapassCard: React.FC<IMetapassCardProps> = ({ pass }) => {
             <span className="metapass-name">Metapass</span>
           </Col>
           <Col style={{ textAlign: 'right' }} span={7}>
-            <span className="metapass-id">ID: #{padId(pass.id)}</span>
+            <span className="metapass-id">ID: #{padMetapassTokenId(pass.id)}</span>
           </Col>
         </Row>
         <Row className="metapass-dao-row">

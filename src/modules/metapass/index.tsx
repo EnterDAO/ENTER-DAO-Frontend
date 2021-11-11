@@ -9,6 +9,7 @@ import MetapassProvider from './providers/metapass-provider';
 
 const MintView = lazy(() => import('./views/mint-view'));
 const OwnedPasses = lazy(() => import('./views/owned-passes-view'));
+const SinglePass = lazy(() => import('./views/single-metapass-view'));
 
 const MetapassView: React.FC = () => {
   const warning = useWarning();
@@ -41,6 +42,7 @@ const MetapassView: React.FC = () => {
         <Switch>
           <Route path="/metapass" exact component={MintView} />
           <Route path="/metapass/owned" exact component={OwnedPasses} />
+          <Route path="/metapass/:tokenId" exact component={SinglePass} />
           <Redirect to="/metapass" />
         </Switch>
       </Suspense>

@@ -1,0 +1,23 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/text.scss";
+
+#metapass-tabs-container {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  color: $pinkish;
+  font-weight: bold;
+}
+
+.tab {
+  padding-bottom: 9px;
+  padding-left: 3px;
+  padding-right: 3px;
+  margin-right: 40px;
+  cursor: pointer;
+  &-selected {
+    color: $black;
+    border-bottom: 2px solid $black;
+  }
+}

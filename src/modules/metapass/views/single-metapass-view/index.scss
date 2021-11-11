@@ -1,0 +1,48 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/text.scss";
+
+#back-button-container {
+  cursor: pointer;
+  margin-bottom: 50px;
+  span {
+    margin-left: 10px;
+    color: black;
+    font-weight: 500;
+    font-size: 16px;
+  }
+}
+#metapass-container {
+  margin-top: 40px;
+  margin-bottom: 55px;
+}
+
+#metapass-name {
+  color: $black;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 30px;
+}
+#metapass-id-container {
+  margin: 20px 0px;
+  border-radius: 12px;
+  padding: 6px 16px;
+  color: $black;
+  background: $lightPink;
+  #metapass-id {
+    font-weight: bold;
+  }
+}
+
+#metapass-opensea-link {
+  cursor: pointer;
+  border: 1px solid $pink;
+  padding: 12px 16px;
+  border-radius: 12px;
+
+  span {
+    color: $black;
+    font-weight: 700;
+    font-size: 14px;
+    padding-right: 16px;
+  }
+}

@@ -1,0 +1,15 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/text.scss";
+
+.description {
+  margin-bottom: 14px;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 160%;
+  color: $pinkish;
+}
+.read-more-link {
+  color: $black;
+  font-size: 16px;
+  cursor: pointer;
+}
