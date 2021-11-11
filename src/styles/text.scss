@@ -237,4 +237,13 @@ $text-aligns: left, center, right;
 .text {
   font-size: $text;
   color: $blackish;
-  }
+}
+
+.text-white {
+  font-size: $text;
+  color: $white;
+}
+
+.text-center {
+  text-align: center;
+}

@@ -27,8 +27,8 @@ const MintView: React.FC = () => {
           secondParagraphText="LandWorks will start off with Decentraland as a primer and then <br> gradually expand to support other prominent games. It will enable landowners to <b>earn passive income on their assets</b>, while renters looking to leverage metaverse games will be able to easily rent instead of buying virtual land properties."
         />
         <MissionCountComponent totalNFTs={10} totalAttributes={133} mission={1} />
-        <MintComponent></MintComponent>
       </div>
+      <MintComponent></MintComponent>
     </>
   );
 };

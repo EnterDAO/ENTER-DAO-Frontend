@@ -1,0 +1,32 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/utils.scss";
+
+.mint-container {
+    min-height: 586px; // Desktop
+    background: url("./assets/background.svg");
+
+    .h1-bold {
+        color: $white;
+    }
+
+    .mint-heading {
+        margin-bottom: 18px;
+    }
+
+    .mint-at-a-time-heading {
+        font-size: $h3;
+        color: $white;
+    }
+
+    .price-block {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        height: 100%;
+        color: $white;
+
+        .eth-sign {
+            margin: 0px 10px;
+        }
+    }
+}

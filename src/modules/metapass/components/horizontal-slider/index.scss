@@ -1,0 +1,41 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/utils.scss";
+
+.parent--horizontall--slider {
+  width: 100%;
+  min-height: 38px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
+  box-shadow: inset 0px 0px 20px $black;
+  border-radius: 100px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin: 40px 0;
+  @include sm {
+      margin: 20px 0;
+  }
+  .child--horizontall--slider {
+      min-height: 34px;
+      // width: 50% !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(90deg, rgba(221,61,203,1) 14%, rgba(239,156,146,1) 74%);
+      background-blend-mode: screen, normal;
+      filter: blur(2px);
+      border-radius: 100px 0px 0px 100px;
+  }
+  .horizontall--scroll--value {
+      position: absolute;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 140%;
+      text-align: center;
+      color: $black;
+      min-width: 20%;
+  }
+}
