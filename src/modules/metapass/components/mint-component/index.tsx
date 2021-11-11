@@ -22,12 +22,17 @@ const MintComponent: FC = () => {
   const [quantity, setQuantity] = useState(1);
 
   async function mintMetapass() {
-    // TODO:: Check if the user is signed in, otherwise prompt a modal with please sign in message
-    // TODO:: Disable the mint button during minting
     setMinting(true);
 
     try {
-      const mintTx = quantity === 1 ? await metapassContract?.mint() : await metapassContract?.bulkBuy(quantity);
+      const isPreSale = await metapassContract?.isPresale();
+      const isSale = await metapassContract?.isSale();
+
+      if (isSale) {
+        const mintTx = quantity === 1 ? await metapassContract?.mint() : await metapassContract?.bulkBuy(quantity);
+      } else if (isPreSale) {
+        const mintTx = await metapassContract?.presaleMint();
+      }
     } catch (e) {
       console.log(e);
     }

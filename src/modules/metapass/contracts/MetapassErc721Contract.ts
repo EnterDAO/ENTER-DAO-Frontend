@@ -15,9 +15,12 @@ const ABI: AbiItem[] = [
   createAbiItem('approve', ['address', 'uint256'], ['bool']),
   createAbiItem('mint', [], []),
   createAbiItem('bulkBuy', ['uint256'], []),
+  createAbiItem('presaleMint', [], []),
   createAbiItem('metapassPrice', [], ['uint256']),
   createAbiItem('presaleStart', [], ['uint256']),
   createAbiItem('officialSaleStart', [], ['uint256']),
+  createAbiItem('isPresale', [], ['bool']),
+  createAbiItem('isSale', [], ['bool']),
   createAbiEvent('Transfer', ['address', 'address', 'uint256'], []),
 ];
 
@@ -94,6 +97,16 @@ export default class MetapassErc721Contract extends Web3Contract {
     }).then();
   }
 
+  presaleMint(): Promise<void> {
+    if (!this.account) {
+      return Promise.reject();
+    }
+    return this.send('presaleMint', [], {
+      from: this.account,
+      value: this.metapassPrice,
+    }).then();
+  }
+
   bulkBuy(amount: number): Promise<void> {
     if (!this.account) {
       return Promise.reject();
@@ -105,6 +118,24 @@ export default class MetapassErc721Contract extends Web3Contract {
     return this.send('bulkBuy', [amount], {
       from: this.account,
       value: price,
+    }).then();
+  }
+
+  isPresale(): Promise<void> {
+    if (!this.account) {
+      return Promise.reject();
+    }
+    return this.call('isPresale', [], {
+      from: this.account,
+    }).then();
+  }
+
+  isSale(): Promise<void> {
+    if (!this.account) {
+      return Promise.reject();
+    }
+    return this.call('isSale', [], {
+      from: this.account,
     }).then();
   }
 }
