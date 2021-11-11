@@ -1,0 +1,29 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/utils.scss";
+@import "../../../../styles/colors.scss";
+
+.ant-modal-body {
+    position: relative;
+
+    .mint-success-component-container {
+        row-gap: 0px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 2px;
+        bottom: 0;
+        background: white;
+        margin: 0;
+
+        .congrats-heading {
+            color: $color-green600;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .nft-cards-list {
+            margin: 0px !important;
+            padding: 20px;
+        }
+    }
+}

@@ -1,0 +1,59 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/utils.scss";
+@import "../../../../styles/colors.scss";
+
+.nft-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid #F2EDF1;
+    box-sizing: border-box;
+    box-shadow: 0px 5px 18px #f7f0f6;
+    border-radius: 6px;
+    padding: 0px 5px;
+
+    .nft-image {
+        margin-bottom: 10px;
+        img {
+            width: 100%;
+        }
+    }
+
+    .nft-description {
+        width: 100%;
+
+        .nft-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+
+            .name {
+                font-size: 16px;
+                font-weight: 600;
+                color: rgba(11, 8, 52, 1);
+            }
+
+            .id {
+                font-size: 12px;
+                color: rgba(131, 118, 127, 1)
+            }
+        }
+
+        .nft-collection-info {
+            margin-bottom: 10px;
+
+            .enterdao-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .metapass-enterdao-name {
+                margin-left: 6px;
+                font-size: 12px;
+                line-height: 20px;
+                color: $black;
+            }
+        }
+    }
+}

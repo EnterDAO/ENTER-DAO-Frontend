@@ -1,7 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'antd';
 
+import enterDaoImage from '../../../../resources/png/enterdao.png';
 import { useMetapass } from '../../providers/metapass-provider';
+// Temporrary card image
+import cardImage from '../metapassCard/assets/woman.png';
+import MintSuccessNFTCard from '../mint-success-nft-card';
 
 import './index.scss';
 
@@ -25,19 +29,24 @@ const MintSuccessComponent: FC<props> = props => {
 
     // TODO:: fetch the data from the BE and display the images in this component
     // const meta = await getNftMeta('50');
-    setNftsMeta(ids);
+    const updated = isBulkBuy ? [...ids] : [ids];
+    setNftsMeta([...updated]);
   }, [result]);
 
   return (
     <>
-      <Row className="count-component-container">
-        <Col xs={24} sm={24} md={8} lg={10} xl={10} className="count-holder">
-          <p> Paragrapgh after success</p>;
+      <div className="mint-success-component-container">
+        <Row>
+          <Col span={24}>
+            <p className="text-center congrats-heading">Success !</p>
+          </Col>
+        </Row>
+        <Row justify="center" gutter={20} className="nft-cards-list">
           {nftsMeta.map(id => (
-            <p> show image for id {id}</p>
+            <MintSuccessNFTCard data={{ id: id }} />
           ))}
-        </Col>
-      </Row>
+        </Row>
+      </div>
     </>
   );
 };
