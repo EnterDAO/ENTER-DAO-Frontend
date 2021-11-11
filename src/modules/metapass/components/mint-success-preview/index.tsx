@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'antd';
+import { any } from 'lodash/fp';
 
 import enterDaoImage from '../../../../resources/png/enterdao.png';
 import { useMetapass } from '../../providers/metapass-provider';
@@ -15,11 +16,11 @@ interface props {
 
 const MintSuccessComponent: FC<props> = props => {
   const { result } = props;
-  const [nftsMeta, setNftsMeta] = useState([]);
+  const [nftsMeta, setNftsMeta] = useState<any[]>([]);
   const metapassCtx = useMetapass();
   const { getNftMeta } = metapassCtx;
 
-  useEffect(async () => {
+  useEffect(() => {
     const transferEvents = result?.events?.Transfer;
 
     if (!transferEvents) return;
@@ -28,9 +29,13 @@ const MintSuccessComponent: FC<props> = props => {
     const ids = isBulkBuy ? transferEvents.map((event: any) => event.returnValues[2]) : transferEvents.returnValues[2];
 
     // TODO:: fetch the data from the BE and display the images in this component
-    // const meta = await getNftMeta('50');
-    const updated = isBulkBuy ? [...ids] : [ids];
-    setNftsMeta([...updated]);
+    const getMeta = async () => {
+      // const meta = await getNftMeta('50');
+      const updated = isBulkBuy ? [...ids] : [ids];
+      setNftsMeta([...updated]);
+    };
+
+    getMeta();
   }, [result]);
 
   return (

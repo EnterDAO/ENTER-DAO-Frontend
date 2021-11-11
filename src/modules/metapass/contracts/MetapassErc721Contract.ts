@@ -78,11 +78,13 @@ export default class MetapassErc721Contract extends Web3Contract {
     }).then();
   }
 
-  bulkBuy(amount: Number): Promise<void> {
+  bulkBuy(amount: number): Promise<void> {
     if (!this.account) {
       return Promise.reject();
     }
-    const price = this.metapassPrice * amount;
+
+    const initialPrice = this.metapassPrice?.toNumber() || 0;
+    const price = initialPrice * amount;
 
     return this.send('bulkBuy', [amount], {
       from: this.account,

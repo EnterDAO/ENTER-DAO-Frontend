@@ -46,7 +46,7 @@ const MintComponent: FC = () => {
   const totalSupply = metapassContract?.totalSupply?.toNumber() || 0;
   const metapassPrice = metapassContract?.metapassPrice?.toString();
   const priceToEth = (metapassPrice && utils.formatEther(metapassPrice)) || 0;
-  const maxMintAmount = process.env.REACT_APP_MINT_MAX_COUNT;
+  const maxMintAmount = parseInt(process.env.REACT_APP_MINT_MAX_COUNT || '0', 10);
 
   return (
     <div className="mint-container">
@@ -103,7 +103,7 @@ const MintComponent: FC = () => {
                     <span>Price:</span>
                     <span>
                       <img alt="img" className="eth-sign" src={PriceETHIconWhite} />
-                      {(quantity * priceToEth).toFixed(1)}
+                      {(quantity * parseFloat(priceToEth || '0')).toFixed(1)}
                     </span>
                   </p>
                 </div>
