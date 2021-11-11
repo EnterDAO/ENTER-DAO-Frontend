@@ -34,3 +34,5 @@ yarn-error.log*
 
 # husky
 .husky/
+.history
+.vscode/settings.json

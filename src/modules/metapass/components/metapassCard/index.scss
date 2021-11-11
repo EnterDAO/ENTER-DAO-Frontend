@@ -1,0 +1,56 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/utils.scss";
+
+.metapass {
+  &-card-wrapper {
+    margin-right: 30px;
+    margin-bottom: 15px;
+    color: $black;
+  }
+  &-card {
+    cursor: pointer;
+  }
+
+  &-name {
+    font-size: $text;
+    font-weight: bold;
+    color: $black;
+  }
+  &-ranking-row {
+    margin-bottom: 12px;
+  }
+  &-rank {
+    font-size: $text;
+    color: $pinkish;
+  }
+  &-rarity-score {
+    font-size: $text;
+    color: $black;
+  }
+  &-image {
+    border-radius: 6px;
+  }
+  &-info-row {
+    margin-top: 16px;
+  }
+  &-id {
+    font-size: 12px;
+    color: $pinkish;
+  }
+  &-dao-row {
+    margin-top: 11px;
+  }
+  &-enterdao-name {
+    margin-left: 6px;
+    font-size: 12px;
+    line-height: 20px;
+    color: $black;
+  }
+}
+.enterdao-icon {
+  width: 20px;
+  height: 20px;
+}
+.ant-card-body {
+  padding: 20px 15px;
+}

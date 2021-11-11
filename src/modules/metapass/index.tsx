@@ -8,6 +8,7 @@ import { useWarning } from 'components/providers/warning-provider';
 import MetapassProvider from './providers/metapass-provider';
 
 const MintView = lazy(() => import('./views/mint-view'));
+const OwnedPasses = lazy(() => import('./views/owned-passes-view'));
 
 const MetapassView: React.FC = () => {
   const warning = useWarning();
@@ -39,6 +40,7 @@ const MetapassView: React.FC = () => {
       <Suspense fallback={<AntdSpin />}>
         <Switch>
           <Route path="/metapass" exact component={MintView} />
+          <Route path="/metapass/owned" exact component={OwnedPasses} />
           <Redirect to="/metapass" />
         </Switch>
       </Suspense>

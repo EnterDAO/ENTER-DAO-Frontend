@@ -1,0 +1,28 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/text.scss";
+
+#owned-container {
+  margin-top: 59px;
+  margin-bottom: 50px;
+
+  #header {
+    font-size: 42px;
+    font-weight: 700;
+    color: $black;
+    margin-bottom: 40px;
+    line-height: 42px;
+  }
+  #filters {
+    margin-bottom: 40px;
+  }
+  #metapasses {
+    margin: 10px 0px;
+  }
+  #metapass-search-input {
+    height: 50px;
+    border: 1px solid $grayish;
+    background-color: #FFFFFF;
+  }
+}
+
+
