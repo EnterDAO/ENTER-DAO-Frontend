@@ -9,6 +9,12 @@
   }
   &-card {
     cursor: pointer;
+    box-shadow: 0px 5px 18px #F7F0F6;
+    border-radius: 6px;
+  }
+
+  &-card:hover {
+    box-shadow: 0px 5px 18px #D4ABCF;
   }
 
   &-name {
