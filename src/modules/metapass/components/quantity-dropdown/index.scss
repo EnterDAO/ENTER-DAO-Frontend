@@ -17,7 +17,7 @@
     .controll-box {
         width: 75%;
         max-width: 140px;
-        border: 1px solid rgba(255, 255, 255, 0.4);;
+        border: 1px solid rgba(255, 255, 255, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -31,25 +31,48 @@
             width: 40px;
             color: white;
             font-size: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 100;
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: rgba(255, 255, 255, 0.25);
             margin: 3px 0px;
+            position: relative;
+            transition: 0.2s;
+            border: 0;
+        }
+
+        .up--quantity--horizontal {
+            width: 40%;
+            height: 1px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            background-color: #ffffff;
+        }
+
+        .up--quantity--vertical {
+            width: 40%;
+            height: 1px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            background-color: #ffffff;
+            transform: rotate(90deg);
         }
         .value {
-            width: 30%;
+            width: 33%;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Poppins', sans-serif;
-            font-style: normal;
-            font-weight: 500;
-            font-size: 18px;
-            line-height: 150%;
+            font-weight: 700;
+            font-size: 16px;
         }
     }
 }

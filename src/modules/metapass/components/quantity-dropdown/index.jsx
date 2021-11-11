@@ -11,7 +11,7 @@ interface quantityProps {
 }
 
 const QuantityUpDownGroup: FC<quantityProps> = props => {
-  const { labelText, min, max, value, onChange, btnLeftText, btnRightText } = props;
+  const { labelText, min, max, value, onChange } = props;
   const upClick = (val, setVal) => {
     if (val < max) setVal(val + 1);
   };
@@ -25,11 +25,12 @@ const QuantityUpDownGroup: FC<quantityProps> = props => {
       </div>
       <div className="controll-box">
         <button type="button" className="btn--down" onClick={() => downClick(value, onChange)}>
-          -
+          <div className="up--quantity--horizontal" />
         </button>
         <div className="value">{value}</div>
         <button type="button" className="btn--up" onClick={() => upClick(value, onChange)}>
-          +
+            <div className="up--quantity--horizontal" />
+            <div className="up--quantity--vertical" />
         </button>
       </div>
     </div>
