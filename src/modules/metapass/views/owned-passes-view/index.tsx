@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
 import { offset } from '@popperjs/core';
-import { Col, Pagination, Row } from 'antd';
-import { Input } from 'antd';
+import { Col, Input, Pagination, Row } from 'antd';
 
 import MetapassCard from 'modules/metapass/components/metapassCard';
 import { MetapassSorter } from 'modules/metapass/components/metapassSorter';
@@ -61,9 +61,10 @@ const OwnedPasses: React.FC = () => {
       <Row id="filters">
         <Col xl={10} md={13} sm={18} xs={19}>
           <Input
+            prefix={<SearchOutlined />}
             id="metapass-search-input"
             value={searchText}
-            size={'large'}
+            size={'small'}
             placeholder="Search items"
             onChange={searchItems}
           />
