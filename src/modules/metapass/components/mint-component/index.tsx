@@ -1,9 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Col, Row, Space } from 'antd';
+import { Col, Row } from 'antd';
+import { utils } from 'ethers';
 
 import Button from 'components/antd/button';
-import Spin from 'components/antd/spin';
-import Grid from 'components/custom/grid';
 
 import { useMetapass } from '../../providers/metapass-provider';
 import HorizontalSlider from '../horizontal-slider/index';
@@ -21,10 +20,16 @@ const MintComponent: FC = () => {
   const [quantity, setQuantity] = useState(1);
 
   async function mintMetapass() {
+    // TODO:: Check if the user is signed in, otherwise prompt a modal with please sign in message
+    // TODO:: Disable the mint button during minting
     setMinting(true);
+
     try {
-      await metapassContract?.mint();
-    } catch (e) {}
+      const mintTx = quantity === 1 ? await metapassContract?.mint() : await metapassContract?.bulkBuy(quantity);
+      console.log(mintTx);
+    } catch (e) {
+      console.log(e);
+    }
 
     setMinting(false);
   }
@@ -36,6 +41,13 @@ const MintComponent: FC = () => {
   if (!metapassContract) {
     return null;
   }
+
+  // TODO:: consider useMemo for those calcs
+  const maxSupply = metapassContract?.maxSupply?.toNumber() || 0;
+  const totalSupply = metapassContract?.totalSupply?.toNumber() || 0;
+  const metapassPrice = metapassContract?.metapassPrice?.toString();
+  const priceToEth = (metapassPrice && utils.formatEther(metapassPrice)) || 0;
+  const maxMintAmount = process.env.REACT_APP_MINT_MAX_COUNT;
 
   return (
     <div className="mint-container">
@@ -52,18 +64,24 @@ const MintComponent: FC = () => {
         </Row>
 
         <Row justify="center">
-          <Col xs={24} md={16}>
+          <Col xs={24} md={24}>
             <p className="text-center h1-bold mint-at-a-time-heading">You can mint 20 Lobby Lobsters at a time</p>
-            <HorizontalSlider min={0} max={100} value={100} color1="red" color2="black" />
+            <HorizontalSlider min={0} max={maxSupply} value={totalSupply} color1="white" color2="black" />
           </Col>
-          <Col xs={24} md={17}>
+          <Col xs={24} md={24}>
             <Row justify="space-between" gutter={16} className="controller-container">
               <Col
                 xs={{ order: 1, span: 24 }}
                 sm={{ order: 1, span: 24 }}
                 md={{ order: 1, span: 8 }}
                 lg={{ order: 1, span: 8 }}>
-                <QuantityDropdown labelText="Quantity" min={1} max={3} value={quantity} onChange={setQuantity} />
+                <QuantityDropdown
+                  labelText="Quantity"
+                  min={1}
+                  max={maxMintAmount}
+                  value={quantity}
+                  onChange={setQuantity}
+                />
               </Col>
               <Col
                 xs={{ order: 3, span: 24 }}
@@ -86,7 +104,7 @@ const MintComponent: FC = () => {
                     <span>Price:</span>
                     <span>
                       <img alt="img" className="eth-sign" src={PriceETHIconWhite} />
-                      {(quantity * 0.1).toFixed(1)}
+                      {(quantity * priceToEth).toFixed(1)}
                     </span>
                   </p>
                 </div>

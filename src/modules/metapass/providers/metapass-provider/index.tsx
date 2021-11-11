@@ -49,7 +49,13 @@ const MetapassProvider: FC = props => {
   return (
     <MetapassContext.Provider value={value}>
       {children}
-      <ContractListener contract={metapassContract} />
+      <ContractListener
+        contract={metapassContract}
+        renderSuccess={res => {
+          console.log(res);
+          return <p> Paragrapgh after success</p>;
+        }}
+      />
     </MetapassContext.Provider>
   );
 };

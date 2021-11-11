@@ -21,7 +21,7 @@ const QuantityUpDownGroup: FC<quantityProps> = props => {
   return (
     <div className={`quantity--input--group`}>
       <div className="label--block">
-        <p>{labelText} : </p>
+        <p>{labelText}: </p>
       </div>
       <div className="controll-box">
         <button type="button" className="btn--down" onClick={() => downClick(value, onChange)}>

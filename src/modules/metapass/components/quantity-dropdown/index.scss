@@ -23,9 +23,6 @@
         box-sizing: border-box;
         border-radius: 12px;
         margin-left: 5px;
-        @include sm {
-            width: 50%;
-        }
         button {
             height: 40px;
             width: 40px;
@@ -77,8 +74,15 @@
     }
 
     // Mobile styles
-    @include sm {
+    @include md {
         justify-content: center;
         height: 100%;
+    }
+
+    @include md {
+        .controll-box {
+            width: 61%;
+            padding: 2px 3px;
+        }
     }
 }
