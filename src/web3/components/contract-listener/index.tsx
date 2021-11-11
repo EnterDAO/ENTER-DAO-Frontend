@@ -45,6 +45,7 @@ const ContractListener: React.FC<Props> = props => {
         prevState.meta?.id === meta.id
           ? {
               ...prevState,
+              meta: { ...meta },
               state: meta.state,
             }
           : prevState,

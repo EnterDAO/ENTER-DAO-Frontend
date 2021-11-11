@@ -22,6 +22,16 @@ export function createAbiItem(name: string, inputs: string[] = [], outputs: stri
   };
 }
 
+export function createAbiEvent(name: string, inputs: string[] = [], outputs: string[] = []): AbiItem {
+  return {
+    name: name,
+    type: 'event',
+    anonymous: false,
+    inputs: inputs.map(type => ({ indexed: true, name: '', type })),
+    outputs: outputs.map(type => ({ name: '', type })),
+  };
+}
+
 export type BatchContractMethod = {
   method: string;
   methodArgs?: any[];

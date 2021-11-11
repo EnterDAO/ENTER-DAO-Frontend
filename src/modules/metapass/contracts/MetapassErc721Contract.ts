@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { AbiItem } from 'web3-utils';
-import Web3Contract, { createAbiItem } from 'web3/web3Contract';
+import Web3Contract, { createAbiEvent, createAbiItem } from 'web3/web3Contract';
 
 const ABI: AbiItem[] = [
   createAbiItem('name', [], ['string']),
@@ -16,6 +16,7 @@ const ABI: AbiItem[] = [
   createAbiItem('mint', [], []),
   createAbiItem('bulkBuy', ['uint256'], []),
   createAbiItem('metapassPrice', [], ['uint256']),
+  createAbiEvent('Transfer', ['address', 'address', 'uint256'], []),
 ];
 
 export default class MetapassErc721Contract extends Web3Contract {

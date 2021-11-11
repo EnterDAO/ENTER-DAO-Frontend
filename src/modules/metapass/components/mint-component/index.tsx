@@ -26,7 +26,6 @@ const MintComponent: FC = () => {
 
     try {
       const mintTx = quantity === 1 ? await metapassContract?.mint() : await metapassContract?.bulkBuy(quantity);
-      console.log(mintTx);
     } catch (e) {
       console.log(e);
     }
