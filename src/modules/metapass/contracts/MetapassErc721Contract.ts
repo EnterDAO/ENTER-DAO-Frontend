@@ -16,6 +16,8 @@ const ABI: AbiItem[] = [
   createAbiItem('mint', [], []),
   createAbiItem('bulkBuy', ['uint256'], []),
   createAbiItem('metapassPrice', [], ['uint256']),
+  createAbiItem('presaleStart', [], ['uint256']),
+  createAbiItem('officialSaleStart', [], ['uint256']),
   createAbiEvent('Transfer', ['address', 'address', 'uint256'], []),
 ];
 
@@ -27,6 +29,10 @@ export default class MetapassErc721Contract extends Web3Contract {
   maxSupply?: BigNumber;
 
   metapassPrice?: BigNumber;
+
+  presaleStart?: BigNumber;
+
+  officialSaleStart?: BigNumber;
 
   constructor(abi: AbiItem[], address: string) {
     super([...ABI, ...abi], address, '');
@@ -58,12 +64,22 @@ export default class MetapassErc721Contract extends Web3Contract {
         method: 'metapassPrice',
         transform: value => new BigNumber(value),
       },
-    ]).then(([name, symbol, totalSupply, maxSupply, metapassPrice]) => {
+      {
+        method: 'presaleStart',
+        transform: value => new BigNumber(value),
+      },
+      {
+        method: 'officialSaleStart',
+        transform: value => new BigNumber(value),
+      },
+    ]).then(([name, symbol, totalSupply, maxSupply, metapassPrice, presaleStart, officialSaleStart]) => {
       this.name = name;
       this.symbol = symbol;
       this.maxSupply = maxSupply;
       this.totalSupply = totalSupply;
       this.metapassPrice = metapassPrice;
+      this.presaleStart = presaleStart;
+      this.officialSaleStart = officialSaleStart;
       this.emit(Web3Contract.UPDATE_DATA);
     });
   }

@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'antd';
+import fromUnixTime from 'date-fns/fromUnixTime';
 import { utils } from 'ethers';
 
 import Button from 'components/antd/button';
@@ -48,6 +49,10 @@ const MintComponent: FC = () => {
   const metapassPrice = metapassContract?.metapassPrice?.toString();
   const priceToEth = (metapassPrice && utils.formatEther(metapassPrice)) || 0;
   const maxMintAmount = parseInt(process.env.REACT_APP_MINT_MAX_COUNT || '0', 10);
+  const preSaleStartTime = metapassContract?.presaleStart?.toNumber() || 0;
+  const publicSaleStartTime = metapassContract?.officialSaleStart?.toNumber() || 0;
+  const preSale = fromUnixTime(preSaleStartTime);
+  const publicSale = fromUnixTime(publicSaleStartTime);
 
   return (
     <div className="mint-container">
@@ -66,7 +71,7 @@ const MintComponent: FC = () => {
         {totalSupply !== maxSupply && (
           <Row justify="center">
             <Col>
-              <Countdwon preSaleStartDate={Date.now() + 10000} publicSaleStartDate={Date.now() + 20000} />
+              <Countdwon preSaleStartDate={preSale} publicSaleStartDate={publicSale} />
             </Col>
           </Row>
         )}

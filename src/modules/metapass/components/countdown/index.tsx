@@ -35,7 +35,7 @@ const CountdownComponent: FC<props> = props => {
           {presale() && <span className="counter-state">{STATES.DURING_PRE_SALE}</span>}
           <Countdown
             key={endDate}
-            daysInHours={true}
+            daysInHours={false}
             className="countdown"
             date={endDate}
             onComplete={() => {
