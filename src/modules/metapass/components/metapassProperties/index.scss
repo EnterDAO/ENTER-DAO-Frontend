@@ -1,23 +1,14 @@
 @import "../../../../styles/variables.scss";
 @import "../../../../styles/text.scss";
 
-#metapass-properties-container {
-  margin-top: 37px;
-  margin-bottom: 16px;
-  display: flex;
-  flex-wrap: wrap;
+.metapass-properties-container {
+  margin: 37px 0px;
 
   .metapass-prop {
-    display: flex;
-    flex-direction: column;
-    padding: 12px;
+    padding: 12px 0px;
     background: $lightPink;
     border: 1px solid $pink;
     border-radius: 12px;
-    width: 165px;
-    height: 85px;
-    margin-right: 21px;
-    margin-bottom: 21px;
     text-align: center;
 
     .metapass-attribute {
@@ -26,14 +17,14 @@
       margin-bottom: 5px;
       font-weight: 500;
     }
-    
+
     .metapass-trait {
       color: $black;
       font-size: 12px;
       font-weight: bold;
       margin-bottom: 3px;
     }
-    
+
     .metapass-rarity {
       color: rgba(0, 0, 0, 0.4);
       font-size: 12px;

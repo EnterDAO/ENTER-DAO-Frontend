@@ -22,7 +22,7 @@
   font-weight: 900;
   line-height: 30px;
 }
-#metapass-id-container {
+#metapass-id {
   margin: 20px 0px;
   border-radius: 12px;
   padding: 6px 16px;
@@ -46,3 +46,17 @@
     padding-right: 16px;
   }
 }
+
+.metapass-name-container {
+  @include mobile {
+    margin-top: 30px;
+    justify-content: center;
+  }
+}
+
+.metapass-id-container, .opensea-link-container {
+  @include mobile {
+    justify-content: center;
+  }
+}
+

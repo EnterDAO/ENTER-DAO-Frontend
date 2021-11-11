@@ -40,59 +40,61 @@ const SingleMetapass: React.FC = () => {
   semper leo. Cras vitae malesuada metus. Suspendisse vulputate commodo tincidunt.`;
 
   return (
-    <Col xl={{ offset: 3 }} md={{ offset: 1 }} sm={{ offset: 1 }} xs={{ offset: 1 }} id="metapass-container">
-      <Row>
-        <div id="back-button-container" onClick={() => history.push('./owned')}>
-          <img src={arrowLeft} alt="back-icon" />
-          <span>My NFTs</span>
-        </div>
-      </Row>
-      <Row>
-        <Col span={8}>
-          <Image
-            placeholder={<Image className="metapass-image" src={loadingWomanImage} preview={false} />}
-            className="metapass-image"
-            src={womanImage}
-          />
-        </Col>
-        <Col offset={2} span={11}>
+    <div className="content-container">
+      <Row id="metapass-container">
+        <Col>
           <Row>
-            <p id="metapass-name">Metapass</p>
-          </Row>
-          <Row>
-            <div id="metapass-id-container">
-              <span>ID: </span>
-              <span id="metapass-id">#{padMetapassTokenId(tokenId)}</span>
+            <div id="back-button-container" onClick={() => history.push('./owned')}>
+              <img src={arrowLeft} alt="back-icon" />
+              <span>My NFTs</span>
             </div>
           </Row>
-          <Row>
-            <MetapassDescription description={description} />
-          </Row>
-          <Row>
-            <MetapassTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-          </Row>
-          <Row>
-            {selectedTab === MetapassTab.Properties ? (
-              <MetapassProperties properties={metapassProps} />
-            ) : (
-              <MetapassMetadata ownerAddress={ownerAddress} genome={genome} />
-            )}
-          </Row>
-          <Row>
-            <div
-              id="metapass-opensea-link"
-              onClick={() =>
-                window
-                  .open(`https://opensea.io/assets/${process.env.REACT_APP_METAPASS_ADDR}/${tokenId}`, '_blank')
-                  ?.focus()
-              }>
-              <span>View on Opensea</span>
-              <img src={outLink} alt="link" />
-            </div>
+          <Row gutter={32}>
+            <Col lg={10} md={9} sm={24}>
+              <Image
+                placeholder={<Image className="metapass-image" src={loadingWomanImage} preview={false} />}
+                className="metapass-image"
+                src={womanImage}
+              />
+            </Col>
+            <Col lg={14} md={15} sm={24}>
+              <Row className="metapass-name-container">
+                <p id="metapass-name">Metapass</p>
+              </Row>
+              <Row className="metapass-id-container">
+                <div id="metapass-id">
+                  <span>ID: </span>
+                  <span id="metapass-id">#{padMetapassTokenId(tokenId)}</span>
+                </div>
+              </Row>
+              <Row>
+                <MetapassDescription description={description} />
+              </Row>
+              <Row>
+                <MetapassTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+              </Row>
+              {selectedTab === MetapassTab.Properties ? (
+                <MetapassProperties properties={metapassProps} />
+              ) : (
+                <MetapassMetadata ownerAddress={ownerAddress} genome={genome} />
+              )}
+              <Row className="opensea-link-container">
+                <Col
+                  id="metapass-opensea-link"
+                  onClick={() =>
+                    window
+                      .open(`https://opensea.io/assets/${process.env.REACT_APP_METAPASS_ADDR}/${tokenId}`, '_blank')
+                      ?.focus()
+                  }>
+                  <span>View on Opensea</span>
+                  <img src={outLink} alt="link" />
+                </Col>
+              </Row>
+            </Col>
           </Row>
         </Col>
       </Row>
-    </Col>
+    </div>
   );
 };
 
