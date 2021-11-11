@@ -30,7 +30,7 @@ const MintView: React.FC = () => {
         />
         <MissionCountComponent totalNFTs={10} totalAttributes={133} mission={1} />
       </div>
-      <MarqueeComponent speed={10} pauseOnHover={false}>
+      <MarqueeComponent speed={10} pauseOnHover={false} gradient={false}>
         <MarqueeImagesComponent />
       </MarqueeComponent>
       <MintComponent></MintComponent>
