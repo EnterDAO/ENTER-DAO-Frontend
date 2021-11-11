@@ -10,6 +10,8 @@ import MarqueImageSix from './assets/3.png';
 import MarqueImageFour from './assets/4.png';
 import MarqueImageFive from './assets/5.png';
 
+import './index.scss';
+
 const MarqueeComponent: FC = () => {
   return (
     <Row>
