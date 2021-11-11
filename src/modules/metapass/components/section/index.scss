@@ -31,16 +31,7 @@
     }
 
 
-    // Mobile and Tablet specifics
-    @include sm {
-        flex-direction: column-reverse;
-
-        &.picture-right {
-            flex-direction: column-reverse;
-        }
-    }
-
-    @include md {
+    @include mobile {
         padding-top: 50px;
 
         .image-container {
@@ -56,7 +47,11 @@
         }
 
         .section-text-container {
-            text-align: center;
+            .heading {
+                font-size: 22px;
+                font-weight: 700;
+                color: $black;
+            }
 
             .first-paragraph, .last-paragraph {
                 margin-top: 14px;
