@@ -26,10 +26,14 @@ const OwnedPasses: React.FC = () => {
     setSearchText(e.target.value);
   };
 
-  const onPaginationChange = (page: number, pageSize?: number | undefined) => {
+  const onPaginationChange = (page: number, newPageSize?: number | undefined) => {
     setPage(page);
-    if (pageSize) {
-      setPageSize(pageSize);
+    if (newPageSize) {
+      setPageSize(newPageSize);
+
+      if (pageSize === newPageSize || newPageSize < pageSize) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }
     }
   };
 
