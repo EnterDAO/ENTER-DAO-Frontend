@@ -1,6 +1,8 @@
 import React from 'react';
 
 import JumbotronComponent from '../../components/jumbotron';
+import MarqueeComponent from '../../components/marquee';
+import MarqueeImagesComponent from '../../components/marquee-images-container';
 import MintComponent from '../../components/mint-component';
 import MissionCountComponent from '../../components/mission-count';
 import SectionComponent from '../../components/section';
@@ -28,6 +30,9 @@ const MintView: React.FC = () => {
         />
         <MissionCountComponent totalNFTs={10} totalAttributes={133} mission={1} />
       </div>
+      <MarqueeComponent speed={10} pauseOnHover={false}>
+        <MarqueeImagesComponent />
+      </MarqueeComponent>
       <MintComponent></MintComponent>
     </>
   );
