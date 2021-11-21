@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { Col, Image, Row } from 'antd';
 
+import { getNftMeta } from 'modules/metapass/api';
 import MetapassDescription from 'modules/metapass/components/metapassDescription';
 import { MetapassMetadata } from 'modules/metapass/components/metapassMetadata';
 import { MetapassProperties } from 'modules/metapass/components/metapassProperties';
@@ -38,6 +39,16 @@ const SingleMetapass: React.FC = () => {
   scelerisque nisi quis venenatis. Phasellus hendrerit condimentum ex, id ultricies turpis iaculis sed.
   Etiam ornare ornare ante, vitae iaculis enim viverra quis. Duis eget ligula luctus, blandit lorem ut,
   semper leo. Cras vitae malesuada metus. Suspendisse vulputate commodo tincidunt.`;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // TODO:: When the BE is ready fetch the data, and populate the View
+      // const meta = await getNftMeta(tokenId);
+      console.log(tokenId);
+    };
+
+    fetchData();
+  }, [tokenId]);
 
   return (
     <div className="content-container">

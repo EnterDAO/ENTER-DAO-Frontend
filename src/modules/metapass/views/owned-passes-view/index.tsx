@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
-import { offset } from '@popperjs/core';
 import { Col, Input, Pagination, Row } from 'antd';
 
 import MetapassCard from 'modules/metapass/components/metapassCard';
 import { MetapassSorter } from 'modules/metapass/components/metapassSorter';
 import { SortDirection } from 'modules/metapass/components/metapassSorter/models/SortDirection';
+import { useWallet } from 'wallets/wallet';
 
+import { getNftMeta, queryShardedMindsGraph, transferShardedMinds } from '../../api';
 import { metapassMockData } from './mockMetapasses';
 
 import './index.scss';
@@ -14,6 +15,8 @@ import './index.scss';
 const OwnedPasses: React.FC = () => {
   const pageSizeOptions = ['12', '24', '48'];
 
+  const walletCtx = useWallet();
+  console.log(walletCtx);
   const [passes, setPasses] = useState(metapassMockData);
   const [totalPasses, setTotalPasses] = useState(metapassMockData.length);
 
@@ -44,6 +47,26 @@ const OwnedPasses: React.FC = () => {
       setSortDir(SortDirection.ASC);
     }
   };
+
+  useEffect(() => {
+    const getMyShardedMinds = async () => {
+      try {
+        const shardedMinds = await queryShardedMindsGraph(transferShardedMinds(walletCtx.account || ''));
+        const tokenIds = shardedMinds?.transferEntities.map((s: any) => s.tokenId);
+        console.log(tokenIds);
+
+        // const metaPromisses = tokenIds.map((id: string) => getNftMeta(id));
+        // const metaData = await Promise.all(metaPromisses);
+        // TODO:: set the passes when the BE is Ready
+        // setPasses(metaData);
+      } catch (e) {
+        // TODO:: handle Errors
+        console.log(e);
+      }
+    };
+
+    getMyShardedMinds();
+  }, []);
 
   useEffect(() => {
     let fileredPasses = metapassMockData.filter(pass => pass.id.includes(searchText));
