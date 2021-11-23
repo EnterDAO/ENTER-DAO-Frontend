@@ -88,16 +88,16 @@ const OwnedPasses: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // let filered: IMetaData[] = filteredPasses.filter(pass => pass.id.includes(searchText));
-    // if (sortDir === SortDirection.ASC) {
-    //   fileredPasses.sort((a, b) => +a.id - +b.id);
-    // } else {
-    //   fileredPasses.sort((a, b) => +b.id - +a.id);
-    // }
-    // setTotalPasses(fileredPasses.length);
-    // const offset = (page - 1) * pageSize;
-    // fileredPasses = fileredPasses.slice(offset, offset + pageSize);
-    // setPasses(fileredPasses);
+    let filered: IMetaData[] = passes.filter(pass => pass.id.includes(searchText));
+    if (sortDir === SortDirection.ASC) {
+      filered.sort((a, b) => +a.id - +b.id);
+    } else {
+      filered.sort((a, b) => +b.id - +a.id);
+    }
+    setTotalPasses(filered.length);
+    const offset = (page - 1) * pageSize;
+    let passesToShow = filered.slice(offset, offset + pageSize);
+    setFilteredPasses(passesToShow);
   }, [sortDir, searchText, page, pageSize]);
 
   console.log(passes.slice((page - 1) * pageSize, page * pageSize));
@@ -130,7 +130,7 @@ const OwnedPasses: React.FC = () => {
               ]}>
               {loading
                 ? [1, 2, 3, 4, 5, 6, 7, 8].map(i => <OwnedNFTCardSkeleton key={i} />)
-                : passes
+                : filteredPasses
                     .slice((page - 1) * pageSize, page * pageSize)
                     .map(pass => <MetapassCard key={pass.id} pass={pass} />)}
             </Row>
