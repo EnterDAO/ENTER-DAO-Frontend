@@ -5,6 +5,7 @@ import { Col, Input, Pagination, Row } from 'antd';
 import MetapassCard from 'modules/metapass/components/metapassCard';
 import { MetapassSorter } from 'modules/metapass/components/metapassSorter';
 import { SortDirection } from 'modules/metapass/components/metapassSorter/models/SortDirection';
+import OwnedNFTCardSkeleton from 'modules/metapass/components/owned-nft-loader-card';
 import { useWallet } from 'wallets/wallet';
 
 import { getNftMeta, queryShardedMindsGraph, transferShardedMinds } from '../../api';
@@ -12,14 +13,28 @@ import { metapassMockData } from './mockMetapasses';
 
 import './index.scss';
 
+type Trait = {
+  trait_type: string;
+  value: string;
+};
+interface IMetaData {
+  attributes: Trait[];
+  description: string;
+  external_url: string;
+  image: string;
+  name: string;
+  video: string;
+  id: string;
+}
+
 const OwnedPasses: React.FC = () => {
   const pageSizeOptions = ['12', '24', '48'];
 
   const walletCtx = useWallet();
-  console.log(walletCtx);
-  const [passes, setPasses] = useState(metapassMockData);
+  const [passes, setPasses] = useState<IMetaData[]>([]);
+  const [filteredPasses, setFilteredPasses] = useState<IMetaData[]>([]);
   const [totalPasses, setTotalPasses] = useState(metapassMockData.length);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [searchText, setSearchText] = useState('');
   const [sortDir, setSortDir] = useState(SortDirection.ASC);
   const [page, setPage] = useState(1);
@@ -51,16 +66,21 @@ const OwnedPasses: React.FC = () => {
   useEffect(() => {
     const getMyShardedMinds = async () => {
       try {
+        setLoading(true);
         const shardedMinds = await queryShardedMindsGraph(transferShardedMinds(walletCtx.account || ''));
         const tokenIds = shardedMinds?.transferEntities.map((s: any) => s.tokenId);
-        console.log(tokenIds);
 
-        // const metaPromisses = tokenIds.map((id: string) => getNftMeta(id));
-        // const metaData = await Promise.all(metaPromisses);
-        // TODO:: set the passes when the BE is Ready
-        // setPasses(metaData);
+        const metaPromisses = tokenIds.map(async (id: string) => {
+          const m = await getNftMeta(id);
+          m.id = id;
+          return m;
+        });
+        const metaData: IMetaData[] = await Promise.all(metaPromisses);
+        setPasses(metaData);
+        setFilteredPasses(metaData);
+        setTotalPasses(metaData.length);
+        setLoading(false);
       } catch (e) {
-        // TODO:: handle Errors
         console.log(e);
       }
     };
@@ -69,18 +89,19 @@ const OwnedPasses: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    let fileredPasses = metapassMockData.filter(pass => pass.id.includes(searchText));
-    if (sortDir === SortDirection.ASC) {
-      fileredPasses.sort((a, b) => +a.id - +b.id);
-    } else {
-      fileredPasses.sort((a, b) => +b.id - +a.id);
-    }
-    setTotalPasses(fileredPasses.length);
-
-    const offset = (page - 1) * pageSize;
-    fileredPasses = fileredPasses.slice(offset, offset + pageSize);
-    setPasses(fileredPasses);
+    // let filered: IMetaData[] = filteredPasses.filter(pass => pass.id.includes(searchText));
+    // if (sortDir === SortDirection.ASC) {
+    //   fileredPasses.sort((a, b) => +a.id - +b.id);
+    // } else {
+    //   fileredPasses.sort((a, b) => +b.id - +a.id);
+    // }
+    // setTotalPasses(fileredPasses.length);
+    // const offset = (page - 1) * pageSize;
+    // fileredPasses = fileredPasses.slice(offset, offset + pageSize);
+    // setPasses(fileredPasses);
   }, [sortDir, searchText, page, pageSize]);
+
+  console.log(passes);
 
   return (
     <>
@@ -109,9 +130,9 @@ const OwnedPasses: React.FC = () => {
                 { sm: 16, md: 16, lg: 32 },
                 { sm: 16, md: 16, lg: 32 },
               ]}>
-              {passes.map(pass => (
-                <MetapassCard key={pass.id} pass={pass} />
-              ))}
+              {loading
+                ? [1, 2, 3, 4, 5, 6, 7, 8].map(i => <OwnedNFTCardSkeleton key={i} />)
+                : passes.slice(page, page + pageSize).map(pass => <MetapassCard key={pass.id} pass={pass} />)}
             </Row>
           </Col>
           <Col span={24} className="my-nfts-pagination">

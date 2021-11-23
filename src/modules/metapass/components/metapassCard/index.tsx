@@ -30,7 +30,7 @@ const MetapassCard: React.FC<IMetapassCardProps> = ({ pass }) => {
           <Image
             placeholder={<Image className="metapass-image" src={loadingWomanImage} preview={false} />}
             className="metapass-image"
-            src={pass.imageUrl}
+            src={pass.image}
             preview={false}
           />
         </Row>
