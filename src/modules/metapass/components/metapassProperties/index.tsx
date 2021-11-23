@@ -1,12 +1,14 @@
 import React from 'react';
 import { Col, Row } from 'antd';
 
-import { IMetapassProperty } from 'modules/metapass/views/single-metapass-view/models/IMetapassProperty';
-
 import './index.scss';
 
+type Trait = {
+  trait_type: string;
+  value: string;
+};
 interface IMetapassPropertiesProps {
-  properties?: IMetapassProperty[];
+  properties?: Trait[];
 }
 
 export const MetapassProperties: React.FC<IMetapassPropertiesProps> = ({ properties }) => {
@@ -22,9 +24,9 @@ export const MetapassProperties: React.FC<IMetapassPropertiesProps> = ({ propert
         properties.map(prop => (
           <Col xs={12} md={8}>
             <div className="metapass-prop">
-              <div className="metapass-attribute">{prop.attribute?.toUpperCase()}</div>
-              <div className="metapass-trait">{prop.trait?.toUpperCase()}</div>
-              <div className="metapass-rarity">{prop.rarity}% have this trait</div>
+              <div className="metapass-attribute">{prop.trait_type?.toUpperCase()}</div>
+              <div className="metapass-trait">{prop.value?.toUpperCase()}</div>
+              <div className="metapass-rarity">{'prop.rarity'}% have this trait</div>
             </div>
           </Col>
         ))}
