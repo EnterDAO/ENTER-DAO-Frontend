@@ -1,0 +1,17 @@
+@import "../../../../styles/variables.scss";
+@import "../../../../styles/utils.scss";
+@import "../../../../styles/colors.scss";
+
+.nft--card--skeleton {
+  background: $white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  border-radius: 12px;
+  padding: 12px;
+  transition: 0.3s ease-in-out;
+  box-shadow: 0px 10px 36px rgba(136, 120, 172, 0.14);
+  &:hover {
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid transparent;
+  }
+}
