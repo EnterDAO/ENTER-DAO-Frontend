@@ -29,7 +29,6 @@ interface IMetaData {
 
 const OwnedPasses: React.FC = () => {
   const pageSizeOptions = ['12', '24', '48'];
-
   const walletCtx = useWallet();
   const [passes, setPasses] = useState<IMetaData[]>([]);
   const [filteredPasses, setFilteredPasses] = useState<IMetaData[]>([]);
@@ -50,7 +49,7 @@ const OwnedPasses: React.FC = () => {
       setPageSize(newPageSize);
 
       if (pageSize === newPageSize || newPageSize < pageSize) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 100, left: 0, behavior: 'smooth' });
       }
     }
   };
@@ -101,8 +100,7 @@ const OwnedPasses: React.FC = () => {
     // setPasses(fileredPasses);
   }, [sortDir, searchText, page, pageSize]);
 
-  console.log(passes);
-
+  console.log(passes.slice((page - 1) * pageSize, page * pageSize));
   return (
     <>
       <div className="content-container">
@@ -132,7 +130,9 @@ const OwnedPasses: React.FC = () => {
               ]}>
               {loading
                 ? [1, 2, 3, 4, 5, 6, 7, 8].map(i => <OwnedNFTCardSkeleton key={i} />)
-                : passes.slice(page, page + pageSize).map(pass => <MetapassCard key={pass.id} pass={pass} />)}
+                : passes
+                    .slice((page - 1) * pageSize, page * pageSize)
+                    .map(pass => <MetapassCard key={pass.id} pass={pass} />)}
             </Row>
           </Col>
           <Col span={24} className="my-nfts-pagination">
