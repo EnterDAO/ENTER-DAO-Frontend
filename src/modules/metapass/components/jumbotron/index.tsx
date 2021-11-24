@@ -4,8 +4,8 @@ import { Col, Row } from 'antd';
 
 import Button from 'components/antd/button';
 
-import jumbotronImage from './assets/jumbotron.png';
 import jumbotronVideo from './assets/loop.mp4';
+import robotImage from './assets/robot-skin.svg';
 
 import './index.scss';
 
@@ -22,7 +22,8 @@ const JumbotronComponent: FC = () => {
           <Col xs={24} md={24} lg={10}>
             <div className="jumbotron-myNFTs-container">
               <p className="h1-bold main-heading">EnterDAO NFT</p>
-              <p className="sub-heading">THEY WEAR SUITS, SO WE DON'T HAVE TO.</p>
+              <p className="h1-bold main-heading">Sharded Minds</p>
+              <p className="sub-heading">exploring the Web3 metaverse</p>
               <Button
                 className="myNFTs-button"
                 type="primary"
@@ -34,7 +35,7 @@ const JumbotronComponent: FC = () => {
             </div>
           </Col>
           <Col xs={24} md={24} lg={14} className="jumbotron-image-container">
-            <img src={jumbotronImage} alt="jumbotron"></img>
+            <img src={robotImage} alt="jumbotron"></img>
           </Col>
         </Row>
       </div>

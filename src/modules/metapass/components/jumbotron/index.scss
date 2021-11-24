@@ -5,6 +5,11 @@
     max-height: 691px; // Desktop
     position: relative;
 
+    .content-container {
+      padding-top: 0px;
+      padding-bottom: 0px;
+    }
+
     .jumbo-video {
         position: absolute;
         top: 0px;
@@ -26,6 +31,9 @@
         }
 
         .main-heading {
+          color: rgba(243, 38, 198, 1);
+          line-height: 53px;
+
           @include mobile {
             font-size: 26px;
           }
@@ -34,6 +42,8 @@
         .sub-heading {
           color: $pinkish;
           font-size: $text-sm;
+          text-transform: uppercase;
+          font-weight: 600;
 
           @include mobile {
             font-size: 14px;
@@ -43,7 +53,11 @@
 
         .myNFTs-button {
           width: 140px;
-          margin-top: 25px;
+          margin-top: 20px;
+          background: rgba(221, 61, 203, 1);
+          color: white;
+          font-weight: 700;
+          font-size: 16px;
 
           @include mobile {
             margin-top: 20px;
