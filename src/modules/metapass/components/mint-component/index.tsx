@@ -64,11 +64,11 @@ const MintComponent: FC = () => {
       <div className="content-container">
         <Row justify="center" className="description">
           <Col xs={24} md={16}>
-            <p className="h1-bold text-center mint-heading">MINT A NFT</p>
+            <p className="text-center mint-heading">Mint a SHARDED MIND</p>
             <p className="text-white text-center">
-              100% of primary sales will be donated to policy and lobby efforts. Secondary sales will be donated to
-              groups focused on growing the Ethereum ecosystem. Mint a Lobby Lobster to become part of a community that
-              will change the universe!
+              Еach EnterDAO Sharded Mind is a unique ERC-721 NFT. It is programmatically assembled on-chain and each
+              token has a genome representing its unique combination of traits, including animated backgrounds and
+              original tracks.
             </p>
           </Col>
         </Row>
@@ -83,7 +83,7 @@ const MintComponent: FC = () => {
 
         <Row justify="center">
           <Col xs={24} md={24}>
-            <p className="text-center h1-bold mint-at-a-time-heading">You can mint 20 Lobby Lobsters at a time</p>
+            <p className="text-center h1-bold mint-at-a-time-heading">You can mint 10 Sharded Minds at a time</p>
             <HorizontalSlider min={0} max={maxSupply} value={totalSupply} color1="white" color2="black" />
           </Col>
           <Col xs={24} md={24}>
