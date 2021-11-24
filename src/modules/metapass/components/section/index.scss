@@ -25,6 +25,12 @@
         justify-content: center;
         flex-direction: column;
 
+        .heading {
+            font-size: 36px;
+            font-weight: 700;
+            color: rgba(11, 8, 52, 1);
+        }
+
         .first-paragraph, .last-paragraph {
             margin-top: 17px;
         }
@@ -50,7 +56,6 @@
             .heading {
                 font-size: 22px;
                 font-weight: 700;
-                color: $black;
             }
 
             .first-paragraph, .last-paragraph {

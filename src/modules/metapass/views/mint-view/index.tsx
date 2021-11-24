@@ -6,6 +6,8 @@ import MarqueeImagesComponent from '../../components/marquee-images-container';
 import MintComponent from '../../components/mint-component';
 import MissionCountComponent from '../../components/mission-count';
 import SectionComponent from '../../components/section';
+import blueWoman from './assets/blue-woman.svg';
+import redWoman from './assets/red-woman.svg';
 
 const MintView: React.FC = () => {
   return (
@@ -14,19 +16,19 @@ const MintView: React.FC = () => {
       <div className="content-container-fix content-container">
         <SectionComponent
           pictureLeft={true}
-          heading="SECOND HEADLINE"
-          firstParagraphText="Through a lineup of core products EnterDAO aims to
-              <b> empower users, metaverse land owners, investors, brands and degens of all kinds</b> by tackling pain
-              points like access to metaverse land, its capital efficiency, as well as UX and onboarding of metaverse
-              games."
-          secondParagraphText="EnterDAO is set to build 2 core products — <b>LandWorks</b> and <b>MetaPortal</b>, as well as an NFT drop called
-            <b>MetaPass</b>."
+          heading="Story"
+          imageUrl={blueWoman}
+          firstParagraphText="The failure of legacy institutions, systems and media has led to the emergence of the Web3 metaverse - a parallel digital reality built around technology, decentralization, public goods and, most importantly, vibes.<br><br>
+          Leaning on the foundations of decentralized finance, digital art and gaming, the Web3 metaverse is a magical space full of adventure and yield. But the Web3 metaverse is also a fragile space, protected by 'gm' from the constant threats of the non-gm-sayers on the verge of oblivion.<br><br>
+          A magical space, yet a space still unaccessible to many. The legend has it that only a sharded mind can enter the metaverse."
         />
         <SectionComponent
           pictureLeft={false}
-          heading="THIRD HEADLINE"
-          firstParagraphText="LandWorks is a <b>metaverse land renting marketplace based on Ethereum</b>. The protocol enables period-based renting of land in Web3 metaverse games."
-          secondParagraphText="LandWorks will start off with Decentraland as a primer and then <br> gradually expand to support other prominent games. It will enable landowners to <b>earn passive income on their assets</b>, while renters looking to leverage metaverse games will be able to easily rent instead of buying virtual land properties."
+          heading="EnterDAO"
+          imageUrl={redWoman}
+          firstParagraphText="EnterDAO Sharded Minds is a collection of 5,000 audiovisual art-pieces created by Angela Pencheva and Raredub as contributors to EnterDAO.<br><br>
+          EnterDAO is a decentralized autonomous organization founded with the mission to build the rails of the Web3 metaverse and the decentralized digital economy that encompasses it. The DAO is building a set of DeFi and Gaming products (LandWorks and MetaPortal) in a community-first way.<br><br>
+          The EnterDAO Shared Minds collection, alongside LandWorks and MetaPortal, is a fundamental piece in the growth of the DAO, its community, governance, products and upcoming in-game events."
         />
         <MissionCountComponent totalNFTs={10} totalAttributes={133} mission={1} />
       </div>
