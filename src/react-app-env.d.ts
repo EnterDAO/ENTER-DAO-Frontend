@@ -13,6 +13,10 @@ declare module 'bignumber.js' {
 
     unscaleBy(decimals?: number): BigNumber | undefined;
   }
+  declare module '*.mp4' {
+    const src: string;
+    export default src;
+  }
 }
 
 export {};

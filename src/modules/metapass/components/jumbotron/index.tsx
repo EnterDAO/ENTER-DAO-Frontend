@@ -5,6 +5,7 @@ import { Col, Row } from 'antd';
 import Button from 'components/antd/button';
 
 import jumbotronImage from './assets/jumbotron.png';
+import jumbotronVideo from './assets/loop.mp4';
 
 import './index.scss';
 
@@ -13,6 +14,9 @@ const JumbotronComponent: FC = () => {
 
   return (
     <div className="jumbotron-container">
+      <video autoPlay muted loop className="jumbo-video">
+        <source src={jumbotronVideo} type="video/mp4" />
+      </video>
       <div className="content-container">
         <Row className="jumbotron-row" align="middle">
           <Col xs={24} md={24} lg={10}>
