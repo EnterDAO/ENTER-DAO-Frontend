@@ -28,7 +28,7 @@ const JumbotronComponent: FC = () => {
                 className="myNFTs-button"
                 type="primary"
                 onClick={() => {
-                  history.push('/metapass/owned');
+                  history.push('/sharded-minds/owned');
                 }}>
                 My NFTs
               </Button>

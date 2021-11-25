@@ -52,7 +52,7 @@ const LayoutHeader: React.FC = () => {
   }, [window.innerWidth]);
 
   const isGovernancePage = useRouteMatch('/governance');
-  const isMetapassPage = useRouteMatch('/metapass');
+  const isShardedPage = useRouteMatch('/sharded-minds');
 
   async function handleAddProjectToken() {
     if (wallet.connector?.id === 'metamask') {
@@ -79,7 +79,7 @@ const LayoutHeader: React.FC = () => {
         <Icon name="png/enterdao" width="auto" height="auto" className={s.logo} />
       </ExternalLink>
       <div className={s.titleDelimiter} />
-      <h1 className={s.title}>{isGovernancePage ? 'Governance' : isMetapassPage ? 'EnterDAO' : 'Yield Farming'}</h1>
+      <h1 className={s.title}>{isGovernancePage ? 'Governance' : isShardedPage ? 'EnterDAO' : 'Yield Farming'}</h1>
 
       <nav className={s.nav}>
         <Popover
@@ -89,8 +89,8 @@ const LayoutHeader: React.FC = () => {
           onVisibleChange={setPopper5visible}
           content={
             <div className={cn('card', s.dropdown)}>
-              <Link to="/metapass" className={s.dropdownLink} onClick={() => setPopper5visible(false)}>
-                <span>MetaPass</span>
+              <Link to="/sharded-minds" className={s.dropdownLink} onClick={() => setPopper5visible(false)}>
+                <span>Sharded Minds</span>
               </Link>
             </div>
           }>

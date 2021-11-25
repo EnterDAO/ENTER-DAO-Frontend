@@ -79,11 +79,9 @@ const SingleMetapass: React.FC = () => {
           ) : (
             <Row gutter={32}>
               <Col lg={10} md={9} sm={24}>
-                <Image
-                  placeholder={<Image className="metapass-image" src={loadingWomanImage} preview={false} />}
-                  className="metapass-image"
-                  src={metaData?.image}
-                />
+                <video controls className="jumbo-video" poster={metaData?.image} style={{ maxWidth: '100%' }}>
+                  <source src={metaData?.video} type="video/mp4" />
+                </video>
               </Col>
               <Col lg={14} md={15} sm={24}>
                 <Row className="metapass-name-container">
