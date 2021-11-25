@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
+import { useLocalStorage } from 'react-use-storage';
 import { Col, Image, Row } from 'antd';
 
 import MetapassDescription from 'modules/metapass/components/metapassDescription';
@@ -43,6 +44,12 @@ const SingleMetapass: React.FC = () => {
   const [metaData, setMetaData] = useState<IMetaData | undefined>();
   const [owner, setOwner] = useState<Owner | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [theme, setTheme] = useLocalStorage('bb_theme', 'light');
+
+  useEffect(() => {
+    setTheme('light');
+  });
 
   useEffect(() => {
     const fetchData = async () => {

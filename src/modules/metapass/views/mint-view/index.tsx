@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocalStorage } from 'react-use-storage';
 
 import JumbotronComponent from '../../components/jumbotron';
 import MarqueeComponent from '../../components/marquee';
@@ -10,6 +11,12 @@ import blueWoman from './assets/blue-woman.svg';
 import redWoman from './assets/red-woman.svg';
 
 const MintView: React.FC = () => {
+  const [theme, setTheme] = useLocalStorage('bb_theme', 'light');
+
+  useEffect(() => {
+    setTheme('light');
+  });
+
   return (
     <>
       <JumbotronComponent />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocalStorage } from 'react-use-storage';
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Pagination, Row } from 'antd';
 
@@ -38,6 +39,11 @@ const OwnedPasses: React.FC = () => {
   const [sortDir, setSortDir] = useState(SortDirection.ASC);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(+pageSizeOptions[0]);
+  const [theme, setTheme] = useLocalStorage('bb_theme', 'light');
+
+  useEffect(() => {
+    setTheme('light');
+  });
 
   const searchItems = (e: any) => {
     setSearchText(e.target.value);
