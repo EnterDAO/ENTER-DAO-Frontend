@@ -16,6 +16,8 @@ import loadingWomanImage from '../../components/metapassCard/assets/loadingWoman
 import arrowLeft from './assets/arrow-left.svg';
 import outLink from './assets/link-out.svg';
 
+import GeneParser from '../../../../utils/ShardedMindsGeneParser';
+
 import './index.scss';
 
 type Trait = {
@@ -44,6 +46,7 @@ const SingleMetapass: React.FC = () => {
   const [metaData, setMetaData] = useState<IMetaData | undefined>();
   const [owner, setOwner] = useState<Owner | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [parsedGenes, setParsedGenes] = useState({});
 
   const [theme, setTheme] = useLocalStorage('bb_theme', 'light');
 
@@ -56,9 +59,6 @@ const SingleMetapass: React.FC = () => {
       setLoading(true);
       const meta = await getNftMeta(tokenId);
       const shardedOwner = await queryShardedMindsGraph(ShardedMindsOwner(tokenId || ''));
-      const shardedRarity = await queryShardedMindsGraph(ShardedMindsTraitRarity(tokenId || ''));
-      console.log(shardedRarity);
-      console.log(shardedOwner.transferEntities[0]);
       if (shardedOwner?.transferEntities && shardedOwner?.transferEntities[0]) {
         setOwner(shardedOwner?.transferEntities[0]);
       }
@@ -68,6 +68,13 @@ const SingleMetapass: React.FC = () => {
 
     fetchData();
   }, [tokenId]);
+
+  useEffect(() => {
+    if (owner) {
+      const parsed = GeneParser.parse(owner?.gene);
+      setParsedGenes(parsed);
+    }
+  }, [owner]);
 
   return (
     <div className="content-container">
@@ -107,7 +114,7 @@ const SingleMetapass: React.FC = () => {
                   <MetapassTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
                 </Row>
                 {selectedTab === MetapassTab.Properties ? (
-                  <MetapassProperties properties={metaData?.attributes} />
+                  <MetapassProperties properties={metaData?.attributes} parsedGenes={parsedGenes} />
                 ) : (
                   <MetapassMetadata ownerAddress={owner?.to || ''} genome={owner?.gene || ''} />
                 )}
