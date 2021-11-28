@@ -14,7 +14,7 @@ const JumbotronComponent: FC = () => {
 
   return (
     <div className="jumbotron-container">
-      <video autoPlay muted loop className="jumbo-video">
+      <video autoPlay muted loop playsInline className="jumbo-video">
         <source src={jumbotronVideo} type="video/mp4" />
       </video>
       <div className="content-container">
