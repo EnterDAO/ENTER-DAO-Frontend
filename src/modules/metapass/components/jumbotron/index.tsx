@@ -4,7 +4,7 @@ import { Col, Row } from 'antd';
 
 import Button from 'components/antd/button';
 
-import jumbotronVideo from './assets/loopBG.mp4';
+import jumbotronVideo from './assets/loop.mp4';
 import robotImage from './assets/robot-skin.svg';
 
 import './index.scss';
