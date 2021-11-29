@@ -5,11 +5,12 @@ import { Col, Image, Row } from 'antd';
 
 import MetapassDescription from 'modules/metapass/components/metapassDescription';
 import { MetapassMetadata } from 'modules/metapass/components/metapassMetadata';
+import { MetapassPreviewTabs } from 'modules/metapass/components/metapassPreviewTabs';
 import { MetapassProperties } from 'modules/metapass/components/metapassProperties';
 import { MetapassTabs } from 'modules/metapass/components/metapassTabs';
 import SingleNFTCardSkeleton from 'modules/metapass/components/single-nft-loader-card';
 import { padMetapassTokenId } from 'modules/metapass/helpers/helpers';
-import { MetapassTab } from 'modules/metapass/views/single-metapass-view/models/MetapassTab';
+import { MetapassTab, PrveiwTab } from 'modules/metapass/views/single-metapass-view/models/MetapassTab';
 
 import { ShardedMindsOwner, ShardedMindsTraitRarity, getNftMeta, queryShardedMindsGraph } from '../../api';
 import loadingWomanImage from '../../components/metapassCard/assets/loadingWoman.png';
@@ -47,6 +48,7 @@ const SingleMetapass: React.FC = () => {
   const [owner, setOwner] = useState<Owner | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
   const [parsedGenes, setParsedGenes] = useState({});
+  const [previewTab, setPreviewTab] = useState(PrveiwTab.Image);
 
   const [theme, setTheme] = useLocalStorage('bb_theme', 'light');
 
@@ -93,9 +95,21 @@ const SingleMetapass: React.FC = () => {
           ) : (
             <Row gutter={32}>
               <Col lg={10} md={9} sm={24}>
-                <video controls className="jumbo-video" poster={metaData?.image} style={{ maxWidth: '100%' }}>
-                  <source src={metaData?.video} type="video/mp4" />
-                </video>
+                <Row>
+                  <MetapassPreviewTabs selectedTab={previewTab} setSelectedTab={setPreviewTab} />
+                </Row>
+                {previewTab === PrveiwTab.Image ? (
+                  <img src={metaData?.image} alt="sharded mind" width="100%" />
+                ) : metaData?.video ? (
+                  <video controls className="jumbo-video" poster={metaData?.image} style={{ maxWidth: '100%' }}>
+                    <source src={metaData?.video} type="video/mp4" />
+                  </video>
+                ) : (
+                  <div className="generating-video">
+                    <img src={metaData?.image} alt="sharded mind" width="100%" />
+                    <p>Video is getting Generated</p>
+                  </div>
+                )}
               </Col>
               <Col lg={14} md={15} sm={24}>
                 <Row className="metapass-name-container">
