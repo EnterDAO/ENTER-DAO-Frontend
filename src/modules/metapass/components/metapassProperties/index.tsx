@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { Col, Row } from 'antd';
 
 import { ShardedMindsTraitRarity, queryShardedMindsGraph } from '../../api';
@@ -22,6 +23,7 @@ interface IMetapassPropertiesProps {
 
 export const MetapassProperties: React.FC<IMetapassPropertiesProps> = ({ properties, parsedGenes }) => {
   const [propsWithRarity, setPropsWithRarity] = useState<TraitWithChance[] | undefined>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getPropertyRarity = async (properties: IMetapassPropertiesProps['properties'], parsedGenes: any) => {
@@ -35,8 +37,10 @@ export const MetapassProperties: React.FC<IMetapassPropertiesProps> = ({ propert
       });
 
       if (rarityPromises?.length) {
+        setLoading(true);
         const props = await Promise.all(rarityPromises);
         setPropsWithRarity(props);
+        setLoading(false);
       }
     };
 
@@ -62,7 +66,13 @@ export const MetapassProperties: React.FC<IMetapassPropertiesProps> = ({ propert
               <div className="metapass-prop">
                 <div className="metapass-attribute">{prop.trait_type?.toUpperCase()}</div>
                 <div className="metapass-trait">{prop.value?.toUpperCase()}</div>
-                <div className="metapass-rarity">{rarity?.toFixed(2)}% have this trait</div>
+                <div className="metapass-rarity">
+                  {loading ? (
+                    <Skeleton width={'90%'} height={20} style={{ background: '#DD3DCB' }} />
+                  ) : (
+                    `${rarity ? rarity?.toFixed(2) + '% have this trait' : 'No Rarity for this trait'}`
+                  )}
+                </div>
               </div>
             </Col>
           );

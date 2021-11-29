@@ -1,4 +1,13 @@
-const ITEMS = {
+interface IItems {
+  BACKGROUND: string[];
+  SKIN: string[];
+  EYES: string[];
+  MOUTH: string[];
+  NECKLACE: string[];
+  VORTEX: string[];
+  TRACK: string[];
+}
+const ITEMS: IItems = {
   BACKGROUND: [
     'Background 13',
     'Background 16',
@@ -132,7 +141,16 @@ const GENES_TYPE_COUNT_MAP = {
   HEAD_GENES_COUNT: ITEMS.TRACK.length,
 };
 
-const GENE_POSITIONS_MAP = {
+interface IGenePosition {
+  BACKGROUND?: number | string;
+  SKIN?: number | string;
+  EYES?: number | string;
+  MOUTH?: number | string;
+  NECKLACE?: number | string;
+  VORTEX?: number | string;
+  TRACK?: number | string;
+}
+const GENE_POSITIONS_MAP: IGenePosition = {
   BACKGROUND: 0,
   SKIN: 1,
   NECKLACE: 2,
@@ -152,12 +170,32 @@ const MOUTH_DISTRIBUTION = [50, 94, 200, 225, 240, 250, 250, 250, 275, 300, 350,
 
 const NECKLACE_DISTRIBUTION = [50, 100, 150, 247, 247, 250, 250, 300, 350, 350, 400, 400, 400, 450, 450, 600];
 
-const VORTEX_DISTRIBUTION = [100, 150, 200, 200, 200, 200, 244, 250, 250, 250, 250, 250, 300, 300, 300, 350, 400, 400, 400];
+const VORTEX_DISTRIBUTION = [
+  100,
+  150,
+  200,
+  200,
+  200,
+  200,
+  244,
+  250,
+  250,
+  250,
+  250,
+  250,
+  300,
+  300,
+  300,
+  350,
+  400,
+  400,
+  400,
+];
 
 const TRACKS_DISTRIBUTION = [44, 150, 250, 360, 450, 550, 660, 750, 840, 940];
 
 class GenesParser {
-  splitArrayIntoChunksOfLen = (arr, len) => {
+  splitArrayIntoChunksOfLen = (arr: any, len: number) => {
     const chunks = [];
     let i = 0;
     const n = arr.length;
@@ -167,10 +205,10 @@ class GenesParser {
     return chunks;
   };
 
-  parse = (gene) => {
+  parse = (gene: string) => {
     // let gene = '8578337193583896977622242819238527022510612018955151247142290718548395028898'; // example
     const adjustableGenes = gene.substr(gene.length - 28); // take the last 18 digits
-    const groupedGenes = [];
+    const groupedGenes: string[] = [];
     // We must take the genes from righ to left for example 9808 -> BACKGROUND code
     // We split them in pair of 4
     for (let i = adjustableGenes.length - 4; i >= 0; i -= 4) {
@@ -179,9 +217,9 @@ class GenesParser {
       groupedGenes.push(genePair);
     }
 
-    const result = {};
+    const result: IGenePosition = {};
     Object.keys(GENE_POSITIONS_MAP).forEach((key, index) => {
-      let distribution = [];
+      let distribution: number[] = [];
       switch (key) {
         case 'BACKGROUND':
           distribution = BACKGROUND_DISTRIBUTION;
@@ -223,9 +261,9 @@ class GenesParser {
       }
 
       const prefix = '99';
-      const id = `${prefix}${GENE_POSITIONS_MAP[key]}${geneItemIndex}`;
-      if (ITEMS[key]) {
-        result[key] = id;
+      const id = `${prefix}${GENE_POSITIONS_MAP[key as keyof IGenePosition]}${geneItemIndex}`;
+      if (ITEMS[key as keyof IItems]) {
+        result[key as keyof IGenePosition] = id;
       }
     });
 
