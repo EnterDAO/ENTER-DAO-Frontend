@@ -54,7 +54,7 @@ const MintSuccessComponent: FC<props> = props => {
           <Col span={24}>
             {showLoaders ? (
               <p className="text-center congrats-heading">
-                Transaction successful, please wiat untill the NFTs are getting generated !
+                The transaction was successful! Please wait for the NFTs to be generated and visualised.
               </p>
             ) : (
               <p className="text-center congrats-heading">Congrats !</p>

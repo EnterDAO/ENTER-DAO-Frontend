@@ -67,7 +67,7 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = props => {
           </Text>
         </Grid>
 
-        <Grid gap={24} colsTemplate="repeat(auto-fit, minmax(120px, 240px))">
+        <Grid gap={24} alignSelf={'center'} colsTemplate="repeat(auto-fit, minmax(120px, 248px))">
           {WalletConnectors.map(connector => (
             <Button
               key={connector.id}
