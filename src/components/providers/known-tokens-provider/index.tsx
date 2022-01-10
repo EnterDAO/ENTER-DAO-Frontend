@@ -24,6 +24,7 @@ export enum KnownTokens {
   ILV = 'ILV',
   LEAG = 'LEAG',
   USDC_ENTR_SLP = 'USDC_ENTR_SUSHI_LP',
+  LANDWORKS = 'LANDWORKS',
 }
 
 export type TokenMeta = {
@@ -52,6 +53,16 @@ export const EnterToken: TokenMeta = {
   name: 'EnterDAO Governance Token',
   decimals: 18,
   icon: 'png/enterdao' as any,
+  contract: new Erc20Contract([], config.tokens.entr),
+};
+
+// TODO: Change all the properties
+export const LandWorksToken: TokenMeta = {
+  address: config.tokens.entr,
+  symbol: KnownTokens.LANDWORKS,
+  name: 'EnterDAO Governance Token',
+  decimals: 18,
+  icon: 'png/landworks' as any,
   contract: new Erc20Contract([], config.tokens.entr),
 };
 

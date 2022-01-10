@@ -4,6 +4,7 @@ import { isMobile } from 'react-device-detect';
 import { Text } from 'components/custom/typography';
 import DaoCard from 'modules/governance/components/dao-card';
 import DAOProvider from 'modules/governance/components/dao-provider';
+import LandworksYfCard from 'modules/yield-farming/components/landworks-yf-card';
 import PoolCard from 'modules/yield-farming/components/pool-card';
 import { useWallet } from 'wallets/wallet';
 
@@ -31,6 +32,7 @@ const PoolsView: React.FC = () => {
         <div className={s.poolCards}>
           <DAOProvider>
             <DaoCard />
+            <LandworksYfCard />
           </DAOProvider>
           <PoolCard poolId={YFPoolID.USDC_ENTR_SLP} />
           <PoolCard poolId={YFPoolID.SUSHI} />

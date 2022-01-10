@@ -3,13 +3,16 @@ import BigNumber from 'bignumber.js';
 import ContractListener from 'web3/components/contract-listener';
 import Erc20Contract from 'web3/erc20Contract';
 import { ZERO_BIG_NUMBER } from 'web3/utils';
+import Web3Contract from 'web3/web3Contract';
 
 import { EnterToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import useMergeState from 'hooks/useMergeState';
+import { useReload } from 'hooks/useReload';
 import { DAOBarnContract, useDAOBarnContract } from 'modules/governance/contracts/daoBarn';
 import { DAOGovernanceContract, useDAOGovernanceContract } from 'modules/governance/contracts/daoGovernance';
 import { DAORewardContract, useDAORewardContract } from 'modules/governance/contracts/daoReward';
+import { YfNftStakingContract } from 'modules/yield-farming/contracts/yfNftStaking';
 import { useWallet } from 'wallets/wallet';
 
 import { APIProposalStateId } from '../../api';
@@ -37,6 +40,7 @@ type DAOContextType = DAOProviderState & {
   daoBarn: DAOBarnContract;
   daoReward: DAORewardContract;
   daoGovernance: DAOGovernanceContract;
+  landworksYf: YfNftStakingContract;
   actions: {
     activate: () => Promise<void>;
     hasActiveProposal: () => Promise<boolean>;
@@ -50,6 +54,7 @@ const DAOContext = React.createContext<DAOContextType>({
   daoBarn: undefined as any,
   daoReward: undefined as any,
   daoGovernance: undefined as any,
+  landworksYf: undefined as any,
   actions: {
     activate: Promise.reject,
     hasActiveProposal: Promise.reject,
@@ -65,10 +70,18 @@ const DAOProvider: React.FC = props => {
   const { children } = props;
 
   const walletCtx = useWallet();
+  const [reload] = useReload();
 
   const daoBarn = useDAOBarnContract();
   const daoReward = useDAORewardContract();
   const daoGovernance = useDAOGovernanceContract();
+
+  const landworksYf = useMemo(() => {
+    const landworksYf = new YfNftStakingContract(config.contracts.landworks);
+    landworksYf.on(Web3Contract.UPDATE_DATA, reload);
+
+    return landworksYf;
+  }, []);
 
   const [state, setState] = useMergeState<DAOProviderState>(InitialState);
 
@@ -76,6 +89,7 @@ const DAOProvider: React.FC = props => {
     daoBarn.contract.setProvider(walletCtx.provider);
     daoReward.contract.setProvider(walletCtx.provider);
     daoGovernance.contract.setProvider(walletCtx.provider);
+    landworksYf.setProvider(walletCtx.provider);
   }, [walletCtx.provider]);
 
   React.useEffect(() => {
@@ -85,9 +99,11 @@ const DAOProvider: React.FC = props => {
     daoBarn.contract.setAccount(walletCtx.account);
     daoReward.contract.setAccount(walletCtx.account);
     daoGovernance.contract.setAccount(walletCtx.account);
+    landworksYf.setAccount(walletCtx.account);
 
     if (walletCtx.isActive) {
       entrContract.loadAllowance(config.contracts.dao.barn).catch(Error);
+      landworksYf.loadCommon().catch(Error);
     }
   }, [walletCtx.account]);
 
@@ -173,6 +189,7 @@ const DAOProvider: React.FC = props => {
         daoBarn,
         daoReward,
         daoGovernance,
+        landworksYf,
         actions: {
           activate,
           hasThreshold,
@@ -183,6 +200,7 @@ const DAOProvider: React.FC = props => {
       <ContractListener contract={daoBarn.contract} />
       <ContractListener contract={daoReward.contract} />
       <ContractListener contract={daoGovernance.contract} />
+      <ContractListener contract={landworksYf} />
     </DAOContext.Provider>
   );
 };
