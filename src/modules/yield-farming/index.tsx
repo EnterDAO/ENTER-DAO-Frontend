@@ -9,6 +9,7 @@ import YFPoolsProvider from './providers/pools-provider';
 
 const PoolsView = lazy(() => import('./views/pools-view'));
 const PoolView = lazy(() => import('./views/pool-view'));
+const LandowrksYfPoolView = lazy(() => import('./views/landowrks-yf-pool-view'));
 
 const YieldFarmingView: React.FC = () => {
   const warning = useWarning();
@@ -40,6 +41,7 @@ const YieldFarmingView: React.FC = () => {
       <Suspense fallback={<AntdSpin />}>
         <Switch>
           <Route path="/yield-farming" exact component={PoolsView} />
+          <Route path="/yield-farming/landworks" exact component={LandowrksYfPoolView} />
           <Route path="/yield-farming/:poolId" exact component={PoolView} />
           <Redirect to="/yield-farming" />
         </Switch>

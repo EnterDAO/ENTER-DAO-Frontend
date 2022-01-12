@@ -1,22 +1,21 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
-import { formatPercent, formatToken } from 'web3/utils';
+import { formatToken } from 'web3/utils';
 
 import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
 import { EnterToken } from 'components/providers/known-tokens-provider';
 import { LandWorksToken } from 'components/providers/known-tokens-provider';
-import { UseLeftTime } from 'hooks/useLeftTime';
-import { useDAO } from 'modules/governance/components/dao-provider';
+import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
 import { useWallet } from 'wallets/wallet';
 
 import s from './s.module.scss';
 
 const LandworksYfCard: FC = () => {
   const walletCtx = useWallet();
-  const daoCtx = useDAO();
-  const { daoReward, landworksYf } = daoCtx;
+  const landworksCtx = useLandworksYf();
+  const { landworksYf } = landworksCtx;
 
   return (
     <div className="card">
@@ -28,7 +27,7 @@ const LandworksYfCard: FC = () => {
           </Text>
         </div>
         {walletCtx.isActive && (
-          <Link to="/governance/wallet/deposit" className="button-primary">
+          <Link to="/yield-farming/landworks" className="button-primary">
             Deposit
           </Link>
         )}

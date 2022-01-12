@@ -6,6 +6,7 @@ import DaoCard from 'modules/governance/components/dao-card';
 import DAOProvider from 'modules/governance/components/dao-provider';
 import LandworksYfCard from 'modules/yield-farming/components/landworks-yf-card';
 import PoolCard from 'modules/yield-farming/components/pool-card';
+import LandowrksYfProvider from 'modules/yield-farming/providers/landworks-yf-provider';
 import { useWallet } from 'wallets/wallet';
 
 import PoolRewards from '../../components/pool-rewards';
@@ -32,8 +33,10 @@ const PoolsView: React.FC = () => {
         <div className={s.poolCards}>
           <DAOProvider>
             <DaoCard />
-            <LandworksYfCard />
           </DAOProvider>
+          <LandowrksYfProvider>
+            <LandworksYfCard />
+          </LandowrksYfProvider>
           <PoolCard poolId={YFPoolID.USDC_ENTR_SLP} />
           <PoolCard poolId={YFPoolID.SUSHI} />
           <PoolCard poolId={YFPoolID.XYZ} />
