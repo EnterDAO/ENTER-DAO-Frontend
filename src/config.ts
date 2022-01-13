@@ -27,6 +27,7 @@ const config = {
     ilv: toLowerCase(process.env.REACT_APP_TOKEN_ILV_ADDR),
     leag: toLowerCase(process.env.REACT_APP_TOKEN_LEAG_ADDR),
     usdcEntrSLP: toLowerCase(process.env.REACT_APP_TOKEN_USDC_ENTR_SUSHI_LP),
+    landworks: toLowerCase(process.env.REACT_APP_TOKEN_LANDWORKS),
   },
   contracts: {
     yf: {
@@ -40,6 +41,7 @@ const config = {
       ilv: toLowerCase(process.env.REACT_APP_CONTRACT_YF_ILV_ADDR),
       leag: toLowerCase(process.env.REACT_APP_CONTRACT_YF_LEAG_ADDR),
       usdcEntrSLP: toLowerCase(process.env.REACT_APP_CONTRACT_YF_USDC_ENTR_SUSHI_LP),
+      landworks: toLowerCase(process.env.REACT_APP_CONTRACT_YF_LANDWORKS_ADDRESS),
     },
     dao: {
       governance: toLowerCase(process.env.REACT_APP_CONTRACT_DAO_GOVERNANCE_ADDR),
@@ -47,7 +49,6 @@ const config = {
       reward: toLowerCase(process.env.REACT_APP_CONTRACT_DAO_REWARD_ADDR),
     },
     merkleDistributor: toLowerCase(process.env.REACT_APP_CONTRACT_MERKLE_DISTRIBUTOR_ADDR),
-    landworks: toLowerCase(process.env.REACT_APP_CONTRACT_YF_LANDWORKS_ADDRESS),
   },
   web3: {
     chainId: Number(process.env.REACT_APP_WEB3_CHAIN_ID),

@@ -29,7 +29,7 @@ const LandowrksYfProvider: React.FC = props => {
   const [reload] = useReload();
 
   const landworksYf = useMemo(() => {
-    const landworksYf = new YfNftStakingContract(config.contracts.landworks);
+    const landworksYf = new YfNftStakingContract(config.contracts.yf.landworks);
     landworksYf.on(Web3Contract.UPDATE_DATA, reload);
 
     return landworksYf;

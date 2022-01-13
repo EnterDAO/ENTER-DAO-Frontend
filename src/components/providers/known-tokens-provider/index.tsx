@@ -2,6 +2,7 @@ import React, { FC, createContext, useContext, useEffect } from 'react';
 import BigNumber from 'bignumber.js';
 import { AbiItem } from 'web3-utils';
 import Erc20Contract from 'web3/erc20Contract';
+import Erc721Contract from 'web3/erc721Contract';
 import { formatUSD } from 'web3/utils';
 import Web3Contract, { createAbiItem } from 'web3/web3Contract';
 
@@ -56,14 +57,13 @@ export const EnterToken: TokenMeta = {
   contract: new Erc20Contract([], config.tokens.entr),
 };
 
-// TODO: Change all the properties
 export const LandWorksToken: TokenMeta = {
-  address: config.contracts.landworks,
+  address: config.tokens.landworks,
   symbol: KnownTokens.LANDWORKS,
-  name: 'EnterDAO Governance Token',
+  name: 'LandWorks',
   decimals: 18,
   icon: 'png/landworks' as any,
-  contract: new Erc20Contract([], config.tokens.entr),
+  contract: new Erc721Contract([], config.tokens.landworks),
 };
 
 export const UsdcToken: TokenMeta = {
