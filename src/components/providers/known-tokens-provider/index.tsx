@@ -58,7 +58,7 @@ export const EnterToken: TokenMeta = {
 
 // TODO: Change all the properties
 export const LandWorksToken: TokenMeta = {
-  address: config.tokens.entr,
+  address: config.contracts.landworks,
   symbol: KnownTokens.LANDWORKS,
   name: 'EnterDAO Governance Token',
   decimals: 18,

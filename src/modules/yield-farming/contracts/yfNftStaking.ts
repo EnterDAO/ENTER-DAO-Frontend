@@ -9,6 +9,7 @@ const ABI: AbiItem[] = [
   createAbiItem('rewardsDuration', [], ['uint256']),
   createAbiItem('lastUpdateTime', [], ['uint256']),
   createAbiItem('rewardPerTokenStored', [], ['uint256']),
+  createAbiItem('rewardPerToken', [], ['uint256']),
   createAbiItem('totalSupply', [], ['uint256']),
   createAbiItem('lastTimeRewardApplicable', [], ['uint256']),
   createAbiItem('rewardPerToken', [], ['uint256']),
@@ -20,6 +21,7 @@ const ABI: AbiItem[] = [
   createAbiItem('getReward', [], []),
   createAbiItem('exit', ['uint256[]'], []),
   createAbiItem('balances', ['address'], ['uint256']),
+  createAbiItem('getReward', [], []),
 ];
 
 export class YfNftStakingContract extends Web3Contract {
@@ -40,6 +42,7 @@ export class YfNftStakingContract extends Web3Contract {
   earned?: number;
   rewardForDuration?: number;
   rewards?: number;
+  potentialRewardPerWeek?: number;
 
   async loadCommon(): Promise<void> {
     const addr = this.account;
@@ -99,9 +102,14 @@ export class YfNftStakingContract extends Web3Contract {
         this.balance = balance;
         this.rewardForDuration = rewardForDuration.unscaleBy(18);
         this.rewards = (lastTimeRewardApplicable - (periodFinish - rewardsDuration)) * rewardRate.unscaleBy(18);
+        this.potentialRewardPerWeek = ((rewardRate.unscaleBy(18) * 604800) / totalSupply) * balance;
         this.emit(Web3Contract.UPDATE_DATA);
       },
     );
+  }
+
+  async getReward(gasPrice: number): Promise<any> {
+    return await this.send('getReward', [], {}, gasPrice);
   }
 
   async stake(tokenAddress: string, amount: BigNumber, gasPrice: number): Promise<BigNumber> {

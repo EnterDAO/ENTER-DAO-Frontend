@@ -1,17 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Redirect, useRouteMatch } from 'react-router-dom';
 import cn from 'classnames';
 
 import Spin from 'components/antd/spin';
 import { Tabs } from 'components/custom/tabs';
+import LandoworksPoolStatistics from 'modules/yield-farming/components/landworks-pool-statistics';
 
 import LandworksPoolHeader from '../../components/landworks-pool-header';
 import PoolStake from '../../components/pool-stake';
-import PoolStatistics from '../../components/pool-statistics';
 import PoolTransactions from '../../components/pool-transactions';
 import PoolUnstake from '../../components/pool-unstake';
 import LandowrksYfProvider, { useLandworksYf } from '../../providers/landworks-yf-provider';
-import { YFPoolID } from '../../providers/pools-provider';
 
 import s from './s.module.scss';
 
@@ -26,17 +24,6 @@ const LandowrksYfPoolViewInner: FC = () => {
     document.documentElement.scrollTop = 0;
   }, []);
 
-  // useEffect(() => {
-  //   if (poolMeta?.contract.isPoolEnded === true) {
-  //     setActiveTab('unstake');
-  //   }
-  // }, [poolMeta?.contract.isPoolEnded]);
-
-  // if (!poolMeta || !poolMeta.contract.isPoolAvailable) {
-  //   return <Redirect to="/yield-farming" />;
-  // }
-
-  // const isInitialized = poolMeta.contract.isPoolEnded !== undefined;
   const isInitialized = true;
 
   return (
@@ -51,7 +38,6 @@ const LandowrksYfPoolViewInner: FC = () => {
                   {
                     id: 'stake',
                     children: 'Stake',
-                    //disabled: poolMeta.contract.isPoolEnded !== false,
                     disabled: false,
                   },
                   {
@@ -69,7 +55,7 @@ const LandowrksYfPoolViewInner: FC = () => {
               {activeTab === 'unstake' && <PoolUnstake />}
             </div>
           </div>
-          <PoolStatistics />
+          <LandoworksPoolStatistics />
         </div>
       </Spin>
       <PoolTransactions />
@@ -77,14 +63,7 @@ const LandowrksYfPoolViewInner: FC = () => {
   );
 };
 
-// type RouteParams = {
-//   poolId: YFPoolID;
-// };
-
 const LandowrksYfPoolView: FC = () => {
-  // const match = useRouteMatch<RouteParams>();
-  // const { poolId } = match.params;
-
   return (
     <LandowrksYfProvider>
       <LandowrksYfPoolViewInner />
