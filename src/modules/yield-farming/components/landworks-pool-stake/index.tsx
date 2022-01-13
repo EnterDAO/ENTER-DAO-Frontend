@@ -1,13 +1,18 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Checkbox, Col, Row } from 'antd';
 
 import Spin from 'components/antd/spin';
+import { useWallet } from 'wallets/wallet';
+
+import { fetchUserAssets } from '../../api';
 
 import './index.scss';
 
 const LANDS = [1, 2, 3, 4, 5, 6, 7, 8];
 
 const LandworksPoolStake: FC = () => {
+  const { account } = useWallet();
+
   const onLandCheckboxChange = (e: any) => {
     console.log(e);
   };
@@ -19,6 +24,15 @@ const LandworksPoolStake: FC = () => {
   const handleEnable = (e: any) => {
     console.log(e);
   };
+
+  useEffect(() => {
+    const getAssets = async () => {
+      const assets = await fetchUserAssets(account || '');
+      console.log(assets);
+    };
+
+    getAssets();
+  }, []);
 
   return (
     <section className="landworks-pool-stake">
