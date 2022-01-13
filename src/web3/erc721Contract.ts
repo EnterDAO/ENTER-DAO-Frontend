@@ -6,11 +6,15 @@ const ABI: AbiItem[] = [
   createAbiItem('name', [], ['string']),
   createAbiItem('symbol', [], ['string']),
   createAbiItem('totalSupply', [], ['uint256']),
-  createAbiItem('maxSupply', [], ['uint256']),
   createAbiItem('balanceOf', ['address'], ['uint256']),
   createAbiItem('setApprovalForAll', ['address', 'bool'], []),
+  createAbiItem('isApprovedForAll', ['address', 'address'], ['bool']),
 ];
 
+type SetApprovedTx = {
+  blockHash: string;
+  status: boolean;
+};
 export default class Erc721Contract extends Web3Contract {
   symbol?: string;
 
@@ -18,7 +22,7 @@ export default class Erc721Contract extends Web3Contract {
 
   private balances: Map<string, BigNumber>;
 
-  constructor(abi: AbiItem[], address: string) {
+  constructor(abi: [], address: string) {
     super([...ABI, ...abi], address, '');
 
     this.balances = new Map<string, BigNumber>();
@@ -76,13 +80,26 @@ export default class Erc721Contract extends Web3Contract {
     });
   }
 
-  setApprovalForAll(operator: string, approved: boolean): Promise<void> {
+  setApprovalForAll(operator: string, approved: boolean): Promise<SetApprovedTx> {
     if (!this.account) {
       return Promise.reject();
     }
 
     return this.send('setApprovalForAll', [operator, approved], {
       from: this.account,
-    }).then(() => this.loadBalance(operator));
+    }).then(res => {
+      this.loadBalance(operator);
+      return res;
+    });
+  }
+
+  isApprovedForAll(owner: string, operator: string): Promise<boolean> {
+    if (!this.account) {
+      return Promise.reject();
+    }
+
+    return this.call('isApprovedForAll', [owner, operator], {
+      from: this.account,
+    });
   }
 }

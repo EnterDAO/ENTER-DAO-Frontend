@@ -168,6 +168,7 @@ export const UsdcEntrSLPToken: TokenMeta = {
 const KNOWN_TOKENS: TokenMeta[] = [
   EthToken,
   EnterToken,
+  LandWorksToken,
   UsdcToken,
   BondToken,
   ManaToken,
