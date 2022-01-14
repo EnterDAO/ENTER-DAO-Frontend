@@ -5,6 +5,11 @@ import { GraphClient } from '../../web3/graph/client';
 
 import { PaginatedResult } from 'utils/fetch';
 
+const GRAPHS = {
+  LANDWORKS: 'landworks',
+  DAO_GOVERNANCE: 'primaryUrl',
+};
+
 export enum APIYFPoolActionType {
   DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
@@ -71,37 +76,110 @@ export function fetchYFPoolTransactions(
     });
 }
 
-export type UserAssets = {
+export type UserNotStakedAssets = {
   id: string;
   assets: any;
+  decentralandData: DecentralandData;
+};
+
+export type UserStakedAssets = {
+  tokenId: string;
+};
+
+export type UserStakedAssetsWithData = {
+  id: string;
+  decentralandData: DecentralandData;
 };
 
 /**
  * Gets all the assets for a given user.
  * @param address The address of the user
  */
-export function fetchUserAssets(address: string): Promise<UserAssets> {
+export function fetchNotStakedAssets(address: string): Promise<UserNotStakedAssets> {
+  return GraphClient.get(
+    {
+      query: gql`
+        query GetUser($id: String) {
+          user(id: $id) {
+            id
+            assets {
+              id
+              metaverseAssetId
+              minPeriod
+              maxPeriod
+              maxFutureTime
+              unclaimedRentFee
+              pricePerSecond
+              lastRentEnd
+              status
+              paymentToken {
+                id
+                name
+                symbol
+                decimals
+              }
+              decentralandData {
+                metadata
+                isLAND
+                coordinates {
+                  id
+                  x
+                  y
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        id: address.toLowerCase(),
+      },
+    },
+    true,
+    GRAPHS.LANDWORKS,
+  )
+    .then(async response => {
+      const result = { ...response.data.user };
+      return result;
+    })
+    .catch(e => {
+      console.log(e);
+      return {} as UserNotStakedAssets;
+    });
+}
+
+export function fetchStakedAssets(address: string): Promise<UserStakedAssets[]> {
   return GraphClient.get({
     query: gql`
-      query GetUser($id: String) {
-        user(id: $id) {
+      query($user: String) {
+        erc721StakedTokens(where: { owner: $user }) {
           id
-          assets {
+          owner
+          tokenId
+        }
+      }
+    `,
+    variables: {
+      user: address.toLowerCase(),
+    },
+  })
+    .then(async response => {
+      const result = [...response.data.erc721StakedTokens];
+      return result;
+    })
+    .catch(e => {
+      console.log(e);
+      return [] as UserStakedAssets[];
+    });
+}
+
+export function fetchAssetsById(ids: string[]): Promise<UserStakedAssetsWithData[]> {
+  return GraphClient.get(
+    {
+      query: gql`
+        query fetchAssetsDecentralandData($ids: [String]) {
+          assets(where: { id_in: $ids }) {
             id
-            metaverseAssetId
-            minPeriod
-            maxPeriod
-            maxFutureTime
-            unclaimedRentFee
-            pricePerSecond
-            lastRentEnd
-            status
-            paymentToken {
-              id
-              name
-              symbol
-              decimals
-            }
             decentralandData {
               metadata
               isLAND
@@ -113,29 +191,40 @@ export function fetchUserAssets(address: string): Promise<UserAssets> {
             }
           }
         }
-      }
-    `,
-    variables: {
-      id: address.toLowerCase(),
+      `,
+      variables: {
+        ids: ids,
+      },
     },
-  })
+    true,
+    GRAPHS.LANDWORKS,
+  )
     .then(async response => {
-      const result = { ...response.data.user };
-      console.log(result);
-      // const ownerAndConsumerAssets = [...result.assets, ...result.consumerTo];
-      // const uniqueAssets = [...new Map(ownerAndConsumerAssets.map(v => [v.id, v])).values()].sort(
-      //   (a: AssetEntity, b: AssetEntity) => Number(b.id) - Number(a.id),
-      // );
-
-      // result.ownerAndConsumerAssets = parseAssets(uniqueAssets);
-      // result.unclaimedRentAssets = parseAssets(
-      //   uniqueAssets.filter((a: any) => BigNumber.from(a.unclaimedRentFee)?.gt(0)),
-      // );
-      // result.hasUnclaimedRent = result.unclaimedRentAssets.length > 0;
+      const result = [...response.data.assets];
       return result;
     })
     .catch(e => {
       console.log(e);
-      return {} as UserAssets;
+      return [] as UserStakedAssetsWithData[];
     });
+}
+
+export type DecentralandData = {
+  metadata: string;
+  isLAND: boolean;
+  coordinates: any[];
+};
+
+export function getDecentralandAssetName(decentralandData: DecentralandData): string {
+  if (decentralandData === null) {
+    return '';
+  }
+  if (decentralandData.metadata !== '') {
+    return decentralandData.metadata;
+  }
+  if (decentralandData.coordinates.length > 1) {
+    return `Estate (${decentralandData.coordinates.length} LAND)`;
+  }
+  const coordinates = decentralandData.coordinates[0].id.split('-');
+  return `LAND (${coordinates[0]}, ${coordinates[1]})`;
 }

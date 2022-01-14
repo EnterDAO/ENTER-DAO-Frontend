@@ -9,11 +9,13 @@ const config = {
   isTestnet: String(process.env.REACT_APP_ENV) === 'testnet',
   graph: {
     primaryUrl: String(process.env.REACT_APP_PRIMARY_GRAPH_URL),
-    fallbackUrl: String(process.env.REACT_APP_FALLBACK_GRAPH_URL)
+    fallbackUrl: String(process.env.REACT_APP_FALLBACK_GRAPH_URL),
+    landworks: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),
+    landworksFallback: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),
   },
   zapper: {
     baseUrl: String(process.env.REACT_APP_ZAPPER_URL),
-    apiKey: String(process.env.REACT_APP_ZAPPER_API_KEY)
+    apiKey: String(process.env.REACT_APP_ZAPPER_API_KEY),
   },
   tokens: {
     usdc: toLowerCase(process.env.REACT_APP_TOKEN_USDC_ADDR),

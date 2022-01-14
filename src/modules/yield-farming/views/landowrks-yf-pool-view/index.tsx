@@ -14,7 +14,7 @@ import LandowrksYfProvider, { useLandworksYf } from '../../providers/landworks-y
 
 import s from './s.module.scss';
 
-const TABS = {
+export const TABS = {
   STAKE: 'stake',
   UNSTAKE: 'unstake',
 };
@@ -57,8 +57,8 @@ const LandowrksYfPoolViewInner: FC = () => {
               />
             </div>
             <div className="p-24">
-              {activeTab === TABS.STAKE && <LandworksPoolStake />}
-              {activeTab === TABS.UNSTAKE && <PoolUnstake />}
+              {activeTab === TABS.STAKE && <LandworksPoolStake tab={activeTab} />}
+              {activeTab === TABS.UNSTAKE && <LandworksPoolStake tab={activeTab} />}
             </div>
           </div>
           <LandoworksPoolStatistics />
