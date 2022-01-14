@@ -1,9 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Checkbox, Col, Row } from 'antd';
+import { Checkbox, Col, Row, Tabs } from 'antd';
 
 import Spin from 'components/antd/spin';
 import { LandWorksToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
+import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
 import { useWallet } from 'wallets/wallet';
 
 import Erc721Contract from '../../../../web3/erc721Contract';
@@ -23,27 +24,82 @@ interface ILandWorksPoolProps {
   tab: string;
 }
 const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps) => {
-  const { account } = useWallet();
   const { tab } = props;
+
+  const { account } = useWallet();
+  const { landworksYf } = useLandworksYf();
+
   const [approved, setApproved] = useState(false);
   const [notStakedAssets, setNotStakedAssets] = useState<UserNotStakedAssets[]>([]);
   const [stakedAssets, setStakedAssets] = useState<UserStakedAssetsWithData[]>([]);
+  const [selectedAssets, setSelectedAssets] = useState<number[]>([]);
 
-  // TODO:: handle stake logic
-  // TODO:: handle unstake logic
-  // TODO:: handle disable logic for stake button
-  // TODO:: handle disable logic for unstake button
+  // Loaders
+  const [stakeBtnLoading, setStakeBtnLoading] = useState(false);
+  const [unstakeBtnLoading, setUnstakeBtnLoading] = useState(false);
 
-  const onLandCheckboxChange = (e: any) => {
-    console.log(e);
+  // Disablers
+  const [stakeBtnDisabled, setStakeBtnDisabled] = useState(false);
+  const [unstakeBtnDisabled, setUnstakeBtnDisabled] = useState(false);
+
+  const onLandCheckboxChange = (e: any, id: string) => {
+    const checked = e.target.checked;
+    const value = Number(id);
+
+    if (checked) {
+      const selectedAssetsCopy = [...selectedAssets];
+      const updatedCopy = [...selectedAssetsCopy, value];
+      setSelectedAssets(updatedCopy);
+    } else {
+      const selectedAssetsCopy = [...selectedAssets];
+      const itemIndex = selectedAssetsCopy.indexOf(value);
+      if (itemIndex !== -1) {
+        selectedAssetsCopy.splice(itemIndex, 1);
+        setSelectedAssets(selectedAssetsCopy);
+      }
+    }
   };
 
-  const handleStake = (e: any) => {
-    console.log(e);
+  const handleStake = async () => {
+    try {
+      setStakeBtnLoading(true);
+      setStakeBtnDisabled(true);
+      const stakeTx = await landworksYf.stake(selectedAssets);
+
+      if (stakeTx.status) {
+        // Update the local copy cus the Graph will need some time to gets updated, the Refetch of the assets wont help here
+        const notStakedAssetsCopy = [...notStakedAssets];
+        const updatedCopy = notStakedAssetsCopy.filter(asset => !selectedAssets.includes(Number(asset.id)));
+        setNotStakedAssets(updatedCopy);
+        setSelectedAssets([]);
+      }
+
+      setStakeBtnLoading(false);
+      setStakeBtnDisabled(false);
+    } catch (e) {
+      console.log('Error while trying to stake assets !', e);
+    }
   };
 
-  const handleUnstake = (e: any) => {
-    console.log(e);
+  const handleUnstake = async () => {
+    try {
+      setUnstakeBtnLoading(true);
+      setUnstakeBtnDisabled(true);
+      const stakeTx = await landworksYf.unstake(selectedAssets);
+
+      if (stakeTx.status) {
+        // Update the local copy cus the Graph will need some time to gets updated, the Refetch of the assets wont help here
+        const stakedAssetsCopy = [...stakedAssets];
+        const updatedCopy = stakedAssetsCopy.filter(asset => !selectedAssets.includes(Number(asset.id)));
+        setStakedAssets(updatedCopy);
+        setSelectedAssets([]);
+      }
+
+      setUnstakeBtnLoading(false);
+      setUnstakeBtnDisabled(false);
+    } catch (e) {
+      console.log('Error while trying to stake assets !', e);
+    }
   };
 
   const handleEnable = async (e: any) => {
@@ -61,28 +117,28 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
     }
   };
 
+  const getNotStakedAssets = async () => {
+    try {
+      const data = await fetchNotStakedAssets(account || '');
+      if (data.assets.length) {
+        setNotStakedAssets(data.assets);
+      }
+    } catch (e) {
+      console.log('Error while trying to fetch not staked user assets !', e);
+    }
+  };
+
+  const getStakedAssets = async () => {
+    try {
+      const assets = await fetchStakedAssets(account || '');
+      const assetData = await fetchAssetsById(assets.map(a => a.tokenId));
+      setStakedAssets(assetData);
+    } catch (e) {
+      console.log('Error while trying to fetch staked user assets !', e);
+    }
+  };
+
   useEffect(() => {
-    const getNotStakedAssets = async () => {
-      try {
-        const data = await fetchNotStakedAssets(account || '');
-        if (data.assets.length) {
-          setNotStakedAssets(data.assets);
-        }
-      } catch (e) {
-        console.log('Error while trying to fetch not staked user assets !', e);
-      }
-    };
-
-    const getStakedAssets = async () => {
-      try {
-        const assets = await fetchStakedAssets(account || '');
-        const assetData = await fetchAssetsById(assets.map(a => a.tokenId));
-        setStakedAssets(assetData);
-      } catch (e) {
-        console.log('Error while trying to fetch staked user assets !', e);
-      }
-    };
-
     if (account) {
       getNotStakedAssets();
       getStakedAssets();
@@ -108,6 +164,12 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
     }
   }, [account]);
 
+  useEffect(() => {
+    const stakeDisabled = !selectedAssets.length;
+    setStakeBtnDisabled(stakeDisabled);
+    setUnstakeBtnDisabled(stakeDisabled);
+  }, [selectedAssets.length]);
+
   const assets = tab === TABS.STAKE ? notStakedAssets : stakedAssets;
 
   return (
@@ -121,9 +183,9 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         {assets.map(asset => {
           const name = getDecentralandAssetName(asset.decentralandData);
           return (
-            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12} key={asset.id}>
               <div className="landBox">
-                <Checkbox className="landCheckbox" onChange={() => onLandCheckboxChange(asset.id)} />
+                <Checkbox className="landCheckbox" onChange={e => onLandCheckboxChange(e, asset.id)} />
                 <span>{name}</span>
               </div>
             </Col>
@@ -134,8 +196,8 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         {tab === TABS.STAKE ? (
           <>
             <Col>
-              <button type="button" className="button-primary" disabled={false} onClick={handleStake}>
-                {false && <Spin spinning />}
+              <button type="button" className="button-primary" disabled={stakeBtnDisabled} onClick={handleStake}>
+                {stakeBtnLoading && <Spin spinning />}
                 Stake
               </button>
             </Col>
@@ -149,8 +211,8 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
           </>
         ) : (
           <Col>
-            <button type="button" className="button-primary" disabled={false} onClick={handleUnstake}>
-              {false && <Spin spinning />}
+            <button type="button" className="button-primary" disabled={unstakeBtnDisabled} onClick={handleUnstake}>
+              {unstakeBtnLoading && <Spin spinning />}
               Unstake
             </button>
           </Col>

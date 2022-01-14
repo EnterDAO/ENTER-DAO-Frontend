@@ -24,6 +24,10 @@ const ABI: AbiItem[] = [
   createAbiItem('getReward', [], []),
 ];
 
+type StakeTx = {
+  transactionHash: string;
+  status: string;
+};
 export class YfNftStakingContract extends Web3Contract {
   constructor(stakingAddress: string) {
     super(ABI, stakingAddress, 'YF NFT STAKING');
@@ -112,13 +116,13 @@ export class YfNftStakingContract extends Web3Contract {
     return await this.send('getReward', [], {}, gasPrice);
   }
 
-  async stake(tokenAddress: string, amount: BigNumber, gasPrice: number): Promise<BigNumber> {
-    const result = await this.send('deposit', [tokenAddress, amount], {}, gasPrice);
-    return new BigNumber(result);
+  async stake(tokenIds: number[]): Promise<StakeTx> {
+    const result = await this.send('stake', [tokenIds]);
+    return result;
   }
 
-  async unstake(tokenAddress: string, amount: BigNumber, gasPrice: number): Promise<BigNumber> {
-    const result = await this.send('withdraw', [tokenAddress, amount], {}, gasPrice);
-    return new BigNumber(result);
+  async unstake(tokenIds: number[]): Promise<StakeTx> {
+    const result = await this.send('withdraw', [tokenIds]);
+    return result;
   }
 }
