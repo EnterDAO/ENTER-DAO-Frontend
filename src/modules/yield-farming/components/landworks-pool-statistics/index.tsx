@@ -1,60 +1,60 @@
-import React, { FC, useState } from 'react';
-import BigNumber from 'bignumber.js';
+import React, { FC, useEffect, useState } from 'react';
+import { List } from 'antd';
 import cn from 'classnames';
 import TxConfirmModal, { ConfirmTxModalArgs } from 'web3/components/tx-confirm-modal';
 import Erc20Contract from 'web3/erc20Contract';
-import { formatToken, formatUSD } from 'web3/utils';
+import { formatToken } from 'web3/utils';
 
 import Spin from 'components/antd/spin';
 import Tooltip from 'components/antd/tooltip';
-import Icon from 'components/custom/icon';
-import { Tabs as ElasticTabs } from 'components/custom/tabs';
+import Icon, { IconNames } from 'components/custom/icon';
+import IconsSet from 'components/custom/icons-set';
 import { Text } from 'components/custom/typography';
-import { EnterToken, convertTokenInUSD, useKnownTokens } from 'components/providers/known-tokens-provider';
-import { YfPoolContract } from 'modules/yield-farming/contracts/yfPool';
+import { EnterToken } from 'components/providers/known-tokens-provider';
+import { YfNftStakingContract } from 'modules/yield-farming/contracts/yfNftStaking';
 import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
 import { useWallet } from 'wallets/wallet';
 
-import { useYFPool } from '../../providers/pool-provider';
-import { useYFPools } from '../../providers/pools-provider';
+import { UserStakedAssetsWithData, fetchAssetsById, fetchStakedAssets, getDecentralandAssetName } from '../../api';
 
 import s from './s.module.scss';
-import { YfNftStakingContract } from 'modules/yield-farming/contracts/yfNftStaking';
 
 const LandoworksPoolStatistics: FC = () => {
   const landworksCtx = useLandworksYf();
+  const { account } = useWallet();
 
   const { landworksYf } = landworksCtx;
-  const knownTokensCtx = useKnownTokens();
   const walletCtx = useWallet();
-  // const yfPoolsCtx = useYFPools();
-  // const yfPoolCtx = useYFPool();
-
-  // const { poolMeta } = yfPoolCtx;
-
-  // const [activeToken, setActiveToken] = useState(poolMeta?.tokens[0]);
   const [claiming, setClaiming] = useState(false);
   const [confirmClaimVisible, setConfirmClaimVisible] = useState(false);
+  const [stakedAssets, setStakedAssets] = useState<UserStakedAssetsWithData[]>([]);
 
   const entrContract = EnterToken.contract as Erc20Contract;
-  //  const activeContract = activeToken?.contract as Erc20Contract;
+
+  useEffect(() => {
+    if (account) {
+      getStakedAssets();
+    }
+  }, [account]);
 
   if (!walletCtx.isActive) {
     return null;
   }
 
-  //const { lastActiveEpoch } = poolMeta.contract;
-
-  //const selectedStakedToken = yfPoolsCtx.stakingContract?.stakedTokens.get(activeToken?.address!);
-
-  function handleTabSelect(tokenSymbol: string) {
-    const tokenMeta = knownTokensCtx.getTokenBySymbol(tokenSymbol);
-    //setActiveToken(tokenMeta);
-  }
-
   function handleClaim() {
     setConfirmClaimVisible(true);
   }
+
+  const getStakedAssets = async () => {
+    try {
+      const assets = await fetchStakedAssets(account || '');
+      const assetData = await fetchAssetsById(assets.map(a => a.tokenId));
+      console.log(assetData);
+      setStakedAssets(assetData);
+    } catch (e) {
+      console.log('Error while trying to fetch staked user assets !', e);
+    }
+  };
 
   const confirmClaim = async <A extends ConfirmTxModalArgs>(args: A) => {
     setConfirmClaimVisible(false);
@@ -152,11 +152,29 @@ const LandoworksPoolStatistics: FC = () => {
         </div>
         <div className="p-24">
           <div className="flex flow-row">
-            <div className="flex align-center justify-space-between mb-24">
+            <div className="flex align-center justify-space-between mb-12">
               <Text type="small" weight="semibold" color="secondary">
                 Staked NFTs
               </Text>
             </div>
+            {stakedAssets.map(asset => {
+              const name = getDecentralandAssetName(asset.decentralandData);
+              return (
+                <div className="flex align-center mb-15">
+                  <IconsSet
+                    icons={['png/landworks'].map(icon => (
+                      <Icon key={icon} name={icon as IconNames} />
+                    ))}
+                    className="mr-16"
+                  />
+                  <div>
+                    <Text type="p1" weight="semibold" color="primary" className="mb-4">
+                      {name}
+                    </Text>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
