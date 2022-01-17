@@ -83,7 +83,9 @@ function getColumns(isAll: boolean): ColumnsType<TableEntity> {
           return null;
         }
 
-        const amount = entity.amount.unscaleBy(knownToken.decimals);
+        const amount = entity.amount.unscaleBy(knownToken.decimals)?.gt(0)
+          ? entity.amount.unscaleBy(knownToken.decimals)
+          : entity.tokenIds.length;
 
         return (
           <>

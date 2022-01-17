@@ -22,6 +22,7 @@ export type APIYFPoolTransaction = {
   transactionHash: string;
   actionType: APIYFPoolActionType;
   blockTimestamp: number;
+  tokenIds: string[];
 };
 
 export function fetchYFPoolTransactions(
@@ -44,7 +45,8 @@ export function fetchYFPoolTransactions(
         userAddress,
         amount,
         transactionHash,
-        blockTimestamp
+        blockTimestamp,
+        tokenIds
       }
     }
   `,
