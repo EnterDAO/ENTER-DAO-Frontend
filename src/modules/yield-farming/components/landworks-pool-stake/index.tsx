@@ -222,10 +222,12 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
             </Col>
 
             <Col>
-              <button type="button" className="button-primary" disabled={approved} onClick={handleEnable}>
-                {false && <Spin spinning />}
-                Enable LandWorks NFTs
-              </button>
+              {!approved && (
+                <button type="button" className="button-primary" disabled={approved} onClick={handleEnable}>
+                  {false && <Spin spinning />}
+                  Enable LandWorks NFTs
+                </button>
+              )}
             </Col>
           </>
         ) : (
