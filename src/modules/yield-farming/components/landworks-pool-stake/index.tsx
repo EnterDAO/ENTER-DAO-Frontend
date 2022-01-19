@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Checkbox, Col, Row, Tabs } from 'antd';
 
+import Alert from 'components/antd/alert';
 import Spin from 'components/antd/spin';
-import { Text } from 'components/custom/typography';
 import { LandWorksToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
@@ -29,7 +29,6 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
 
   const { account } = useWallet();
   const { landworksYf } = useLandworksYf();
-  const walletCtx = useWallet();
 
   const [approved, setApproved] = useState(false);
   const [notStakedAssets, setNotStakedAssets] = useState<UserNotStakedAssets[]>([]);
@@ -172,23 +171,17 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
     setUnstakeBtnDisabled(stakeDisabled);
   }, [selectedAssets.length]);
 
-  if (!walletCtx.isActive) {
-    return (
-      <section className="landworks-pool-stake">
-        <Text type="p1" weight="semibold" color="secondary">
-          Please sign-in in order to stake your LandWorks NFTs.
-        </Text>
-      </section>
-    );
-  }
-
   const assets = tab === TABS.STAKE ? notStakedAssets : stakedAssets;
 
   return (
     <section className="landworks-pool-stake">
       <Row justify="center">
         <Col>
-          <p className="headMsg">Select the land you want to stake from the list</p>
+          {tab === TABS.UNSTAKE && assets.length === 0 ? (
+            <Alert className="mb-32" message="You don't have any LandWorks NFTs staked." />
+          ) : (
+            <p className="headMsg">Select the land you want to stake/unstake from the list</p>
+          )}
         </Col>
       </Row>
       <Row gutter={[16, 16]} className="lands-container">
@@ -208,23 +201,17 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         {tab === TABS.STAKE ? (
           <>
             <Col>
-              <button
-                type="button"
-                className="button-primary"
-                disabled={stakeBtnDisabled || !approved}
-                onClick={handleStake}>
+              <button type="button" className="button-primary" disabled={stakeBtnDisabled} onClick={handleStake}>
                 {stakeBtnLoading && <Spin spinning />}
                 Stake
               </button>
             </Col>
 
             <Col>
-              {!approved && (
-                <button type="button" className="button-primary" disabled={approved} onClick={handleEnable}>
-                  {false && <Spin spinning />}
-                  Enable LandWorks NFTs
-                </button>
-              )}
+              <button type="button" className="button-primary" disabled={approved} onClick={handleEnable}>
+                {false && <Spin spinning />}
+                Enable LandWorks NFTs
+              </button>
             </Col>
           </>
         ) : (
