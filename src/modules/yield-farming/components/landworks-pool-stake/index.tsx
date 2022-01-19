@@ -211,7 +211,11 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         {tab === TABS.STAKE ? (
           <>
             <Col>
-              <button type="button" className="button-primary" disabled={stakeBtnDisabled} onClick={handleStake}>
+              <button
+                type="button"
+                className="button-primary"
+                disabled={stakeBtnDisabled || !approved}
+                onClick={handleStake}>
                 {stakeBtnLoading && <Spin spinning />}
                 Stake
               </button>
