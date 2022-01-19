@@ -177,11 +177,15 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
     <section className="landworks-pool-stake">
       <Row justify="center">
         <Col>
-          {tab === TABS.UNSTAKE && assets.length === 0 ? (
-            <Alert className="mb-32" message="You don't have any LandWorks NFTs staked." />
-          ) : (
-            <p className="headMsg">Select the land you want to stake/unstake from the list</p>
-          )}
+          {(() => {
+            if (tab === TABS.UNSTAKE && assets.length === 0) {
+              return <Alert className="mb-32" message="You don't have any LandWorks NFTs staked." />;
+            }
+            if (tab === TABS.STAKE && assets.length === 0) {
+              return <Alert className="mb-32" message="You don't have any LandWorks NFTs to stake." />;
+            }
+            return <p className="headMsg">Select the land you want to stake/unstake from the list</p>;
+          })()}
         </Col>
       </Row>
       <Row gutter={[16, 16]} className="lands-container">
