@@ -122,7 +122,7 @@ const LandoworksPoolStatistics: FC = () => {
                     className="mr-8 text-ellipsis"
                     style={{ maxWidth: '120px' }}>
                     {formatToken(landworksYf.earned, {
-                      decimals: EnterToken.decimals,
+                      decimals: 2,
                     }) ?? '-'}
                   </Text>
                 </Tooltip>
