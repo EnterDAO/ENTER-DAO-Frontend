@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { AbiItem } from 'web3-utils';
 import { formatToken } from 'web3/utils';
-import Web3Contract, { createAbiItem } from 'web3/web3Contract';
+import Web3Contract, { BatchContractMethod, createAbiItem } from 'web3/web3Contract';
 
 const ABI: AbiItem[] = [
   createAbiItem('periodFinish', [], ['uint256']),
@@ -49,67 +49,75 @@ export class YfNftStakingContract extends Web3Contract {
   potentialRewardPerWeek?: number;
 
   async loadCommon(): Promise<void> {
-    const addr = this.account;
-
-    if (!addr) {
-      return;
-    }
-    return this.batch([
+    const commonMethods: BatchContractMethod[] = [
       {
         method: 'rewardRate',
-        transform: value => new BigNumber(value),
+        transform: (value: any) => new BigNumber(value),
       },
       {
         method: 'totalSupply',
-        transform: value => new BigNumber(value),
+        transform: (value: any) => new BigNumber(value),
+      },
+      {
+        method: 'getRewardForDuration',
+        transform: (value: any) => new BigNumber(value),
+      },
+      {
+        method: 'lastTimeRewardApplicable',
+        transform: (value: any) => new BigNumber(value),
+      },
+      {
+        method: 'periodFinish',
+        transform: (value: any) => new BigNumber(value),
+      },
+      {
+        method: 'rewardsDuration',
+        transform: (value: any) => new BigNumber(value),
+      },
+    ];
+
+    return this.batch(commonMethods).then(
+      ([rewardRate, totalSupply, rewardForDuration, lastTimeRewardApplicable, periodFinish, rewardsDuration]) => {
+        this.rewardRate = rewardRate;
+        this.totalSupply = totalSupply || 0;
+        this.rewardForDuration = rewardForDuration.unscaleBy(18);
+        this.rewards = (lastTimeRewardApplicable - (periodFinish - rewardsDuration)) * rewardRate.unscaleBy(18);
+        this.emit(Web3Contract.UPDATE_DATA);
+      },
+    );
+  }
+
+  async loadAccountMethods(): Promise<void> {
+    const addr = this.account;
+    if (!addr) return;
+
+    const accountMethods: BatchContractMethod[] = [
+      {
+        method: 'rewardRate',
+        transform: (value: any) => new BigNumber(value),
+      },
+      {
+        method: 'totalSupply',
+        transform: (value: any) => new BigNumber(value),
       },
       {
         method: 'earned',
         methodArgs: [addr],
-        transform: value => new BigNumber(value),
+        transform: (value: any) => new BigNumber(value),
       },
       {
         method: 'balances',
         methodArgs: [addr],
-        transform: value => new BigNumber(value),
+        transform: (value: any) => new BigNumber(value),
       },
-      {
-        method: 'getRewardForDuration',
-        transform: value => new BigNumber(value),
-      },
-      {
-        method: 'lastTimeRewardApplicable',
-        transform: value => new BigNumber(value),
-      },
-      {
-        method: 'periodFinish',
-        transform: value => new BigNumber(value),
-      },
-      {
-        method: 'rewardsDuration',
-        transform: value => new BigNumber(value),
-      },
-    ]).then(
-      ([
-        rewardRate,
-        totalSupply,
-        earned,
-        balance,
-        rewardForDuration,
-        lastTimeRewardApplicable,
-        periodFinish,
-        rewardsDuration,
-      ]) => {
-        this.rewardRate = rewardRate;
-        this.totalSupply = totalSupply || 0;
-        this.earned = earned.unscaleBy(18);
-        this.balance = balance;
-        this.rewardForDuration = rewardForDuration.unscaleBy(18);
-        this.rewards = (lastTimeRewardApplicable - (periodFinish - rewardsDuration)) * rewardRate.unscaleBy(18);
-        this.potentialRewardPerWeek = ((rewardRate.unscaleBy(18) * 604800) / totalSupply) * balance;
-        this.emit(Web3Contract.UPDATE_DATA);
-      },
-    );
+    ];
+
+    return this.batch(accountMethods).then(([rewardRate, totalSupply, earned, balance]) => {
+      this.earned = earned.unscaleBy(18);
+      this.balance = balance;
+      this.potentialRewardPerWeek = ((rewardRate.unscaleBy(18) * 604800) / totalSupply) * balance;
+      this.emit(Web3Contract.UPDATE_DATA);
+    });
   }
 
   async getReward(gasPrice: number): Promise<any> {

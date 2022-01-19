@@ -49,8 +49,10 @@ const LandowrksYfProvider: React.FC = props => {
 
     if (walletCtx.isActive) {
       entrContract.loadAllowance(config.contracts.dao.barn).catch(Error);
-      landworksYf.loadCommon().catch(Error);
+      landworksYf.loadAccountMethods().catch(Error);
     }
+
+    landworksYf.loadCommon().catch(Error);
   }, [walletCtx.account]);
 
   return (
