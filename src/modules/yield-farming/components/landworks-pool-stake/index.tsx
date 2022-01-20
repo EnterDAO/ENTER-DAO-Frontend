@@ -3,6 +3,7 @@ import { Checkbox, Col, Row, Tabs } from 'antd';
 
 import Alert from 'components/antd/alert';
 import Spin from 'components/antd/spin';
+import { Text } from 'components/custom/typography';
 import { LandWorksToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
@@ -29,6 +30,7 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
 
   const { account } = useWallet();
   const { landworksYf } = useLandworksYf();
+  const walletCtx = useWallet();
 
   const [approved, setApproved] = useState(false);
   const [notStakedAssets, setNotStakedAssets] = useState<UserNotStakedAssets[]>([]);
@@ -170,6 +172,14 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
     setStakeBtnDisabled(stakeDisabled);
     setUnstakeBtnDisabled(stakeDisabled);
   }, [selectedAssets.length]);
+
+  if (!walletCtx.isActive) {
+    return (
+      <section className="landworks-pool-stake">
+        <Alert className="mb-32" message="Please sign-in in order to stake your LandWorks NFTs." />;
+      </section>
+    );
+  }
 
   const assets = tab === TABS.STAKE ? notStakedAssets : stakedAssets;
 
