@@ -10,11 +10,12 @@ import { useWallet } from 'wallets/wallet';
 
 import Erc721Contract from '../../../../web3/erc721Contract';
 import {
+  UserNotStakedAsset,
   UserStakedAssetsWithData,
   fetchAssetsById,
   fetchNotStakedAssets,
   fetchStakedAssets,
-  getDecentralandAssetName, UserNotStakedAsset,
+  getDecentralandAssetName,
 } from '../../api';
 import { TABS } from '../../views/landowrks-yf-pool-view';
 
@@ -30,7 +31,7 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
   const { landworksYf } = useLandworksYf();
   const walletCtx = useWallet();
 
-  const [approved, setApproved] = useState(false);
+  const [approved, setApproved] = useState(true);
   const [notStakedAssets, setNotStakedAssets] = useState<UserNotStakedAsset[]>([]);
   const [stakedAssets, setStakedAssets] = useState<UserStakedAssetsWithData[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<number[]>([]);
@@ -38,10 +39,12 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
   // Loaders
   const [stakeBtnLoading, setStakeBtnLoading] = useState(false);
   const [unstakeBtnLoading, setUnstakeBtnLoading] = useState(false);
+  const [approveBtnLoading, setApproveBtnLoading] = useState(false);
 
   // Disablers
   const [stakeBtnDisabled, setStakeBtnDisabled] = useState(false);
   const [unstakeBtnDisabled, setUnstakeBtnDisabled] = useState(false);
+  const [approveBtnDisabled, setApproveBtnDisabled] = useState(false);
 
   const onLandCheckboxChange = (e: any, id: string) => {
     const checked = e.target.checked;
@@ -105,6 +108,8 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
 
   const handleEnable = async (e: any) => {
     try {
+      setApproveBtnLoading(true);
+      setApproveBtnDisabled(true);
       const tx = await (LandWorksToken.contract as Erc721Contract).setApprovalForAll(
         config.contracts.yf.landworks || '',
         true,
@@ -113,6 +118,9 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
       if (tx.status) {
         setApproved(tx.status);
       }
+
+      setApproveBtnDisabled(false);
+      setApproveBtnLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -121,7 +129,7 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
   const getNotStakedAssets = async () => {
     try {
       const assets = await fetchNotStakedAssets(account || '');
-        setNotStakedAssets(assets);
+      setNotStakedAssets(assets);
     } catch (e) {
       console.log('Error while trying to fetch not staked user assets !', e);
     }
@@ -223,8 +231,12 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
 
             <Col>
               {!approved && (
-                <button type="button" className="button-primary" disabled={approved} onClick={handleEnable}>
-                  {false && <Spin spinning />}
+                <button
+                  type="button"
+                  className="button-primary"
+                  disabled={approveBtnDisabled || approved}
+                  onClick={handleEnable}>
+                  {approveBtnLoading && <Spin spinning />}
                   Enable LandWorks NFTs
                 </button>
               )}
