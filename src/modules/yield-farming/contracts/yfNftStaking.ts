@@ -126,11 +126,17 @@ export class YfNftStakingContract extends Web3Contract {
 
   async stake(tokenIds: number[]): Promise<StakeTx> {
     const result = await this.send('stake', [tokenIds]);
+    if (result.status) {
+      this.emit(Web3Contract.UPDATE_DATA);
+    }
     return result;
   }
 
   async unstake(tokenIds: number[]): Promise<StakeTx> {
     const result = await this.send('withdraw', [tokenIds]);
+    if (result.status) {
+      this.emit(Web3Contract.UPDATE_DATA);
+    }
     return result;
   }
 }

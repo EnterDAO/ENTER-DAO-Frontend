@@ -1,9 +1,9 @@
-import React, { FC, useEffect, useState } from 'react';
-import { List } from 'antd';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import cn from 'classnames';
 import TxConfirmModal, { ConfirmTxModalArgs } from 'web3/components/tx-confirm-modal';
 import Erc20Contract from 'web3/erc20Contract';
 import { formatToken } from 'web3/utils';
+import Web3Contract from 'web3/web3Contract';
 
 import Spin from 'components/antd/spin';
 import Tooltip from 'components/antd/tooltip';
@@ -31,16 +31,6 @@ const LandoworksPoolStatistics: FC = () => {
 
   const entrContract = EnterToken.contract as Erc20Contract;
 
-  useEffect(() => {
-    if (account) {
-      getStakedAssets();
-    }
-  }, [account]);
-
-  if (!walletCtx.isActive) {
-    return null;
-  }
-
   function handleClaim() {
     setConfirmClaimVisible(true);
   }
@@ -49,7 +39,6 @@ const LandoworksPoolStatistics: FC = () => {
     try {
       const assets = await fetchStakedAssets(account || '');
       const assetData = await fetchAssetsById(assets.map(a => a.tokenId));
-      console.log(assetData);
       setStakedAssets(assetData);
     } catch (e) {
       console.log('Error while trying to fetch staked user assets !', e);
@@ -68,6 +57,22 @@ const LandoworksPoolStatistics: FC = () => {
 
     setClaiming(false);
   };
+
+  useEffect(() => {
+    if (account) {
+      getStakedAssets();
+    }
+  }, [account]);
+
+  useMemo(() => {
+    if (account) {
+      landworksYf.on(Web3Contract.UPDATE_DATA, getStakedAssets);
+    }
+  }, [account]);
+
+  if (!walletCtx.isActive) {
+    return null;
+  }
 
   const isEnded = false;
 
@@ -160,7 +165,7 @@ const LandoworksPoolStatistics: FC = () => {
             {stakedAssets.map(asset => {
               const name = getDecentralandAssetName(asset.decentralandData);
               return (
-                <div className="flex align-center mb-15">
+                <div className="flex align-center mb-15" key={name}>
                   <IconsSet
                     icons={['png/landworks'].map(icon => (
                       <Icon key={icon} name={icon as IconNames} />
