@@ -4,12 +4,10 @@ import cn from 'classnames';
 import Spin from 'components/antd/spin';
 import { Tabs } from 'components/custom/tabs';
 import LandoworksPoolStatistics from 'modules/yield-farming/components/landworks-pool-statistics';
+import LandworksPoolTransactions from 'modules/yield-farming/components/landworks-pool-transactions';
 
 import LandworksPoolHeader from '../../components/landworks-pool-header';
 import LandworksPoolStake from '../../components/landworks-pool-stake';
-import PoolStake from '../../components/pool-stake';
-import PoolTransactions from '../../components/pool-transactions';
-import PoolUnstake from '../../components/pool-unstake';
 import LandowrksYfProvider, { useLandworksYf } from '../../providers/landworks-yf-provider';
 
 import s from './s.module.scss';
@@ -64,7 +62,7 @@ const LandowrksYfPoolViewInner: FC = () => {
           <LandoworksPoolStatistics />
         </div>
       </Spin>
-      <PoolTransactions />
+      <LandworksPoolTransactions />
     </div>
   );
 };
