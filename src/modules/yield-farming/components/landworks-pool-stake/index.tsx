@@ -3,7 +3,6 @@ import { Checkbox, Col, Row, Tabs } from 'antd';
 
 import Alert from 'components/antd/alert';
 import Spin from 'components/antd/spin';
-import { Text } from 'components/custom/typography';
 import { LandWorksToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
@@ -11,12 +10,11 @@ import { useWallet } from 'wallets/wallet';
 
 import Erc721Contract from '../../../../web3/erc721Contract';
 import {
-  UserNotStakedAssets,
   UserStakedAssetsWithData,
   fetchAssetsById,
   fetchNotStakedAssets,
   fetchStakedAssets,
-  getDecentralandAssetName,
+  getDecentralandAssetName, UserNotStakedAsset,
 } from '../../api';
 import { TABS } from '../../views/landowrks-yf-pool-view';
 
@@ -33,7 +31,7 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
   const walletCtx = useWallet();
 
   const [approved, setApproved] = useState(false);
-  const [notStakedAssets, setNotStakedAssets] = useState<UserNotStakedAssets[]>([]);
+  const [notStakedAssets, setNotStakedAssets] = useState<UserNotStakedAsset[]>([]);
   const [stakedAssets, setStakedAssets] = useState<UserStakedAssetsWithData[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<number[]>([]);
 
@@ -122,10 +120,8 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
 
   const getNotStakedAssets = async () => {
     try {
-      const data = await fetchNotStakedAssets(account || '');
-      if (data.assets.length) {
-        setNotStakedAssets(data.assets);
-      }
+      const assets = await fetchNotStakedAssets(account || '');
+        setNotStakedAssets(assets);
     } catch (e) {
       console.log('Error while trying to fetch not staked user assets !', e);
     }

@@ -78,11 +78,10 @@ export function fetchYFPoolTransactions(
     });
 }
 
-export type UserNotStakedAssets = {
+export type UserNotStakedAsset = {
   id: string;
-  assets: any;
   decentralandData: DecentralandData;
-};
+}
 
 export type UserStakedAssets = {
   tokenId: string;
@@ -94,40 +93,37 @@ export type UserStakedAssetsWithData = {
 };
 
 /**
- * Gets all the assets for a given user.
+ * Gets all the listed assets for a given user.
  * @param address The address of the user
  */
-export function fetchNotStakedAssets(address: string): Promise<UserNotStakedAssets> {
+export function fetchNotStakedAssets(address: string): Promise<UserNotStakedAsset[]> {
   return GraphClient.get(
     {
       query: gql`
         query GetUser($id: String) {
-          user(id: $id) {
+          assets(where: { owner: $id, status: "LISTED" }) {
             id
-            assets {
+            metaverseAssetId
+            minPeriod
+            maxPeriod
+            maxFutureTime
+            unclaimedRentFee
+            pricePerSecond
+            lastRentEnd
+            status
+            paymentToken {
               id
-              metaverseAssetId
-              minPeriod
-              maxPeriod
-              maxFutureTime
-              unclaimedRentFee
-              pricePerSecond
-              lastRentEnd
-              status
-              paymentToken {
+              name
+              symbol
+              decimals
+            }
+            decentralandData {
+              metadata
+              isLAND
+              coordinates {
                 id
-                name
-                symbol
-                decimals
-              }
-              decentralandData {
-                metadata
-                isLAND
-                coordinates {
-                  id
-                  x
-                  y
-                }
+                x
+                y
               }
             }
           }
@@ -141,12 +137,12 @@ export function fetchNotStakedAssets(address: string): Promise<UserNotStakedAsse
     GRAPHS.LANDWORKS,
   )
     .then(async response => {
-      const result = { ...response.data.user };
+      const result = [...response.data.assets];
       return result;
     })
     .catch(e => {
       console.log(e);
-      return {} as UserNotStakedAssets;
+      return [] as UserNotStakedAsset[];
     });
 }
 
