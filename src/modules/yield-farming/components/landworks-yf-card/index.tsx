@@ -7,6 +7,7 @@ import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
 import { EnterToken } from 'components/providers/known-tokens-provider';
 import { LandWorksToken } from 'components/providers/known-tokens-provider';
+import config from 'config';
 import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
 import { useWallet } from 'wallets/wallet';
 
@@ -15,7 +16,7 @@ import s from './s.module.scss';
 const LandworksYfCard: FC = () => {
   const walletCtx = useWallet();
   const landworksCtx = useLandworksYf();
-  const { landworksYf } = landworksCtx;
+  const { landworksYf, landworksContract } = landworksCtx;
 
   return (
     <div className="card">
@@ -39,7 +40,7 @@ const LandworksYfCard: FC = () => {
         <div className="flex flow-col">
           <Icon name="png/landworks" className="mr-4" />
           <Text type="p1" weight="semibold" color="primary">
-            {formatToken(landworksYf.totalSupply) ?? '-'}
+            {formatToken(landworksContract.getBalanceOf(config.contracts.yf.landworks)) ?? '-'}
           </Text>
         </div>
       </div>
