@@ -6,11 +6,12 @@ import Icon, { IconNames } from 'components/custom/icon';
 import IconsSet from 'components/custom/icons-set';
 import { Text } from 'components/custom/typography';
 import { EnterToken } from 'components/providers/known-tokens-provider';
+import config from 'config';
 import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
 
 const LandworksPoolHeader: FC = () => {
   const landworksCtx = useLandworksYf();
-  const { landworksYf } = landworksCtx;
+  const { landworksYf, landworksContract } = landworksCtx;
 
   useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -48,7 +49,7 @@ const LandworksPoolHeader: FC = () => {
           </Text>
           <div className="flex align-center">
             <Text type="p1" weight="semibold" color="primary">
-              {formatToken(landworksYf.totalSupply) ?? '-'}
+              {formatToken(landworksContract.getBalanceOf(config.contracts.yf.landworks)) ?? '-'}
             </Text>
           </div>
         </div>
