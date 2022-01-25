@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import { formatPercent, formatToken } from 'web3/utils';
@@ -12,7 +12,7 @@ import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-pro
 import { useWallet } from 'wallets/wallet';
 
 import s from './s.module.scss';
-import { fetchDecentralandFloor } from '../../api';
+import { fetchDecentralandFloor, fetchStakedAssets } from '../../api';
 import BigNumber from 'bignumber.js';
 
 const LandworksYfCard: FC = () => {
@@ -22,6 +22,7 @@ const LandworksYfCard: FC = () => {
   const { landworksYf, landworksContract } = landworksCtx;
 
   const [apr, setApr] = useState<BigNumber | number | undefined>(undefined);
+  const [userTokensStaked, setUserTokensStaked] = useState<BigNumber | number | undefined>(undefined);
 
   const updateApr = async () => {
     const { periodFinish, totalSupply, rewardForDuration } = landworksYf;
@@ -44,9 +45,23 @@ const LandworksYfCard: FC = () => {
     setApr(durationReward.div(landFloorUsdc.multipliedBy(totalSupply)));
   };
 
-  useMemo(() => {
+  const updateUserStakedTokens = async (address?: string) => {
+    if (!address) {
+      setUserTokensStaked(undefined);
+      return;
+    }
+
+    const userStakedStakedTokens = await fetchStakedAssets(address);
+    setUserTokensStaked(userStakedStakedTokens.length);
+  };
+
+  useEffect(() => {
     updateApr();
   }, [landworksYf.rewardForDuration, landworksYf.periodFinish, knownTokensCtx.tokens]);
+
+  useEffect(() => {
+    updateUserStakedTokens(walletCtx.account);
+  }, [walletCtx.account]);
 
   return (
     <div className="card">
@@ -103,7 +118,7 @@ const LandworksYfCard: FC = () => {
           <div className="flex flow-col">
             <Icon name="png/landworks" className="mr-4" />
             <Text type="p1" weight="semibold" color="primary">
-              {formatToken(landworksYf.balance) ?? '-'}
+              {formatToken(userTokensStaked) ?? '-'}
             </Text>
           </div>
         </div>
