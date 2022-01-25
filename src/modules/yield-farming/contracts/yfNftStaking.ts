@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import { AbiItem } from 'web3-utils';
-import { formatToken } from 'web3/utils';
 import Web3Contract, { BatchContractMethod, createAbiItem } from 'web3/web3Contract';
 
 const ABI: AbiItem[] = [
@@ -47,6 +46,7 @@ export class YfNftStakingContract extends Web3Contract {
   rewardForDuration?: number;
   rewards?: number;
   potentialRewardPerWeek?: number;
+  periodFinish?: number;
 
   async loadCommon(): Promise<void> {
     const commonMethods: BatchContractMethod[] = [
@@ -82,6 +82,7 @@ export class YfNftStakingContract extends Web3Contract {
         this.totalSupply = totalSupply || 0;
         this.rewardForDuration = rewardForDuration.unscaleBy(18);
         this.rewards = (lastTimeRewardApplicable - (periodFinish - rewardsDuration)) * rewardRate.unscaleBy(18);
+        this.periodFinish = periodFinish;
         this.emit(Web3Contract.UPDATE_DATA);
       },
     );

@@ -62,6 +62,9 @@ const config = {
     etherscan: {
       apiKey: String(process.env.REACT_APP_ETHERSCAN_API_KEY),
     },
+    opensea: {
+      url: String(process.env.REACT_APP_OPENSEA_URL),
+    },
     wallets: {
       portis: {
         id: String(process.env.REACT_APP_WEB3_PORTIS_APP_ID),

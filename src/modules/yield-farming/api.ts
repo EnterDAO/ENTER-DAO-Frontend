@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { GraphClient } from '../../web3/graph/client';
 
 import { PaginatedResult } from 'utils/fetch';
+import config from 'config';
 
 const GRAPHS = {
   LANDWORKS: 'landworks',
@@ -76,6 +77,13 @@ export function fetchYFPoolTransactions(
         })),
       };
     });
+}
+
+export async function fetchDecentralandFloor(): Promise<number> {
+  return fetch(`${config.web3.opensea.url}collection/decentraland/stats`)
+    .then(res => res.json())
+    .then(result => result.stats.floor_price)
+    .catch(Error);
 }
 
 export type UserNotStakedAsset = {
