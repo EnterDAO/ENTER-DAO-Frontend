@@ -19,15 +19,15 @@
 
   text-align: center;
 
-  color: #000;
+  color: #fff;
 
   &:hover {
-    color: #000;
+    color: #fff;
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), linear-gradient(135deg, #DD3DCB 15.57%, #EF9C92 84.88%);
   }
 
   &:active {
-    color: #000;
+    color: #fff;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), linear-gradient(135deg, #DD3DCB 15.57%, #EF9C92 84.88%);
   }
 

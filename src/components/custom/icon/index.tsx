@@ -3,6 +3,7 @@ import cn from 'classnames';
 
 import aaveSrc from 'resources/png/token-aave.png';
 import ilvSrc from 'resources/png/token-ilv.png';
+import landworksSrc from 'resources/png/landworks.png';
 import leagSrc from 'resources/png/leag.png';
 import linkSrc from 'resources/png/token-link.png';
 import sushiSrc from 'resources/png/token-sushi.png';
@@ -43,6 +44,7 @@ export type TokenIconNames =
   | 'token-sushi'
   | 'compound'
   | 'png/enter-star'
+  | 'png/landworks'
   | 'png/universe'
   | 'png/mana'
   | 'png/sandbox'
@@ -165,6 +167,7 @@ export type IconNames =
   | 'core-drops'
   | 'png/add-enter'
   | 'png/telegram'
+  | 'png/landowrks'
   | 'static/add-token';
 
 export type IconProps = {
@@ -217,6 +220,8 @@ const Icon: React.FC<IconProps> = props => {
           return enterStarSrc;
         case 'png/telegram':
           return telegramSrc;
+        case 'png/landworks':
+          return landworksSrc;
         default:
           return '';
       }

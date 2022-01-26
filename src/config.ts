@@ -9,11 +9,13 @@ const config = {
   isTestnet: String(process.env.REACT_APP_ENV) === 'testnet',
   graph: {
     primaryUrl: String(process.env.REACT_APP_PRIMARY_GRAPH_URL),
-    fallbackUrl: String(process.env.REACT_APP_FALLBACK_GRAPH_URL)
+    fallbackUrl: String(process.env.REACT_APP_FALLBACK_GRAPH_URL),
+    landworks: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),
+    landworksFallback: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),
   },
   zapper: {
     baseUrl: String(process.env.REACT_APP_ZAPPER_URL),
-    apiKey: String(process.env.REACT_APP_ZAPPER_API_KEY)
+    apiKey: String(process.env.REACT_APP_ZAPPER_API_KEY),
   },
   tokens: {
     usdc: toLowerCase(process.env.REACT_APP_TOKEN_USDC_ADDR),
@@ -27,6 +29,7 @@ const config = {
     ilv: toLowerCase(process.env.REACT_APP_TOKEN_ILV_ADDR),
     leag: toLowerCase(process.env.REACT_APP_TOKEN_LEAG_ADDR),
     usdcEntrSLP: toLowerCase(process.env.REACT_APP_TOKEN_USDC_ENTR_SUSHI_LP),
+    landworks: toLowerCase(process.env.REACT_APP_TOKEN_LANDWORKS),
   },
   contracts: {
     yf: {
@@ -40,6 +43,7 @@ const config = {
       ilv: toLowerCase(process.env.REACT_APP_CONTRACT_YF_ILV_ADDR),
       leag: toLowerCase(process.env.REACT_APP_CONTRACT_YF_LEAG_ADDR),
       usdcEntrSLP: toLowerCase(process.env.REACT_APP_CONTRACT_YF_USDC_ENTR_SUSHI_LP),
+      landworks: toLowerCase(process.env.REACT_APP_CONTRACT_YF_LANDWORKS_ADDRESS),
     },
     dao: {
       governance: toLowerCase(process.env.REACT_APP_CONTRACT_DAO_GOVERNANCE_ADDR),
@@ -57,6 +61,9 @@ const config = {
     },
     etherscan: {
       apiKey: String(process.env.REACT_APP_ETHERSCAN_API_KEY),
+    },
+    opensea: {
+      url: String(process.env.REACT_APP_OPENSEA_URL),
     },
     wallets: {
       portis: {

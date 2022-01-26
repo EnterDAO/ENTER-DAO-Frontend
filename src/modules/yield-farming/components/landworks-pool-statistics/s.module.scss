@@ -1,0 +1,15 @@
+.component {
+    max-width: 384px;
+    width: 100%;
+  
+    @media (max-width: 900px) {
+      max-width: none;
+    }
+  }
+  
+  .claimBlock {
+    padding: 16px 20px;
+    background: var(--theme-body-color);
+    border-radius: 4px;
+  }
+  

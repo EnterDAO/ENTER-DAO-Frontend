@@ -1,4 +1,4 @@
-﻿import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { SelectValue } from 'antd/lib/select';
 import { ColumnsType } from 'antd/lib/table/interface';
 import format from 'date-fns/format';
@@ -11,12 +11,11 @@ import Icon, { IconNames } from 'components/custom/icon';
 import { Tabs } from 'components/custom/tabs';
 import { Text } from 'components/custom/typography';
 import { convertTokenInUSD, getTokenByAddress } from 'components/providers/known-tokens-provider';
+import config from 'config';
 import { useReload } from 'hooks/useReload';
 import { useWallet } from 'wallets/wallet';
 
 import { APIYFPoolActionType, APIYFPoolTransaction, fetchYFPoolTransactions } from '../../api';
-import { useYFPool } from '../../providers/pool-provider';
-import { useYFPools } from '../../providers/pools-provider';
 
 type TableEntity = APIYFPoolTransaction;
 
@@ -40,7 +39,7 @@ const InitialState: State = {
   loading: false,
   filters: {
     actionType: 'all',
-    tokenAddress: 'all',
+    tokenAddress: config.tokens.landworks,
   },
 };
 
@@ -109,20 +108,18 @@ function getColumns(isAll: boolean): ColumnsType<TableEntity> {
         );
       },
     },
-    isAll
-      ? {
-        title: 'Address',
-        dataIndex: 'from',
-        width: '25%',
-        render: (_, entity) => (
-          <ExternalLink href={getEtherscanAddressUrl(entity.userAddress)} className="link-blue">
-            <Text type="p1" weight="semibold" color="var(--gradient-blue-safe)" textGradient="var(--gradient-blue)">
-              {shortenAddr(entity.userAddress)}
-            </Text>
-          </ExternalLink>
-        ),
-      }
-      : {},
+    {
+      title: 'Address',
+      dataIndex: 'from',
+      width: '25%',
+      render: (_, entity) => (
+        <ExternalLink href={getEtherscanAddressUrl(entity.userAddress)} className="link-blue">
+          <Text type="p1" weight="semibold" color="var(--gradient-blue-safe)" textGradient="var(--gradient-blue)">
+            {shortenAddr(entity.userAddress)}
+          </Text>
+        </ExternalLink>
+      ),
+    },
     {
       title: 'Transaction hash/timestamp',
       width: '25%',
@@ -157,57 +154,24 @@ const TX_OPTS: SelectOption[] = [
   },
 ];
 
-const PoolTransactions: FC = () => {
+const LandworksPoolTransactions: FC = () => {
   const walletCtx = useWallet();
-  const poolsCtx = useYFPools();
-  const poolCtx = useYFPool();
 
-  const hasOwnTab = !!poolCtx.poolMeta && walletCtx.isActive;
+  const hasOwnTab = walletCtx.isActive;
   const [reload, version] = useReload();
   const [state, setState] = useState<State>(InitialState);
   const [activeTab, setActiveTab] = useState(hasOwnTab ? 'own' : 'all');
-
-  const tokens = useMemo(() => {
-    if (poolCtx.poolMeta) {
-      return poolCtx.poolMeta.tokens;
-    }
-
-    return poolsCtx.yfPools.map(pool => pool.tokens).flat();
-  }, [poolCtx.poolMeta]);
 
   const tableColumns = useMemo(() => {
     return getColumns(activeTab === 'all');
   }, [activeTab]);
 
   useEffect(() => {
-    const poolMeta = poolCtx.poolMeta;
-
-    if (!poolMeta) {
-      return;
-    }
-
     setState(prevState => ({
       ...prevState,
       page: 1,
-      filters: {
-        ...prevState.filters,
-        actionType: 'all',
-        tokenAddress: poolMeta.tokens[0].address ?? 'all',
-      },
     }));
-
-    function onPoolTx() {
-      if (activeTab === 'own') {
-        reload();
-      }
-    }
-
-    poolMeta.contract.on('tx:success', onPoolTx);
-
-    return () => {
-      poolMeta.contract.off('tx:success', onPoolTx);
-    };
-  }, [poolCtx.poolMeta]);
+  }, [activeTab]);
 
   useEffect(() => {
     setState(prevState => ({
@@ -256,17 +220,6 @@ const PoolTransactions: FC = () => {
     setActiveTab(hasOwnTab ? 'own' : 'all');
   }, [hasOwnTab]);
 
-  function handleTokenFilterChange(value: SelectValue) {
-    setState(prevState => ({
-      ...prevState,
-      page: 1,
-      filters: {
-        ...prevState.filters,
-        tokenAddress: String(value),
-      },
-    }));
-  }
-
   function handleTypeFilterChange(value: SelectValue) {
     setState(prevState => ({
       ...prevState,
@@ -294,39 +247,20 @@ const PoolTransactions: FC = () => {
           tabs={[
             ...(hasOwnTab
               ? [
-                {
-                  id: 'own',
-                  children: 'My transactions',
-                },
-              ]
+                  {
+                    id: 'own',
+                    children: 'My transactions',
+                  },
+                ]
               : []),
             {
               id: 'all',
-              children: poolCtx.poolMeta ? 'All transactions' : 'Transactions',
+              children: 'All transactions',
             },
           ]}
           onClick={setActiveTab}
         />
         <div className="flex align-center">
-          {tokens.length! > 1 && (
-            <Select
-              className="mr-16"
-              style={{ minWidth: 150 }}
-              options={[
-                {
-                  value: 'all',
-                  label: 'All tokens',
-                },
-                ...tokens.map(token => ({
-                  value: token.address ?? 'all',
-                  label: token.symbol,
-                })),
-              ]}
-              value={state.filters.tokenAddress}
-              onChange={handleTokenFilterChange}
-            />
-          )}
-
           <Select
             style={{ minWidth: 200 }}
             options={TX_OPTS}
@@ -361,4 +295,4 @@ const PoolTransactions: FC = () => {
   );
 };
 
-export default PoolTransactions;
+export default LandworksPoolTransactions;

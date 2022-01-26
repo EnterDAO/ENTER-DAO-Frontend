@@ -2,6 +2,7 @@ import React, { FC, createContext, useContext, useEffect } from 'react';
 import BigNumber from 'bignumber.js';
 import { AbiItem } from 'web3-utils';
 import Erc20Contract from 'web3/erc20Contract';
+import Erc721Contract from 'web3/erc721Contract';
 import { formatUSD } from 'web3/utils';
 import Web3Contract, { createAbiItem } from 'web3/web3Contract';
 
@@ -24,6 +25,7 @@ export enum KnownTokens {
   ILV = 'ILV',
   LEAG = 'LEAG',
   USDC_ENTR_SLP = 'USDC_ENTR_SUSHI_LP',
+  LANDWORKS = 'LANDWORKS',
 }
 
 export type TokenMeta = {
@@ -53,6 +55,15 @@ export const EnterToken: TokenMeta = {
   decimals: 18,
   icon: 'png/enterdao' as any,
   contract: new Erc20Contract([], config.tokens.entr),
+};
+
+export const LandWorksToken: TokenMeta = {
+  address: config.tokens.landworks,
+  symbol: KnownTokens.LANDWORKS,
+  name: 'LandWorks',
+  decimals: 18,
+  icon: 'png/landworks' as any,
+  contract: new Erc721Contract([], config.tokens.landworks),
 };
 
 export const UsdcToken: TokenMeta = {
@@ -157,6 +168,7 @@ export const UsdcEntrSLPToken: TokenMeta = {
 const KNOWN_TOKENS: TokenMeta[] = [
   EthToken,
   EnterToken,
+  LandWorksToken,
   UsdcToken,
   BondToken,
   ManaToken,
