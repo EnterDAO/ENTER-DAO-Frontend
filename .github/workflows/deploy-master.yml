@@ -1,0 +1,50 @@
+name: Master Branch Build and Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm install
+      - name: Create .env file
+        run: |
+          touch .env | echo "${{ secrets.ENVIRONMENT_MAINNET }}" > .env
+      - name: Build
+        run: CI=false npm run build # CI=false should be removed for prod
+      - name: Archive build artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: build
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build
+      - name: Create firebase.json
+        run: |
+          echo '${{ secrets.FIREBASE_MAINNET_CONFIG }}' > firebase.json
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT }}
