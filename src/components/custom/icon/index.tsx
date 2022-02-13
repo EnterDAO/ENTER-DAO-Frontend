@@ -154,6 +154,7 @@ export type IconNames =
   | 'team'
   | 'governance'
   | 'yield-farming'
+  | 'airdrop'
   | 'docs'
   | 'twitter'
   | 'discord'
