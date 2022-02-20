@@ -12,7 +12,7 @@ import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
 import { useGeneral } from 'components/providers/general-provider';
-import { LeagueToken } from 'components/providers/known-tokens-provider';
+import { EnterToken } from 'components/providers/known-tokens-provider';
 import cupSvgWhite from 'resources/svg/cup_transparent_white.svg';
 import cupSvg from 'resources/svg/cup_transparent.svg';
 import { useWallet } from 'wallets/wallet';
@@ -38,18 +38,18 @@ const Airdrop: FC = () => {
   const lockedAirDrop = !merkleDistributorContract?.claimIndex;
 
   const totalClaimed = new _BigNumber(merkleDistributorContract?.totalInfo?.totalAirdropClaimed ?? 0).unscaleBy(
-    LeagueToken.decimals,
+    EnterToken.decimals,
   );
   const totalRedistributed = new _BigNumber(
     merkleDistributorContract?.totalInfo?.totalAirdropRedistributed ?? 0,
-  ).unscaleBy(LeagueToken.decimals);
+  ).unscaleBy(EnterToken.decimals);
 
-  const userAmount = new _BigNumber(merkleDistributorContract?.claimAmount ?? 0).unscaleBy(LeagueToken.decimals);
+  const userAmount = new _BigNumber(merkleDistributorContract?.claimAmount ?? 0).unscaleBy(EnterToken.decimals);
   const userAvailable = new _BigNumber(merkleDistributorContract?.adjustedAmount?.airdropAmount ?? 0).unscaleBy(
-    LeagueToken.decimals,
+    EnterToken.decimals,
   );
   const userBonus = new _BigNumber(merkleDistributorContract?.adjustedAmount?.bonusPart ?? 0).unscaleBy(
-    LeagueToken.decimals,
+    EnterToken.decimals,
   );
 
   const [isClaim, setIsClaim] = useState(false);
@@ -82,7 +82,7 @@ const Airdrop: FC = () => {
             Airdrop reward
           </Text>
           <Text type="p3" color="secondary" className="mb-32">
-            You may have received claimable token rewards from the LeagueDAO Airdrop. Claiming your airdrop will forfeit
+            You may have received claimable token rewards from the EnterDAO Airdrop. Claiming your airdrop will forfeit
             a portion of your balance. Your total claimable amount will rise whenever someone forfeits a portion of
             their reward.
           </Text>
@@ -96,40 +96,40 @@ const Airdrop: FC = () => {
               className={cn(s.card, s.card__head, 'mb-32')}>
               <div>
                 <Hint
-                  text="This number shows the $LEAG token rewards distributed so far."
+                  text="This number shows the $ENTR token rewards distributed so far."
                   className="mb-8">
                   <Text type="p2" color="secondary">
                     Total airdropped
                   </Text>
                 </Hint>
                 <div className="flex flow-col align-center">
-                  <Icon width={24} height={24} name="png/league" className="mr-6" />
+                  <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
                   <Text type="h3" weight="bold" color="primary">
-                    {formatToken(merkleDistributorContract?.totalAirdropped?.unscaleBy(LeagueToken.decimals)) ?? 0}
+                  {formatToken(merkleDistributorContract?.totalAirdropped?.unscaleBy(EnterToken.decimals)) ?? 0}
                   </Text>
                 </div>
               </div>
               <div>
-                <Hint text="The amount of LEAG claimed to date." className="mb-8">
+                <Hint text="The amount of ENTR claimed to date." className="mb-8">
                   <Text type="p2" color="secondary">
                     Total claimed
                   </Text>
                 </Hint>
                 <div className="flex flow-col align-center">
-                  <Icon width={24} height={24} name="png/league" className="mr-6" />
+                  <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
                   <Text type="h3" weight="bold" color="primary">
                     {formatToken(totalClaimed)}
                   </Text>
                 </div>
               </div>
               <div>
-                <Hint text="The amount of forfeited $LEAG redistributed across remaining recipients." className="mb-8">
+                <Hint text="The amount of forfeited $ENTR redistributed across remaining recipients." className="mb-8">
                   <Text type="p2" color="secondary">
                     Total redistributed
                   </Text>
                 </Hint>
                 <div className="flex flow-col align-center">
-                  <Icon width={24} height={24} name="png/league" className="mr-6" />
+                  <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
                   <Text type="h3" weight="bold" color="green">
                     {formatToken(totalRedistributed)}
                   </Text>
@@ -159,15 +159,15 @@ const Airdrop: FC = () => {
                   <div className={s.airdrop__info__details}>
                     <div className={`${s.total__amount} ${s.general__info}`}>
                       <Hint
-                        text="This is the total amount of $LEAG you are getting based on your initial airdrop amount + bonus
-                    amount from redistributed $LEAG."
+                        text="This is the total amount of $ENTR you are getting based on your initial airdrop amount + bonus
+                    amount from redistributed $ENTR."
                         className="mb-8">
                         <Text type="p2" color="secondary">
                           Your total airdrop amount
                         </Text>
                       </Hint>
                       <div className="flex flow-col align-center">
-                        <Icon width={36} height={36} name="png/league" className="mr-8" />
+                        <Icon width={36} height={36} name="png/enterdao" className="mr-8" />
                         <Text type="h1" weight="bold" color="primary">
                           {formatToken(userBonus?.plus(userAmount ?? 0), { decimals: 1 })}
                         </Text>
@@ -175,20 +175,20 @@ const Airdrop: FC = () => {
                     </div>
                     <div className={`${s.total__airdropped} ${s.general__info}`}>
                       <Hint
-                        text="The amount of $LEAG token airdrop assigned to you."
+                        text="The amount of $ENTR token airdrop assigned to you."
                         className="mb-8">
                         <Text type="p2" color="secondary">
                           Total airdropped
                         </Text>
                       </Hint>
                       <span>
-                        <Icon width={22} height={22} name="png/league" />
+                        <Icon width={22} height={22} name="png/enterdao" />
                         {formatToken(userAmount)}
                       </span>
                     </div>
 
                     <Hint
-                      text="This is the amount of additional $LEAG you have received as a result of early claimants
+                      text="This is the amount of additional $ENTR you have received as a result of early claimants
                     forfeiting a portion of their airdrop."
                       className="mb-8">
                       <Text type="p2" color="secondary">
@@ -196,7 +196,7 @@ const Airdrop: FC = () => {
                       </Text>
                     </Hint>
                     <div className="flex flow-col align-center">
-                      <Icon width={22} height={22} name="png/league" className="mr-6" />
+                      <Icon width={22} height={22} name="png/enterdao" className="mr-6" />
                       <Text type="h3" weight="bold" color="green">
                         +{formatToken(userBonus)}
                       </Text>
@@ -238,7 +238,7 @@ const Airdrop: FC = () => {
                       Available to claim now:
                     </Text>
                     <div className="flex flow-col align-center">
-                      <Icon width={24} height={24} name="png/league" className="mr-6" />
+                      <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
                       <Text type="h2" weight="bold" color="primary">
                         {formatToken(userAvailable)}
                       </Text>
@@ -249,7 +249,7 @@ const Airdrop: FC = () => {
                       You forfeit:
                     </Text>
                     <div className="flex flow-col align-center">
-                      <Icon width={21} height={21} name="png/league" className="mr-6" />
+                      <Icon width={21} height={21} name="png/enterdao" className="mr-6" />
                       <Text type="p2" weight="bold" color="red">
                         {formatToken(userBonus?.plus(userAmount ?? 0)?.minus(userAvailable ?? 0))}
                       </Text>

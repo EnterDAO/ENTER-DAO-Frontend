@@ -24,7 +24,6 @@ const AirdropProvider: FC = props => {
 
   const walletCtx = useWallet();
   const [reload] = useReload();
-
   const merkleDistributor = useMemo(() => {
     const merkleDistributor = new MerkleDistributor([], config.contracts.merkleDistributor);
     merkleDistributor.on(Web3Contract.UPDATE_DATA, reload);

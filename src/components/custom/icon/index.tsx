@@ -56,6 +56,7 @@ export type TokenIconNames =
   | 'png/leag'
   | 'png/uslp'
   | 'png/eslp'
+  | 'png/enterdao'
   | 'cream_finance'
   | 'yearn_finance';
 
