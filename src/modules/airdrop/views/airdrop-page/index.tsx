@@ -15,6 +15,10 @@ import { useGeneral } from 'components/providers/general-provider';
 import { EnterToken } from 'components/providers/known-tokens-provider';
 import cupSvgWhite from 'resources/svg/cup_transparent_white.svg';
 import cupSvg from 'resources/svg/cup_transparent.svg';
+
+import phoneSvgWhite from 'resources/svg/phone_white.svg';
+import phoneSvgDark from 'resources/svg/phone_dark.svg';
+import mountain from 'resources/svg/mountain.svg';
 import { useWallet } from 'wallets/wallet';
 
 import { useMediaQuery } from '../../../../hooks';
@@ -78,10 +82,10 @@ const Airdrop: FC = () => {
     <section className={s.page}>
       <div className="content-container">
         <div className={s.general__info}>
-          <Text type="h2" weight="bold" color="primary" className="mb-8">
+          <Text type="h1" weight="bold" color="primary" className="mb-8">
             Airdrop reward
           </Text>
-          <Text type="p3" color="secondary" className="mb-32">
+          <Text type="p1" color="secondary" className="mb-32">
             You may have received claimable token rewards from the EnterDAO Airdrop. Claiming your airdrop will forfeit
             a portion of your balance. Your total claimable amount will rise whenever someone forfeits a portion of
             their reward.
@@ -103,8 +107,8 @@ const Airdrop: FC = () => {
                   </Text>
                 </Hint>
                 <div className="flex flow-col align-center">
-                  <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
-                  <Text type="h3" weight="bold" color="primary">
+                  <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                  <Text type="h2" weight="bold" color="primary">
                   {formatToken(merkleDistributorContract?.totalAirdropped?.unscaleBy(EnterToken.decimals)) ?? 0}
                   </Text>
                 </div>
@@ -116,8 +120,8 @@ const Airdrop: FC = () => {
                   </Text>
                 </Hint>
                 <div className="flex flow-col align-center">
-                  <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
-                  <Text type="h3" weight="bold" color="primary">
+                  <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                  <Text type="h2" weight="bold" color="primary">
                     {formatToken(totalClaimed)}
                   </Text>
                 </div>
@@ -129,8 +133,8 @@ const Airdrop: FC = () => {
                   </Text>
                 </Hint>
                 <div className="flex flow-col align-center">
-                  <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
-                  <Text type="h3" weight="bold" color="green">
+                  <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                  <Text type="h2" weight="bold" color="green">
                     {formatToken(totalRedistributed)}
                   </Text>
                 </div>
@@ -152,55 +156,65 @@ const Airdrop: FC = () => {
                 </div>
               ) : (
                 <>
-                  <div className={s.week}>
+                  {/* <div className={s.week}>
                     WEEK {merkleDistributorContract?.airdropCurrentWeek}/
                     {merkleDistributorContract?.airdropDurationInWeeks}
-                  </div>
+                  </div> */}
                   <div className={s.airdrop__info__details}>
-                    <div className={`${s.total__amount} ${s.general__info}`}>
+                    <div className={s.total__amount__container}>
+                      <div className={`${s.total__amount} ${s.general__info}`}>
+                        <Hint
+                          text="This is the total amount of $ENTR you are getting based on your initial airdrop amount + bonus
+                      amount from redistributed $ENTR."
+                          className="mb-8">
+                          <Text type="p2" color="secondary">
+                            Your total airdrop amount
+                          </Text>
+                        </Hint>
+                        <div className="flex flow-col align-center">
+                          <Icon width={36} height={36} name="png/enterdao" className="mr-8" />
+                          <Text type="h1" weight="bold" color="primary">
+                            {formatToken(userBonus?.plus(userAmount ?? 0), { decimals: 1 })}
+                          </Text>
+                        </div>
+                      </div>
+                    </div>
+                    <Grid
+                      className={s.grid}
+                      colsTemplate={!isMobile ? 'max-content max-content' : '1fr'}
+                      gap={24}
+                      justify="center"
+                      >
+                        <div className={`${s.total__airdropped} ${s.general__info}`}>
+                        <Hint
+                          text="The amount of $ENTR token airdrop assigned to you."
+                          className="mb-8">
+                          <Text type="p2" color="secondary">
+                            Total airdropped
+                          </Text>
+                        </Hint>
+                        <span>
+                          <Icon width={30} height={30} name="png/enterdao" />
+                          {formatToken(userAmount)}
+                        </span>
+                      </div>
+                      <div className={`${s.total__bonuses} ${s.general__info}`}>
                       <Hint
-                        text="This is the total amount of $ENTR you are getting based on your initial airdrop amount + bonus
-                    amount from redistributed $ENTR."
+                        text="This is the amount of additional $ENTR you have received as a result of early claimants
+                      forfeiting a portion of their airdrop."
                         className="mb-8">
                         <Text type="p2" color="secondary">
-                          Your total airdrop amount
+                          Your bonus amount
                         </Text>
                       </Hint>
                       <div className="flex flow-col align-center">
-                        <Icon width={36} height={36} name="png/enterdao" className="mr-8" />
-                        <Text type="h1" weight="bold" color="primary">
-                          {formatToken(userBonus?.plus(userAmount ?? 0), { decimals: 1 })}
+                        <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                        <Text type="h3" weight="bold" color="green">
+                          +{formatToken(userBonus)}
                         </Text>
                       </div>
-                    </div>
-                    <div className={`${s.total__airdropped} ${s.general__info}`}>
-                      <Hint
-                        text="The amount of $ENTR token airdrop assigned to you."
-                        className="mb-8">
-                        <Text type="p2" color="secondary">
-                          Total airdropped
-                        </Text>
-                      </Hint>
-                      <span>
-                        <Icon width={22} height={22} name="png/enterdao" />
-                        {formatToken(userAmount)}
-                      </span>
-                    </div>
-
-                    <Hint
-                      text="This is the amount of additional $ENTR you have received as a result of early claimants
-                    forfeiting a portion of their airdrop."
-                      className="mb-8">
-                      <Text type="p2" color="secondary">
-                        Your bonus amount
-                      </Text>
-                    </Hint>
-                    <div className="flex flow-col align-center">
-                      <Icon width={22} height={22} name="png/enterdao" className="mr-6" />
-                      <Text type="h3" weight="bold" color="green">
-                        +{formatToken(userBonus)}
-                      </Text>
-                    </div>
+                      </div>
+                    </Grid>
                   </div>
                 </>
               )}
@@ -208,8 +222,8 @@ const Airdrop: FC = () => {
           </Grid>
           <div className={cn(s.card, s.card__table, { [s.card__table__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed })}>
             <Grid gap={15} className={cn(s.airdrop__animateBlock, { [s.airdrop__animateBlock__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed })}>
-              <div className={s.cupBlock}>
-                <img src={isDarkTheme ? cupSvg : cupSvgWhite} alt="" />
+              <div className={s.phoneBlock}>
+                <img src={isDarkTheme ? phoneSvgDark : phoneSvgWhite} alt="" />
                 {!wallet.isActive && (
                   <div className={s.cupBlock__text}>
                     <Text type="h2" weight="bold" color="primary">
@@ -234,22 +248,22 @@ const Airdrop: FC = () => {
               {lockedAirDrop || !merkleDistributorContract?.isAirdropClaimed && (
                 <>
                   <div>
-                    <Text type="p2" color="secondary">
+                    <Text type="p2" color="secondary" className={s.uppercase}>
                       Available to claim now:
                     </Text>
                     <div className="flex flow-col align-center">
-                      <Icon width={24} height={24} name="png/enterdao" className="mr-6" />
+                      <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                       <Text type="h2" weight="bold" color="primary">
                         {formatToken(userAvailable)}
                       </Text>
                     </div>
                   </div>
                   <div>
-                    <Text type="p2" color="secondary">
+                    <Text type="p2" color="secondary" className={s.uppercase}>
                       You forfeit:
                     </Text>
                     <div className="flex flow-col align-center">
-                      <Icon width={21} height={21} name="png/enterdao" className="mr-6" />
+                      <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                       <Text type="p2" weight="bold" color="red">
                         {formatToken(userBonus?.plus(userAmount ?? 0)?.minus(userAvailable ?? 0))}
                       </Text>

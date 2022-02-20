@@ -1,5 +1,6 @@
 .card {
   background-color: var(--L11-D11);
+  border: 2px solid var(--theme-border-color);
   border-radius: 8px;
   padding: 17px 24px;
   position: relative;
@@ -19,6 +20,8 @@
   }
 
   &__big {
+    background: url('../../../../resources/svg/mountain.svg') 0 100% no-repeat;
+    
     padding: 40px;
     position: relative;
 
@@ -29,7 +32,6 @@
     &::after {
       content: '';
       position: absolute;
-      background: url('../../../../resources/png/airdrop_img.png') calc(100% - 100px) 0 no-repeat;
       background-size: contain;
       height: calc(100% - -24px);
       width: 100%;
@@ -42,7 +44,7 @@
         top: auto;
         height: 265px;
         bottom: -26px;
-        background-position: bottom center;
+        background: none;
       }
     }
   }
@@ -61,13 +63,17 @@
     &::before {
       content: '';
       position: absolute;
-      background: url('../../../../resources/png/airdrop_bg_cup_block.png') 100% 50% no-repeat;
+      // background: url('../../../../resources/png/airdrop_bg_cup_block.png') 100% 50% no-repeat;
       background-size: 122px 221px;
       height: calc(100% - -24px);
       width: 100%;
       top: -24px;
       pointer-events: none;
       z-index: 3;
+    }
+
+    span {
+      text-transform: uppercase;
     }
   }
 
@@ -97,6 +103,9 @@
         &::before {
           display: none;
         }
+      }
+      span {
+        text-transform: uppercase;
       }
     }
   }
@@ -129,6 +138,9 @@
   }
 }
 
+.grid {
+  justify-content: center;
+}
 
 .general__info {
   max-width: 730px;
@@ -186,18 +198,26 @@
     }
   }
 }
+.total__amount__container {
+  display: flex;
+  justify-content: center;
 
-.total__amount {
-  margin-bottom: 46px;
+  .total__amount {
+    margin-bottom: 46px;
+    border: 2px solid var(--theme-border-color);
+    border-radius: 8px;
+    padding: 13px 24px;
 
-  p {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  span {
-    font-size: 36px;
-    line-height: 120%;
+    p {
+      font-size: 14px;
+      line-height: 20px;
+    }
+  
+    span {
+      font-size: 36px;
+      line-height: 120%;
+      text-transform: uppercase;
+    }
   }
 }
 
@@ -212,6 +232,7 @@
   span {
     font-size: 16px;
     line-height: 150%;
+    text-transform: uppercase;
   }
 }
 
@@ -227,6 +248,7 @@
     color: var(--L10-D10) !important;
     font-size: 16px;
     line-height: 150%;
+    text-transform: uppercase;
   }
 }
 
@@ -246,13 +268,16 @@
   }
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
 
-.cupBlock {
+.phoneBlock {
   position: relative;
   overflow: hidden;
-  width: 220px;
+  // width: 220px;
   margin: 0 auto;
-  height: 180px;
+  // height: 180px;
 
   &__text {
     position: absolute;
