@@ -5,7 +5,7 @@
   padding: 17px 24px;
   position: relative;
   box-shadow: var(--theme-card-shadow);
-
+ 
   &__empty {
     padding-top: 30px;
     padding-bottom: 70px;
@@ -17,6 +17,10 @@
     @media (max-width: 720px) {
       min-height: 0;
     }
+  }
+
+  .info__vl{
+    border-right: 2px solid var(--theme-border-color);
   }
 
   &__big {
@@ -203,7 +207,7 @@
   justify-content: center;
 
   .total__amount {
-    margin-bottom: 46px;
+    margin-bottom: 90px;
     border: 2px solid var(--theme-border-color);
     border-radius: 8px;
     padding: 13px 24px;

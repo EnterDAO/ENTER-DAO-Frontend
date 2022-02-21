@@ -98,7 +98,7 @@ const Airdrop: FC = () => {
               gap={24}
               justify="space-between"
               className={cn(s.card, s.card__head, 'mb-32')}>
-              <div>
+              <div className={s.info__vl}>
                 <Hint
                   text="This number shows the $ENTR token rewards distributed so far."
                   className="mb-8">
@@ -113,7 +113,7 @@ const Airdrop: FC = () => {
                   </Text>
                 </div>
               </div>
-              <div>
+              <div className={s.info__vl}>
                 <Hint text="The amount of ENTR claimed to date." className="mb-8">
                   <Text type="p2" color="secondary">
                     Total claimed
