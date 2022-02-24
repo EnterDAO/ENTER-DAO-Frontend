@@ -13,20 +13,22 @@ import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
 import { useGeneral } from 'components/providers/general-provider';
 import { EnterToken } from 'components/providers/known-tokens-provider';
-import cupSvgWhite from 'resources/svg/cup_transparent_white.svg';
-import cupSvg from 'resources/svg/cup_transparent.svg';
+import loaderForDark from 'resources/svg/loader-for-dark-theme.svg';
+import loaderForWhite from 'resources/svg/loader-for-light-theme.svg';
+import base from 'resources/svg/base.svg';
 
-import phoneSvgWhite from 'resources/svg/phone_white.svg';
-import phoneSvgDark from 'resources/svg/phone_dark.svg';
-import mountain from 'resources/svg/mountain.svg';
 import { useWallet } from 'wallets/wallet';
 
 import { useMediaQuery } from '../../../../hooks';
 import cupWaveAnimation from '../../animations/waves.json';
+import waves2 from '../../animations/waves2.json';
 import AirdropClaimed from '../../components/AirdropClaimed';
 import NotConnectWallet from '../../components/NotConnectWallet';
 import NotEligible from '../../components/NotEligible';
 import { useAirdrop } from '../../providers/airdrop-provider';
+
+import cupSvgWhite from 'resources/svg/cup_transparent_white.svg';
+import cupSvg from 'resources/svg/cup_transparent.svg';
 
 import s from './airdrop.module.scss';
 
@@ -62,6 +64,8 @@ const Airdrop: FC = () => {
     ?.times(100)
     .div(userAmount ?? 0)
     .toNumber();
+
+  // const progressPercent = 100;
 
   const handleClaim = async () => {
     setIsClaim(true);
@@ -223,7 +227,12 @@ const Airdrop: FC = () => {
           <div className={cn(s.card, s.card__table, { [s.card__table__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed })}>
             <Grid gap={15} className={cn(s.airdrop__animateBlock, { [s.airdrop__animateBlock__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed })}>
               <div className={s.phoneBlock}>
-                <img src={isDarkTheme ? phoneSvgDark : phoneSvgWhite} alt="" />
+                   <div className={s.week}>
+                     <Text type="small" color="secondary">WEEK</Text>
+                     <Text type="small" weight="bold" color="secondary">{merkleDistributorContract?.airdropCurrentWeek}/
+                   {merkleDistributorContract?.airdropDurationInWeeks}</Text>
+                  </div>
+                  <img src={isDarkTheme ? loaderForDark : loaderForWhite} alt="" />
                 {!wallet.isActive && (
                   <div className={s.cupBlock__text}>
                     <Text type="h2" weight="bold" color="primary">
@@ -235,15 +244,15 @@ const Airdrop: FC = () => {
                     </Text>
                   </div>
                 )}
-                <Lottie
-                  animationData={cupWaveAnimation}
+                {/* <Lottie
+                  animationData={waves2}
                   style={{
                     transform: `translateY(calc(-${
                       isNaN(progressPercent as number) ? 22 : (progressPercent as number) < 22 ? 22 : progressPercent
                     }% - -10px))`,
                   }}
                   className={s.waveAnimation}
-                />
+                /> */}
               </div>
               {lockedAirDrop || !merkleDistributorContract?.isAirdropClaimed && (
                 <>

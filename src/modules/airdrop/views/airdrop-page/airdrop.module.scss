@@ -115,33 +115,6 @@
   }
 }
 
-.week {
-  text-transform: uppercase;
-  background: rgba(255, 230, 84, 0.05);
-  border: 1px solid #ffe654;
-  padding: 3px 12px;
-  border-radius: 30px;
-  display: inline-block;
-  color: #000;
-  position: absolute;
-  right: 40px;
-  top: 40px;
-  font-size: var(--font-size-sm);
-
-  [data-theme='dark'] & {
-    color: #ffe654;
-  }
-
-  @media (max-width: 720px) {
-    position: relative;
-    left: auto;
-    right: auto;
-    top: auto;
-    margin-bottom: 30px;
-    display: inline-block;
-  }
-}
-
 .grid {
   justify-content: center;
 }
@@ -282,6 +255,26 @@
   // width: 220px;
   margin: 0 auto;
   // height: 180px;
+
+  .week {
+    display: flex;
+    justify-content: center;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    > div {
+      padding: 2px;
+    }
+
+  
+    // @media (max-width: 720px) {
+    //   position: relative;
+    //   left: auto;
+    //   right: auto;
+    //   top: auto;
+    //   margin-bottom: 30px;
+    //   display: inline-block;
+    // }
+  }
 
   &__text {
     position: absolute;
