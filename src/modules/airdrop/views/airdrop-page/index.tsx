@@ -13,8 +13,8 @@ import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
 import { useGeneral } from 'components/providers/general-provider';
 import { EnterToken } from 'components/providers/known-tokens-provider';
-import loaderForDark from 'resources/svg/loader-for-dark-theme.svg';
-import loaderForWhite from 'resources/svg/loader-for-light-theme.svg';
+import loaderForDark from 'resources/svg/dark.svg';
+import loaderForWhite from 'resources/svg/light.svg';
 import base from 'resources/svg/base.svg';
 
 import { useWallet } from 'wallets/wallet';
@@ -22,6 +22,7 @@ import { useWallet } from 'wallets/wallet';
 import { useMediaQuery } from '../../../../hooks';
 import cupWaveAnimation from '../../animations/waves.json';
 import waves2 from '../../animations/waves2.json';
+import waves3 from '../../animations/waves3.json';
 import AirdropClaimed from '../../components/AirdropClaimed';
 import NotConnectWallet from '../../components/NotConnectWallet';
 import NotEligible from '../../components/NotEligible';
@@ -244,15 +245,15 @@ const Airdrop: FC = () => {
                     </Text>
                   </div>
                 )}
-                {/* <Lottie
+                {wallet.isActive && <Lottie
                   animationData={waves2}
                   style={{
                     transform: `translateY(calc(-${
                       isNaN(progressPercent as number) ? 22 : (progressPercent as number) < 22 ? 22 : progressPercent
-                    }% - -10px))`,
+                    }%))`,
                   }}
                   className={s.waveAnimation}
-                /> */}
+                />}
               </div>
               {lockedAirDrop || !merkleDistributorContract?.isAirdropClaimed && (
                 <>
