@@ -4,7 +4,6 @@ import cn from 'classnames';
 import aaveSrc from 'resources/png/token-aave.png';
 import ilvSrc from 'resources/png/token-ilv.png';
 import landworksSrc from 'resources/png/landworks.png';
-import leagSrc from 'resources/png/leag.png';
 import linkSrc from 'resources/png/token-link.png';
 import sushiSrc from 'resources/png/token-sushi.png';
 import uslpSrc from 'resources/png/token-uslp.png';
@@ -56,6 +55,7 @@ export type TokenIconNames =
   | 'png/leag'
   | 'png/uslp'
   | 'png/eslp'
+  | 'png/enterdao'
   | 'cream_finance'
   | 'yearn_finance';
 
@@ -154,6 +154,7 @@ export type IconNames =
   | 'team'
   | 'governance'
   | 'yield-farming'
+  | 'airdrop'
   | 'docs'
   | 'twitter'
   | 'discord'
@@ -204,8 +205,6 @@ const Icon: React.FC<IconProps> = props => {
           return aaveSrc;
         case 'png/ilv':
           return ilvSrc;
-        case 'png/leag':
-          return leagSrc;
         case 'png/link':
           return linkSrc;
         case 'png/sushi':

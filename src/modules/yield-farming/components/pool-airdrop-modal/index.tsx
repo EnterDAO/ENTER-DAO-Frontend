@@ -48,18 +48,18 @@ const AirdropModal: FC<AirdropModalProps> = props => {
     claimIndex !== -1
       ? tree.getProof(claimIndex || BigNumber.from(0), walletCtx.account || '', claimAmountFromJSON)
       : [];
-  const adjustedAmount = _BigNumber.from(merkleDistributorContract?.adjustedAmount);
+  // const adjustedAmount = _BigNumber.from(merkleDistributorContract?.adjustedAmount);
 
   async function claimAirdrop() {
     setClaiming(true);
-    try {
-      await merkleDistributorContract?.claim(
-        claimIndex || BigNumber.from(0),
-        merkleDistributorContract.account || '',
-        claimAmountFromJSON.toString(),
-        merkleProof,
-      );
-    } catch (e) {}
+    // try {
+    //   await merkleDistributorContract?.claim(
+    //     claimIndex || BigNumber.from(0),
+    //     merkleDistributorContract.account || '',
+    //     claimAmountFromJSON.toString(),
+    //     merkleProof,
+    //   );
+    // } catch (e) {}
 
     setClaiming(false);
     props.onCancel?.();
@@ -85,7 +85,7 @@ const AirdropModal: FC<AirdropModalProps> = props => {
           </Text>
           <br></br>
           <Text type="p1" weight="bold" color="primary" className="mb-8">
-            Available to claim now: {formatToken(adjustedAmount?.unscaleBy(EnterToken.decimals))}
+            {/* Available to claim now: {formatToken(adjustedAmount?.unscaleBy(EnterToken.decimals))} */}
           </Text>
         </div>
         <Grid flow="col" justify="space-between">

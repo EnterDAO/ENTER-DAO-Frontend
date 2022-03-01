@@ -51,6 +51,7 @@ const LayoutHeader: React.FC = () => {
   }, [window.innerWidth]);
 
   const isGovernancePage = useRouteMatch('/governance');
+  const isAirdropPage = useRouteMatch('/airdrop');
 
   async function handleAddProjectToken() {
     if (wallet.connector?.id === 'metamask') {
@@ -77,7 +78,7 @@ const LayoutHeader: React.FC = () => {
         <Icon name="png/enterdao" width="auto" height="auto" className={s.logo} />
       </ExternalLink>
       <div className={s.titleDelimiter} />
-      <h1 className={s.title}>{isGovernancePage ? 'Governance' : 'Yield Farming'}</h1>
+      <h1 className={s.title}>{isGovernancePage ? 'Governance' : isAirdropPage ? 'Airdrop' : 'Yield Farming'}</h1>
 
       <nav className={s.nav}>
         <Popover
@@ -133,6 +134,10 @@ const LayoutHeader: React.FC = () => {
               <Link to="/yield-farming" className={s.dropdownLink} onClick={() => setPopper3visible(false)}>
                 <Icon name="yield-farming" width={20} height={20} className={s.dropdownIcon} />
                 <span>Yield farming</span>
+              </Link>
+              <Link to="/airdrop" className={s.dropdownLink} onClick={() => setPopper3visible(false)}>
+                <Icon name="airdrop" width={20} height={20} className={s.dropdownIcon} />
+                <span>Airdrop</span>
               </Link>
             </div>
           }>
@@ -206,6 +211,10 @@ const LayoutHeader: React.FC = () => {
                   <Link to="/yield-farming" className={s.dropdownLink} onClick={() => setNavOpen(false)}>
                     <Icon name="yield-farming" width={20} height={20} className={s.dropdownIcon} />
                     <span>Yield farming</span>
+                  </Link>
+                  <Link to="/airdrop" className={s.dropdownLink} onClick={() => setNavOpen(false)}>
+                    <Icon name="airdrop" width={20} height={20} className={s.dropdownIcon} />
+                    <span>Airdrop</span>
                   </Link>
                 </div>
                 {!wallet.isActive && !isMobile ? (
