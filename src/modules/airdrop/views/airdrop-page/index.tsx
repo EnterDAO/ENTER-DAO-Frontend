@@ -20,9 +20,7 @@ import base from 'resources/svg/base.svg';
 import { useWallet } from 'wallets/wallet';
 
 import { useMediaQuery } from '../../../../hooks';
-import cupWaveAnimation from '../../animations/waves.json';
 import waves2 from '../../animations/waves2.json';
-import waves3 from '../../animations/waves3.json';
 import AirdropClaimed from '../../components/AirdropClaimed';
 import NotConnectWallet from '../../components/NotConnectWallet';
 import NotEligible from '../../components/NotEligible';

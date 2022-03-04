@@ -264,16 +264,6 @@
     > div {
       padding: 2px;
     }
-
-  
-    // @media (max-width: 720px) {
-    //   position: relative;
-    //   left: auto;
-    //   right: auto;
-    //   top: auto;
-    //   margin-bottom: 30px;
-    //   display: inline-block;
-    // }
   }
 
   &__text {
@@ -305,6 +295,7 @@
     max-width: 220px;
     display: block;
     margin: 0 auto;
+    top: 1px;
   }
 
   .waveAnimation {
