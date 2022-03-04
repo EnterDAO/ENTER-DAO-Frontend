@@ -6,7 +6,6 @@ import { formatToken } from 'web3/utils';
 
 import Button from 'components/antd/button';
 import Spin from 'components/antd/spin';
-// import Tooltip from '../../components/antd/tooltip';
 import Grid from 'components/custom/grid';
 import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
@@ -20,16 +19,11 @@ import base from 'resources/svg/base.svg';
 import { useWallet } from 'wallets/wallet';
 
 import { useMediaQuery } from '../../../../hooks';
-import cupWaveAnimation from '../../animations/waves.json';
 import waves2 from '../../animations/waves2.json';
-import waves3 from '../../animations/waves3.json';
 import AirdropClaimed from '../../components/AirdropClaimed';
 import NotConnectWallet from '../../components/NotConnectWallet';
 import NotEligible from '../../components/NotEligible';
 import { useAirdrop } from '../../providers/airdrop-provider';
-
-import cupSvgWhite from 'resources/svg/cup_transparent_white.svg';
-import cupSvg from 'resources/svg/cup_transparent.svg';
 
 import s from './airdrop.module.scss';
 
@@ -161,10 +155,6 @@ const Airdrop: FC = () => {
                 </div>
               ) : (
                 <>
-                  {/* <div className={s.week}>
-                    WEEK {merkleDistributorContract?.airdropCurrentWeek}/
-                    {merkleDistributorContract?.airdropDurationInWeeks}
-                  </div> */}
                   <div className={s.airdrop__info__details}>
                     <div className={s.total__amount__container}>
                       <div className={`${s.total__amount} ${s.general__info}`}>
