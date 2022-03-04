@@ -35,9 +35,6 @@ const Airdrop: FC = () => {
 
   const merkleDistributorContract = airdropCtx.merkleDistributor;
 
-  console.log(merkleDistributorContract)
-  console.log(merkleDistributorContract?.airdropCurrentWeek)
-
   const wallet = useWallet();
   const lockedAirDrop = !merkleDistributorContract?.claimIndex;
 
