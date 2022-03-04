@@ -109,7 +109,7 @@ const LayoutFooter: React.FC = () => {
               <Link to="/yield-farming" className={s.link}>
                 Yield farming
               </Link>
-              <Link to="/airdrop" className={s.dropdownLink}>
+              <Link to="/airdrop" className={s.link}>
                 Airdrop
               </Link>
             </nav>

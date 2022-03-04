@@ -35,6 +35,9 @@ const Airdrop: FC = () => {
 
   const merkleDistributorContract = airdropCtx.merkleDistributor;
 
+  console.log(merkleDistributorContract)
+  console.log(merkleDistributorContract?.airdropCurrentWeek)
+
   const wallet = useWallet();
   const lockedAirDrop = !merkleDistributorContract?.claimIndex;
 
@@ -113,7 +116,7 @@ const Airdrop: FC = () => {
                 </div>
               </div>
               <div className={s.info__vl}>
-                <Hint text="The amount of ENTR claimed to date." className="mb-8">
+                <Hint text="The amount of $ENTR claimed to date." className="mb-8">
                   <Text type="p2" color="secondary">
                     Total claimed
                   </Text>
@@ -225,15 +228,16 @@ const Airdrop: FC = () => {
                   </div>
                   <img src={isDarkTheme ? loaderForDark : loaderForWhite} alt="" />
                 {!wallet.isActive && (
-                  <div className={s.cupBlock__text}>
-                    <Text type="h2" weight="bold" color="primary">
-                      {formatToken(userAvailable, { compact: true })}
-                      {/*0*/}
-                    </Text>
-                    <Text type="p2" tag="span" color="primary">
-                      available
-                    </Text>
-                  </div>
+                  <Lottie
+                  animationData={waves2}
+                  style={{
+                    transform: `translateY(calc(-${
+                      22
+                    }%))`,
+                  }}
+                  className={s.waveAnimation}
+                  type="loop"
+                />
                 )}
                 {wallet.isActive && <Lottie
                   animationData={waves2}
