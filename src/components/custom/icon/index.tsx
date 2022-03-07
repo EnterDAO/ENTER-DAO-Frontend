@@ -4,6 +4,7 @@ import cn from 'classnames';
 import aaveSrc from 'resources/png/token-aave.png';
 import ilvSrc from 'resources/png/token-ilv.png';
 import landworksSrc from 'resources/png/landworks.png';
+import leagSrc from 'resources/png/leag.png';
 import linkSrc from 'resources/png/token-link.png';
 import sushiSrc from 'resources/png/token-sushi.png';
 import uslpSrc from 'resources/png/token-uslp.png';
@@ -207,6 +208,8 @@ const Icon: React.FC<IconProps> = props => {
           return ilvSrc;
         case 'png/link':
           return linkSrc;
+        case 'png/leag':
+          return leagSrc;
         case 'png/sushi':
           return sushiSrc;
         case 'png/uslp':
