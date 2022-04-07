@@ -77,11 +77,11 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         setNotStakedAssets(updatedCopy);
         setSelectedAssets([]);
       }
-
-      setStakeBtnLoading(false);
-      setStakeBtnDisabled(false);
     } catch (e) {
       console.log('Error while trying to stake assets !', e);
+    } finally {
+      setStakeBtnLoading(false);
+      setStakeBtnDisabled(false);
     }
   };
 
@@ -98,11 +98,11 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         setStakedAssets(updatedCopy);
         setSelectedAssets([]);
       }
-
-      setUnstakeBtnLoading(false);
-      setUnstakeBtnDisabled(false);
     } catch (e) {
       console.log('Error while trying to stake assets !', e);
+    } finally {
+      setUnstakeBtnLoading(false);
+      setUnstakeBtnDisabled(false);
     }
   };
 

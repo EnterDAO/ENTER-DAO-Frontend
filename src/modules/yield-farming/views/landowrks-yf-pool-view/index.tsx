@@ -17,7 +17,7 @@ export const TABS = {
   UNSTAKE: 'unstake',
 };
 
-const LandowrksYfPoolViewInner: FC = () => {
+const LandworksYfPoolViewInner: FC = () => {
   const yfPoolCtx = useLandworksYf();
 
   const { landworksYf } = yfPoolCtx;
@@ -67,12 +67,12 @@ const LandowrksYfPoolViewInner: FC = () => {
   );
 };
 
-const LandowrksYfPoolView: FC = () => {
+const LandworksYfPoolView: FC = () => {
   return (
     <LandowrksYfProvider>
-      <LandowrksYfPoolViewInner />
+      <LandworksYfPoolViewInner />
     </LandowrksYfProvider>
   );
 };
 
-export default LandowrksYfPoolView;
+export default LandworksYfPoolView;
