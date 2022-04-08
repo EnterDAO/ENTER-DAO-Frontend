@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 
 import Spin from 'components/antd/spin';
@@ -11,6 +11,7 @@ import LandworksPoolStake from '../../components/landworks-pool-stake';
 import LandowrksYfProvider, { useLandworksYf } from '../../providers/landworks-yf-provider';
 
 import s from './s.module.scss';
+import LandworksYfStakeModal from '../../components/landworks-yf-stake-modal';
 
 export const TABS = {
   STAKE: 'stake',
@@ -18,17 +19,20 @@ export const TABS = {
 };
 
 const LandworksYfPoolViewInner: FC = () => {
-  const yfPoolCtx = useLandworksYf();
-
-  const { landworksYf } = yfPoolCtx;
-
   const [activeTab, setActiveTab] = useState('stake');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [hasUnclaimedRent, setHasUnclaimedRent] = useState(false);
 
   useEffect(() => {
     document.documentElement.scrollTop = 0;
   }, []);
 
   const isInitialized = true;
+
+  const handleStake = (hasUnclaimedRent: boolean) => {
+    setHasUnclaimedRent(hasUnclaimedRent);
+    setModalOpen(true);
+  };
 
   return (
     <div className="content-container-fix content-container">
@@ -55,14 +59,24 @@ const LandworksYfPoolViewInner: FC = () => {
               />
             </div>
             <div className="p-24">
-              {activeTab === TABS.STAKE && <LandworksPoolStake tab={activeTab} />}
-              {activeTab === TABS.UNSTAKE && <LandworksPoolStake tab={activeTab} />}
+              {activeTab === TABS.STAKE && <LandworksPoolStake onStake={handleStake} tab={activeTab} />}
+              {activeTab === TABS.UNSTAKE && <LandworksPoolStake onStake={handleStake} tab={activeTab} />}
             </div>
           </div>
           <LandoworksPoolStatistics />
         </div>
       </Spin>
       <LandworksPoolTransactions />
+      {modalOpen && (
+        <LandworksYfStakeModal
+          hasUnclaimedRent={hasUnclaimedRent}
+          onOk={async () => {
+            // TODO: Execute function from child component
+            setModalOpen(false);
+          }}
+          onCancel={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
