@@ -88,6 +88,7 @@ export async function fetchDecentralandFloor(): Promise<number> {
 
 export type UserNotStakedAsset = {
   id: string;
+  unclaimedRentFee: string;
   decentralandData: DecentralandData;
 }
 
@@ -97,6 +98,7 @@ export type UserStakedAssets = {
 
 export type UserStakedAssetsWithData = {
   id: string;
+  unclaimedRentFee: string;
   decentralandData: DecentralandData;
 };
 
@@ -186,6 +188,7 @@ export function fetchAssetsById(ids: string[]): Promise<UserStakedAssetsWithData
         query fetchAssetsDecentralandData($ids: [String]) {
           assets(where: { id_in: $ids }) {
             id
+            unclaimedRentFee
             decentralandData {
               metadata
               isLAND

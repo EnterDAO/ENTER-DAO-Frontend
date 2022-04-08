@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 
 import Spin from 'components/antd/spin';
@@ -11,24 +11,34 @@ import LandworksPoolStake from '../../components/landworks-pool-stake';
 import LandowrksYfProvider, { useLandworksYf } from '../../providers/landworks-yf-provider';
 
 import s from './s.module.scss';
+import LandworksYfStakeModal from '../../components/landworks-yf-stake-modal';
 
 export const TABS = {
   STAKE: 'stake',
   UNSTAKE: 'unstake',
 };
 
-const LandowrksYfPoolViewInner: FC = () => {
-  const yfPoolCtx = useLandworksYf();
+interface ChildRef {
+  execute: () => Promise<void>;
+}
 
-  const { landworksYf } = yfPoolCtx;
-
+const LandworksYfPoolViewInner: FC = () => {
   const [activeTab, setActiveTab] = useState('stake');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [hasUnclaimedRent, setHasUnclaimedRent] = useState(false);
+
+  const childRef = useRef<ChildRef>();
 
   useEffect(() => {
     document.documentElement.scrollTop = 0;
   }, []);
 
   const isInitialized = true;
+
+  const handleStake = (hasUnclaimedRent: boolean) => {
+    setHasUnclaimedRent(hasUnclaimedRent);
+    setModalOpen(true);
+  };
 
   return (
     <div className="content-container-fix content-container">
@@ -55,24 +65,36 @@ const LandowrksYfPoolViewInner: FC = () => {
               />
             </div>
             <div className="p-24">
-              {activeTab === TABS.STAKE && <LandworksPoolStake tab={activeTab} />}
-              {activeTab === TABS.UNSTAKE && <LandworksPoolStake tab={activeTab} />}
+              {activeTab === TABS.STAKE && <LandworksPoolStake ref={childRef} onStake={handleStake} tab={activeTab} />}
+              {activeTab === TABS.UNSTAKE && (
+                <LandworksPoolStake ref={childRef} onStake={handleStake} tab={activeTab} />
+              )}
             </div>
           </div>
           <LandoworksPoolStatistics />
         </div>
       </Spin>
       <LandworksPoolTransactions />
+      {modalOpen && (
+        <LandworksYfStakeModal
+          hasUnclaimedRent={hasUnclaimedRent}
+          onOk={async () => {
+            await childRef.current?.execute();
+            setModalOpen(false);
+          }}
+          onCancel={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
 
-const LandowrksYfPoolView: FC = () => {
+const LandworksYfPoolView: FC = () => {
   return (
     <LandowrksYfProvider>
-      <LandowrksYfPoolViewInner />
+      <LandworksYfPoolViewInner />
     </LandowrksYfProvider>
   );
 };
 
-export default LandowrksYfPoolView;
+export default LandworksYfPoolView;
