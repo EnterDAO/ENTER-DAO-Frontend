@@ -18,10 +18,16 @@ export const TABS = {
   UNSTAKE: 'unstake',
 };
 
+interface ChildRef {
+  execute: () => Promise<void>;
+}
+
 const LandworksYfPoolViewInner: FC = () => {
   const [activeTab, setActiveTab] = useState('stake');
   const [modalOpen, setModalOpen] = useState(false);
   const [hasUnclaimedRent, setHasUnclaimedRent] = useState(false);
+
+  const childRef = useRef<ChildRef>();
 
   useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -59,8 +65,10 @@ const LandworksYfPoolViewInner: FC = () => {
               />
             </div>
             <div className="p-24">
-              {activeTab === TABS.STAKE && <LandworksPoolStake onStake={handleStake} tab={activeTab} />}
-              {activeTab === TABS.UNSTAKE && <LandworksPoolStake onStake={handleStake} tab={activeTab} />}
+              {activeTab === TABS.STAKE && <LandworksPoolStake ref={childRef} onStake={handleStake} tab={activeTab} />}
+              {activeTab === TABS.UNSTAKE && (
+                <LandworksPoolStake ref={childRef} onStake={handleStake} tab={activeTab} />
+              )}
             </div>
           </div>
           <LandoworksPoolStatistics />
@@ -71,7 +79,7 @@ const LandworksYfPoolViewInner: FC = () => {
         <LandworksYfStakeModal
           hasUnclaimedRent={hasUnclaimedRent}
           onOk={async () => {
-            // TODO: Execute function from child component
+            await childRef.current?.execute();
             setModalOpen(false);
           }}
           onCancel={() => setModalOpen(false)}

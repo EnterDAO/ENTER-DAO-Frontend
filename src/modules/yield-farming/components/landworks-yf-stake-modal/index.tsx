@@ -25,9 +25,9 @@ const LandWorksYfStakeActionModal: React.FC<LandWorksYfStakeModalProps> = props 
             {hasUnclaimedRent && (
               <Text type="p2" weight="semibold" color="secondary">
                 <br />
-                {hasUnclaimedRent ? 'One or more selected assets have unclaimed rent.' : ''}
+                One or more selected assets have unclaimed rent.
                 <br />
-                {hasUnclaimedRent ? 'Executing this will transfer all the unclaimed rent to your address.' : ''}
+                Executing this will transfer all the unclaimed rent to your address.
               </Text>
             )}
           </Grid>

@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useImperativeHandle, useState } from 'react';
-import { Checkbox, Col, Row, Tabs } from 'antd';
+import React, { FC, ForwardedRef, forwardRef, Ref, useEffect, useImperativeHandle, useState } from 'react';
+import { Checkbox, Col, Row } from 'antd';
 
 import Alert from 'components/antd/alert';
 import Spin from 'components/antd/spin';
@@ -26,8 +26,17 @@ interface ILandWorksPoolProps {
   tab: string;
   onStake: (hasUnclaimedRent: boolean) => void;
 }
-const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps) => {
+
+type IProps = ILandWorksPoolProps & { ref: React.Ref<any> };
+
+const LandworksPoolStake: FC<IProps> = forwardRef((props: ILandWorksPoolProps, ref: ForwardedRef<any>) => {
   const { tab, onStake } = props;
+
+  useImperativeHandle(ref, () => ({
+    async execute() {
+      tab === TABS.STAKE ? await handleStake() : await handleUnstake();
+    },
+  }));
 
   const { account } = useWallet();
   const { landworksYf } = useLandworksYf();
@@ -268,6 +277,6 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
       </Row>
     </section>
   );
-};
+});
 
 export default LandworksPoolStake;
