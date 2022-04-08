@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Checkbox, Col, Row, Tabs } from 'antd';
+import React, { FC, ForwardedRef, forwardRef, Ref, useEffect, useImperativeHandle, useState } from 'react';
+import { Checkbox, Col, Row } from 'antd';
 
 import Alert from 'components/antd/alert';
 import Spin from 'components/antd/spin';
@@ -20,12 +20,23 @@ import {
 import { TABS } from '../../views/landowrks-yf-pool-view';
 
 import './index.scss';
+import BigNumber from 'bignumber.js';
 
 interface ILandWorksPoolProps {
   tab: string;
+  onStake: (hasUnclaimedRent: boolean) => void;
 }
-const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps) => {
-  const { tab } = props;
+
+type IProps = ILandWorksPoolProps & { ref: React.Ref<any> };
+
+const LandworksPoolStake: FC<IProps> = forwardRef((props: ILandWorksPoolProps, ref: ForwardedRef<any>) => {
+  const { tab, onStake } = props;
+
+  useImperativeHandle(ref, () => ({
+    async execute() {
+      tab === TABS.STAKE ? await handleStake() : await handleUnstake();
+    },
+  }));
 
   const { account } = useWallet();
   const { landworksYf } = useLandworksYf();
@@ -64,6 +75,10 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
     }
   };
 
+  const handleConfirm = async () => {
+    onStake(hasUnclaimedRent());
+  };
+
   const handleStake = async () => {
     try {
       setStakeBtnLoading(true);
@@ -77,12 +92,21 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         setNotStakedAssets(updatedCopy);
         setSelectedAssets([]);
       }
-
-      setStakeBtnLoading(false);
-      setStakeBtnDisabled(false);
     } catch (e) {
       console.log('Error while trying to stake assets !', e);
+    } finally {
+      setStakeBtnLoading(false);
+      setStakeBtnDisabled(false);
     }
+  };
+
+  const hasUnclaimedRent = () => {
+    let assets = notStakedAssets.filter(a => new BigNumber(a.unclaimedRentFee).gt(0)).map(a => Number(a.id));
+    if (tab === TABS.UNSTAKE) {
+      assets = stakedAssets.filter(a => new BigNumber(a.unclaimedRentFee).gt(0)).map(a => Number(a.id));
+    }
+
+    return assets.some(a => selectedAssets.indexOf(a) >= 0);
   };
 
   const handleUnstake = async () => {
@@ -98,11 +122,11 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
         setStakedAssets(updatedCopy);
         setSelectedAssets([]);
       }
-
-      setUnstakeBtnLoading(false);
-      setUnstakeBtnDisabled(false);
     } catch (e) {
       console.log('Error while trying to stake assets !', e);
+    } finally {
+      setUnstakeBtnLoading(false);
+      setUnstakeBtnDisabled(false);
     }
   };
 
@@ -223,7 +247,7 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
                 type="button"
                 className="button-primary"
                 disabled={stakeBtnDisabled || !approved}
-                onClick={handleStake}>
+                onClick={handleConfirm}>
                 {stakeBtnLoading && <Spin spinning />}
                 Stake
               </button>
@@ -244,7 +268,7 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
           </>
         ) : (
           <Col>
-            <button type="button" className="button-primary" disabled={unstakeBtnDisabled} onClick={handleUnstake}>
+            <button type="button" className="button-primary" disabled={unstakeBtnDisabled} onClick={handleConfirm}>
               {unstakeBtnLoading && <Spin spinning />}
               Unstake
             </button>
@@ -253,6 +277,6 @@ const LandworksPoolStake: FC<ILandWorksPoolProps> = (props: ILandWorksPoolProps)
       </Row>
     </section>
   );
-};
+});
 
 export default LandworksPoolStake;
