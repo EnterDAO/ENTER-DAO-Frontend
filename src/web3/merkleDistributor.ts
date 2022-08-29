@@ -95,7 +95,7 @@ export default class MerkleDistributor extends Web3Contract {
       this.airdropDurationInWeeks -
       differenceInCalendarWeeks(new Date(airdropEndDate), new Date() > airdropEndDate ? airdropEndDate : new Date());
 
-    if (this.claimAmount !== null && this.claimIndex !== -1) {
+    if (this.claimAmount !== null && this.claimAmount !== undefined && this.claimIndex !== -1) {
       const [isClaimed, adjustedAmount] = await this.batch([
         { method: 'isClaimed', methodArgs: [this.claimIndex], callArgs: { from: account } },
         { method: 'calculateAdjustedAmount', methodArgs: [this.claimAmount], callArgs: { from: account } },
