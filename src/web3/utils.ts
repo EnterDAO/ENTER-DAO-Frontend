@@ -80,6 +80,8 @@ export function getEtherscanAddressUrl(address?: string, chainId = config.web3.c
         return `https://rinkeby.etherscan.io/address/${address}`;
       case 42:
         return `https://kovan.etherscan.io/address/${address}`;
+      case 80001:
+        return 'https://mumbai.polygonscan.com/';
       default:
     }
   }
@@ -100,6 +102,8 @@ export function getEtherscanABIUrl(
         return `https://api-rinkeby.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
       case 42:
         return `https://api-kovan.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
+      case 80001:
+        return `https://api-testnet.polygonscan.com/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
       default:
     }
   }

@@ -1,0 +1,65 @@
+{
+  "merkleRoot": "0xe9352698b50d91309f04d980092fedcc8ce9c74282a657666923394f017f7713",
+  "tokenTotal": "690663",
+  "ethTotal": "3636640042387864195",
+  "redemptions": {
+    "0x2C004cA912De927c6236C40d67357991bd57dbd2": {
+      "index": 0,
+      "tokens": "118716",
+      "eth": "893180690802633986",
+      "proof": [
+        "0x37e9125a4c902041ddbc7f62246d76a88e2469048c5dad56bed1da1333fb55cc",
+        "0xd5805d6eda0268b82270fb026c7b7e6cbc19735abf335cda6732386db6fb44ef",
+        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+      ]
+    },
+    "0x39650Cd0969B1FE9e25E468150EC35E4002Bfdb1": {
+      "index": 1,
+      "tokens": "97087",
+      "eth": "599771646152649823",
+      "proof": [
+        "0x94557121abef88e77e86f58e24d96cc543fb233c50b20ead8bfaf730c7e1203a",
+        "0xd5805d6eda0268b82270fb026c7b7e6cbc19735abf335cda6732386db6fb44ef",
+        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+      ]
+    },
+    "0xAC36c8c9479d18D67ec084Fa42f4E16EA9cEc6C7": {
+      "index": 2,
+      "tokens": "118712",
+      "eth": "10000000000000000",
+      "proof": [
+        "0x0f669496404ad87e9527677551dd3e2f85a14896a77bde5b2dfca3f4e30812c7",
+        "0x00615933d1353ce4878bfe0c321b8ce32ef182068b05726e9c7a4c124009735d",
+        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+      ]
+    },
+    "0xB6A290327bFAf8b303ED7cc6590a9D584fF92f89": {
+      "index": 3,
+      "tokens": "118716",
+      "eth": "893180690802633986",
+      "proof": [
+        "0x9c07bc14f88feb6699658ca670df2977fc03b521fd3ffdb0873dbaa9b65b2569",
+        "0x868849ce9165a0a4b73ae72ca23ef2d9b5be54cf42d06e26216865b3fc041739"
+      ]
+    },
+    "0xE33Cfa2B6ea374E38EFC0Ea08bfd2E3d5101e456": {
+      "index": 4,
+      "tokens": "118716",
+      "eth": "347326323827312414",
+      "proof": [
+        "0xb698871c3bce3b78c492a1078dba9af70a921734477eea2ec93f74d60b2751ae",
+        "0x868849ce9165a0a4b73ae72ca23ef2d9b5be54cf42d06e26216865b3fc041739"
+      ]
+    },
+    "0xe0B726D0dC19b1d137994a9A405A586a3b43F191": {
+      "index": 5,
+      "tokens": "118716",
+      "eth": "893180690802633986",
+      "proof": [
+        "0x26a530ed5ae9896c885e0655ec9b67acaa17fa1d15c2ab294d2a5e90b1fd8f7b",
+        "0x00615933d1353ce4878bfe0c321b8ce32ef182068b05726e9c7a4c124009735d",
+        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+      ]
+    }
+  }
+}

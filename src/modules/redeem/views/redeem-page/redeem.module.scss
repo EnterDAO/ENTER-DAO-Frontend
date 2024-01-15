@@ -4,6 +4,7 @@
   border-radius: 8px;
   padding: 17px 24px;
   position: relative;
+  max-height: 448px;
 
   &__empty {
     padding-top: 30px;
@@ -21,16 +22,17 @@
   .info__vl {
     border-right: 2px solid var(--theme-border-color);
     background-color: #25225e;
-    border-radius: 5px;
+    border-radius: 8px;
     height: 72px;
     padding: 10px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-bottom: 70px;
   }
 
   .info__vl__last {
     background-color: white;
-    border-radius: 5px;
-    height: 72px;
-    padding: 10px;
   }
 
   &__big {
@@ -131,6 +133,9 @@
 
 .general__info {
   max-width: 730px;
+  align-items: start;
+  margin: 0;
+  padding: 0;
 
   h1 {
     font-family: 'Kumbh Sans', sans-serif;
@@ -160,6 +165,7 @@
 
 .general__info {
   font-family: 'Manrope', sans-serif;
+  width: 80%;
 
   p {
     color: #7c7d8d;
@@ -323,4 +329,42 @@
 .flex__column {
   display: flex;
   flex-direction: column;
+  width: 608px;
+}
+
+.page {
+  background-color: white;
+}
+
+.grid__container {
+  background-color: #0b0834;
+  place-items: center;
+  padding-top: 96px;
+  padding-bottom: 142px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Adjust if more columns are needed */
+  width: 100%; /* Make sure it spans the full width */
+  margin-left: 0; /* Reset any default margins */
+  padding-left: 0;
+}
+
+.container {
+  margin: 0 auto;
+  color: black;
+}
+
+.redeem__info__details {
+  height: 448px;
+  color: #fff;
+}
+
+.redeem__container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-direction: column;
+}
+
+.redeem__button {
+  width: 100%;
 }

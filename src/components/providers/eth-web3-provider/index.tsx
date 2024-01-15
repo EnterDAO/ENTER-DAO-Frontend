@@ -25,6 +25,8 @@ export function getNetworkName(chainId: number | undefined): string {
       return 'Rinkeby';
     case 42:
       return 'Kovan';
+    case 80001:
+      return 'Mumbai';
     default:
       return '-';
   }
