@@ -117,26 +117,28 @@ export default class MerkleRedeemDistributor extends Web3Contract {
   }
 
   async redeem(): Promise<void> {
-    console.log(
-      `
-        this.redeemIndex,
-        this.account,
-        this.allocatedTokens,
-        this.allocatedEth,
-        this.merkleProof,
-        this.actualAllocatedTokens,
-       :>> `,
-      [
-        this.redeemIndex,
-        this.account,
-        this.allocatedTokens,
-        this.allocatedEth,
-        this.merkleProof,
-        this.actualAllocatedTokens,
-      ],
-    );
+    // console.log(
+    //   `
+    //     this.redeemIndex,
+    //     this.account,
+    //     this.allocatedTokens,
+    //     this.allocatedEth,
+    //     this.merkleProof,
+    //     this.actualAllocatedTokens,
+    //    :>> `,
+    //   [
+    //     this.redeemIndex,
+    //     this.account,
+    //     this.allocatedTokens,
+    //     this.allocatedEth,
+    //     this.merkleProof,
+    //     this.actualAllocatedTokens,
+    //   ],
+    // );
     return this.send(
       'redeem',
+      //TODO Hris
+      // hardcoded data
       //   [
       //     4,
       //     this.account,

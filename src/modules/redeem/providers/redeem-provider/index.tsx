@@ -29,6 +29,7 @@ const RedeemProvider: FC = props => {
   const walletCtx = useWallet();
   const [reload] = useReload();
   const merkleDistributor = useMemo(() => {
+    //TODO Hris
     const merkleDistributor = new MerkleRedeemDistributor(
       MerkleDistributorABI.abi as AbiItem[],
       '0xf3bFEC2EAE9AdaaDedF8BDcbCAC1A11F4A907353',

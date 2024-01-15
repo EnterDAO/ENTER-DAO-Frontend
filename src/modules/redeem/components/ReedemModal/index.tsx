@@ -36,7 +36,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
     const redeemAccounts = Object.entries(redeemData.redemptions).map(([address, data]) => ({
       account: address,
       amount: BigNumber.from((data as any).eth),
-      // eth: BigNumber.from((data as any).eth)) // TODO fix this
+      // tokens: BigNumber.from((data as any).tokens)) //TODO Hris
     }));
 
     return new BalanceRedeemTree(redeemAccounts);
@@ -50,7 +50,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
 
   const redeemIndex = merkleDistributorContract?.redeemIndex || -1;
   console.log('redeemIndex, ', redeemIndex);
-  const merkleProof =
+  const merkleProof = //TODO Hris
     redeemIndex !== -1
       ? tree.getProof(redeemIndex || BigNumber.from(0), walletCtx.account || '', claimAmountETHFromJSON)
       : [];
