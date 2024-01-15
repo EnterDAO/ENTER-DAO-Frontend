@@ -38,6 +38,8 @@ export default class MerkleRedeemDistributor extends Web3Contract {
   isInitialized: boolean;
   redeemableAmount?: string;
 
+  obj?: any // TODO Nasty - fix it
+
   constructor(abi: AbiItem[], address: string) {
     super([...ABI, ...abi], address, '');
     this.isInitialized = false;
@@ -135,29 +137,13 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     //     this.actualAllocatedTokens,
     //   ],
     // );
+
+    
     return this.send(
       'redeem',
-      //TODO Hris
-      // hardcoded data
-      //   [
-      //     4,
-      //     this.account,
-      //     '118712',
-      //     '10000000000000000',
-      //     [
-      //       '0x61d3fe1d2a02ff4edef082cdbdbaa0168b507fe8f08bef9199434f8b3c0a53aa',
-      //       '0x0ceed3be3f9d27797c311710c9f8186e3fc5f40f6fd7066f4a0b3568284c0394',
-      //       '0x35a4b6b16d3b9675986b76b9cad1431e225e896a0edd8f4eef5c744f0c692689',
-      //     ],
-      //     '118712',
-      //   ],
       [
-        this.redeemIndex,
-        this.account,
-        this.allocatedTokens,
-        this.allocatedEth,
-        this.merkleProof,
-        this.actualAllocatedTokens,
+        this.obj,
+        this.allocatedTokens, //TODO this is the actual balance of tokens held by the user. If above allocated amount -> refer to what is in the tree. If below. refer to the actual balance
       ],
       {
         from: this.account,
