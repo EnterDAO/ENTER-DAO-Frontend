@@ -85,8 +85,6 @@ const RedeemModal: FC<RedeemModalProps> = props => {
   merkleDistributorContract!.loadUserData(userData);
 
   async function claimRedeem() {
-    console.log('Redeem initiated');
-
     if (!account || !library || !merkleDistributorContract) return;
 
     const actualTokenBalance = BigNumber.from(tokenBalance);
@@ -99,12 +97,9 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       if (currentAllowance.lt(amountToApprove)) {
         const approvalTx = await erc20TokenContract.approve(merkleDistributorContract.address, amountToApprove);
         await approvalTx.wait();
-        console.log('Approval successful');
       }
       await merkleDistributorContract?.redeem();
-      console.log('Redeem successful');
     } catch (e) {
-      console.error('Error during redeem:', e);
     } finally {
       setClaiming(false);
       props.onCancel?.();
@@ -112,17 +107,12 @@ const RedeemModal: FC<RedeemModalProps> = props => {
   }
 
   async function claimPermitRedeem() {
-    console.log('Permit Redeem initiated');
-
     if (!account || !library || !merkleDistributorContract) return;
 
     try {
       setClaiming(true);
-      const test = await merkleDistributorContract?.permitRedeem();
-      console.log('test :>> ', test);
-      console.log('Permit Redeem successful');
+      await merkleDistributorContract?.permitRedeem();
     } catch (e) {
-      console.error('Error during Permit redeem:', e);
     } finally {
       setClaiming(false);
       window.location.reload(); //TODO nasty fix
