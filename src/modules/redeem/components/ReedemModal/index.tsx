@@ -1,18 +1,21 @@
-import React, { FC, useMemo, useState } from 'react';
-import { BigNumber as _BigNumber } from 'bignumber.js';
-import { BigNumber, FixedNumber } from 'ethers';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { Contract } from '@ethersproject/contracts';
+import { useWeb3React } from '@web3-react/core';
+import { BigNumber } from 'ethers';
 import MerkleRedeemDistributor from 'web3/merkleRedeemDistributor';
-import { formatToken } from 'web3/utils';
 
 import Button from 'components/antd/button';
 import Modal, { ModalProps } from 'components/antd/modal';
 import Spin from 'components/antd/spin';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
-import { EnterToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import BalanceTree from 'merkle-distributor/balance-tree';
 import { useWallet } from 'wallets/wallet';
+
+import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
+
+const tokenAddress = '0x5EAcE625Cd0937a6349cAbB5AD0710D55512493B';
 
 export type RedeemModalProps = ModalProps & {
   merkleDistributor?: MerkleRedeemDistributor;
@@ -20,9 +23,10 @@ export type RedeemModalProps = ModalProps & {
 
 const RedeemModal: FC<RedeemModalProps> = props => {
   const { merkleDistributor, ...modalProps } = props;
-
+  const { account, library } = useWeb3React();
+  const [tokenBalance, setTokenBalance] = useState(0);
   const walletCtx = useWallet();
-
+  const erc20TokenContract = new Contract(tokenAddress, tokenAbi, library.getSigner());
   const [claiming, setClaiming] = useState(false);
 
   const merkleDistributorContract = merkleDistributor;
@@ -42,15 +46,22 @@ const RedeemModal: FC<RedeemModalProps> = props => {
     return new BalanceTree(redeemAccounts);
   }, []);
 
+  useEffect(() => {
+    if (account && library) {
+      const fetchBalance = async () => {
+        const balance = await erc20TokenContract.balanceOf(account);
+        setTokenBalance(balance.toString());
+      };
+      fetchBalance().catch(console.error);
+    }
+  }, [account, library, tokenAddress, tokenAbi]);
+
   const redeemAmountETH = merkleDistributorContract?.allocatedEth || 0;
   const redeemAmountENTR = merkleDistributorContract?.allocatedTokens || 0;
 
-  const claimAmountETHFromJSON = BigNumber.from(FixedNumber.from(redeemAmountETH)); //TODO where is this being used? 
-  const claimAmountENTRFromJSON = BigNumber.from(FixedNumber.from(redeemAmountENTR));
+  const redeemIndex = merkleDistributorContract?.redeemIndex ?? -1;
 
-  const redeemIndex = merkleDistributorContract?.redeemIndex ?? -1; //TODO this was merkleDistributorContract?.redeemIndex || -1. Not sure whether was correct tho but needs to be double checked
-
-  const merkleProof = //TODO Hris
+  const merkleProof =
     redeemIndex !== -1
       ? tree.getProof(
           +redeemIndex,
@@ -59,32 +70,64 @@ const RedeemModal: FC<RedeemModalProps> = props => {
           BigNumber.from(redeemAmountETH),
         )
       : [];
-  // const adjustedAmount = _BigNumber.from(merkleDistributorContract?.adjustedAmount);
 
-  const obj = { // TODO nasty code fix it
+  const userData = {
     index: redeemIndex,
     account: walletCtx.account,
     tokens: redeemAmountENTR,
     eth: redeemAmountETH,
     merkleProof: merkleProof,
+    actualBalance: tokenBalance,
+    library: library,
+    erc20: erc20TokenContract,
   };
 
-  merkleDistributorContract!.obj = obj; //TODO nasty code. Fix it
+  merkleDistributorContract!.loadUserData(userData);
 
   async function claimRedeem() {
     console.log('Redeem initiated');
-    setClaiming(true);
+
+    if (!account || !library || !merkleDistributorContract) return;
+
+    const actualTokenBalance = BigNumber.from(tokenBalance);
+    const allocatedTokens = BigNumber.from(userData.tokens);
+    const amountToApprove = actualTokenBalance.lt(allocatedTokens) ? actualTokenBalance : allocatedTokens;
+
     try {
-      await merkleDistributorContract?.redeem(
-      );
-
-      console.log('Redeem successful'); //TODO tx hash currently not redirect you anywhere
+      setClaiming(true);
+      const currentAllowance = await erc20TokenContract.allowance(account, merkleDistributorContract.address);
+      if (currentAllowance.lt(amountToApprove)) {
+        const approvalTx = await erc20TokenContract.approve(merkleDistributorContract.address, amountToApprove);
+        await approvalTx.wait();
+        console.log('Approval successful');
+      }
+      await merkleDistributorContract?.redeem();
+      console.log('Redeem successful');
     } catch (e) {
-      console.log('error =>>', e);
+      console.error('Error during redeem:', e);
+    } finally {
+      setClaiming(false);
+      props.onCancel?.();
     }
+  }
 
-    setClaiming(false);
-    props.onCancel?.();
+  async function claimPermitRedeem() {
+    console.log('Permit Redeem initiated');
+
+    if (!account || !library || !merkleDistributorContract) return;
+
+    try {
+      setClaiming(true);
+      const test = await merkleDistributorContract?.permitRedeem();
+      console.log('test :>> ', test);
+      console.log('Permit Redeem successful');
+    } catch (e) {
+      console.error('Error during Permit redeem:', e);
+    } finally {
+      setClaiming(false);
+      window.location.reload(); //TODO nasty fix
+      props.onCancel?.();
+    }
   }
 
   async function cancelRedeemModal() {
@@ -99,9 +142,8 @@ const RedeemModal: FC<RedeemModalProps> = props => {
             Redeem reward
           </Text>
           <Text type="p1" weight="500" color="secondary">
-            You have claimable tokens from the $ENTR Redeem. This balance will rise over time and as more people exit
-            the pool and forfeit their additional rewards. <br></br>
-            <Text type="p1" tag="span" weight="bold">
+            You have claimable tokens from the $ENTR Redeem. <br></br>
+            <Text type="p1" tag="span" weight="bold" style={{ textTransform: 'uppercase' }}>
               Warning: You can only claim once!
             </Text>
           </Text>
@@ -113,7 +155,12 @@ const RedeemModal: FC<RedeemModalProps> = props => {
         <Grid flow="col" justify="space-between">
           <Spin spinning={claiming === true}>
             <Button type="primary" onClick={() => claimRedeem()}>
-              Claim
+              Redeem
+            </Button>
+          </Spin>
+          <Spin spinning={claiming === true}>
+            <Button type="primary" onClick={() => claimPermitRedeem()}>
+              Permit Redeem
             </Button>
           </Spin>
           <Button type="ghost" onClick={() => cancelRedeemModal()}>

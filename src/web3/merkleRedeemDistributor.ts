@@ -1,12 +1,11 @@
 import { BigNumber as _BigNumber } from 'bignumber.js';
-import add from 'date-fns/add';
-import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks';
+import { BigNumber } from 'ethers';
 import { AbiItem } from 'web3-utils';
 import Web3Contract, { createAbiItem } from 'web3/web3Contract';
 
 import config from 'config';
 
-import { fetchAirdropTotal } from '../modules/airdrop/api';
+import { Builder } from './signer';
 
 const ABI: AbiItem[] = [
   createAbiItem('isRedeemed', ['uint256'], ['bool']),
@@ -37,8 +36,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
   merkleProof?: string[];
   isInitialized: boolean;
   redeemableAmount?: string;
-
-  obj?: any // TODO Nasty - fix it
+  userData?: any;
 
   constructor(abi: AbiItem[], address: string) {
     super([...ABI, ...abi], address, '');
@@ -67,18 +65,16 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       this.allocatedEth = this.redeemData.redemptions[this.account ?? '']?.eth;
       this.allocatedTokens = this.redeemData.redemptions[this.account ?? '']?.tokens;
       this.redeemableAmount = undefined;
-      this.totalToBeRedeemed = _BigNumber.from(this.redeemData.tokenTotal);
+      this.totalToBeRedeemed = _BigNumber.from(this.redeemData.ethTotal);
     });
   }
 
-  async loadUserData(): Promise<void> {
+  async loadUserData(userData: any): Promise<void> {
     const account = this.account;
 
     if (!account) {
       return;
     }
-
-    const airdropEndDate = new Date('11.2.2024');
 
     if (this.allocatedEth !== null && this.allocatedEth !== undefined && this.redeemIndex !== -1) {
       const [isRedeemed, redeemableAmount] = await this.batch([
@@ -93,6 +89,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       this.isRedeemClaimed = isRedeemed;
       this.redeemableAmount = redeemableAmount;
     }
+    this.userData = userData;
     this.isInitialized = true;
     this.emit(Web3Contract.UPDATE_DATA);
   }
@@ -119,36 +116,34 @@ export default class MerkleRedeemDistributor extends Web3Contract {
   }
 
   async redeem(): Promise<void> {
-    // console.log(
-    //   `
-    //     this.redeemIndex,
-    //     this.account,
-    //     this.allocatedTokens,
-    //     this.allocatedEth,
-    //     this.merkleProof,
-    //     this.actualAllocatedTokens,
-    //    :>> `,
-    //   [
-    //     this.redeemIndex,
-    //     this.account,
-    //     this.allocatedTokens,
-    //     this.allocatedEth,
-    //     this.merkleProof,
-    //     this.actualAllocatedTokens,
-    //   ],
-    // );
+    const actualBalance = BigNumber.from(this.userData.actualBalance);
+    const allocatedTokens = BigNumber.from(this.allocatedTokens);
+    const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
 
-    
-    return this.send(
-      'redeem',
-      [
-        this.obj,
-        this.allocatedTokens, //TODO this is the actual balance of tokens held by the user. If above allocated amount -> refer to what is in the tree. If below. refer to the actual balance
-      ],
-      {
-        from: this.account,
-      },
-    ).then(() => {
+    return this.send('redeem', [this.userData, amountToRedeem.toString()], {
+      from: this.account,
+    }).then(() => {
+      this.isRedeemClaimed = true;
+      this.redeemIndex = -1;
+      this.allocatedTokens = undefined;
+      this.allocatedEth = undefined;
+      this.emit(Web3Contract.UPDATE_DATA);
+    });
+  }
+
+  async permitRedeem(): Promise<void> {
+    const buildObj = {
+      owner: this.userData.library.getSigner(this.account),
+      spenderAddress: this.address,
+      erc20: this.userData.erc20,
+    };
+
+    const user = await Builder.create().withSignObject(buildObj).build();
+    await user.signPermit(this.userData.tokens.toString());
+
+    return this.send('permitRedeem', [this.userData, user.permitMessage], {
+      from: this.account,
+    }).then(() => {
       this.isRedeemClaimed = true;
       this.redeemIndex = -1;
       this.allocatedTokens = undefined;

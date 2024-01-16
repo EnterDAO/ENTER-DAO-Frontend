@@ -64,6 +64,8 @@ export function getEtherscanTxUrl(txHash?: string, chainId = config.web3.chainId
         return `https://rinkeby.etherscan.io/tx/${txHash}`;
       case 42:
         return `https://kovan.etherscan.io/tx/${txHash}`;
+      case 80001:
+        return `https://mumbai.polygonscan.com/tx/${txHash}`;
       default:
     }
   }
@@ -81,7 +83,7 @@ export function getEtherscanAddressUrl(address?: string, chainId = config.web3.c
       case 42:
         return `https://kovan.etherscan.io/address/${address}`;
       case 80001:
-        return 'https://mumbai.polygonscan.com/';
+        return `https://mumbai.polygonscan.com/address/${address}`;
       default:
     }
   }

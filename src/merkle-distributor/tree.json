@@ -1,64 +1,75 @@
 {
-  "merkleRoot": "0xe9352698b50d91309f04d980092fedcc8ce9c74282a657666923394f017f7713",
-  "tokenTotal": "690663",
-  "ethTotal": "3636640042387864195",
+  "merkleRoot": "0xa6782aef3a024ba180e4bcbe6c9c355a8a1c53431128e94b5b2b52bf0eb5e0e1",
+  "tokenTotal": "1809375",
+  "ethTotal": "3648640042387864195",
   "redemptions": {
-    "0x2C004cA912De927c6236C40d67357991bd57dbd2": {
+    "0x0af9dF1A49fdbf9215Dd787a7c17b1eB11A50BD5": {
       "index": 0,
+      "tokens": "1118712",
+      "eth": "12000000000000000",
+      "proof": [
+        "0xee7a9ae6cf9b49c31735706f34542aebc329861f85fb88b6e060b7e46d2418d2",
+        "0xf3575a08a1c25ac177f27c0a2a4da1a30b831d7da1515d6b8902b1991eeaf4ad"
+      ]
+    },
+    "0x2C004cA912De927c6236C40d67357991bd57dbd2": {
+      "index": 1,
       "tokens": "118716",
       "eth": "893180690802633986",
       "proof": [
-        "0x37e9125a4c902041ddbc7f62246d76a88e2469048c5dad56bed1da1333fb55cc",
-        "0xd5805d6eda0268b82270fb026c7b7e6cbc19735abf335cda6732386db6fb44ef",
-        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+        "0x3dce1f4f4ceb3e38468cfe56a65cabf20d782e565c990b56889c57a4065325f0",
+        "0x81d975ec2043f8b442a2f4b71a588b908c5f6bffd9409ea8978678919cffcc64",
+        "0xf6a531515dca4babf302e96db266530703503d63979e184c6b8cabc403ec221d"
       ]
     },
     "0x39650Cd0969B1FE9e25E468150EC35E4002Bfdb1": {
-      "index": 1,
+      "index": 2,
       "tokens": "97087",
       "eth": "599771646152649823",
       "proof": [
-        "0x94557121abef88e77e86f58e24d96cc543fb233c50b20ead8bfaf730c7e1203a",
-        "0xd5805d6eda0268b82270fb026c7b7e6cbc19735abf335cda6732386db6fb44ef",
-        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+        "0xb1ba8811f25b220388cfc9af3fe2facd3a26452c03364e430e7299d3e261d095",
+        "0xf76f2391d80f89dfacb1405ab59315f94721eb82a2e0dea041ec6d3be9c98909",
+        "0xf3575a08a1c25ac177f27c0a2a4da1a30b831d7da1515d6b8902b1991eeaf4ad"
       ]
     },
     "0xAC36c8c9479d18D67ec084Fa42f4E16EA9cEc6C7": {
-      "index": 2,
+      "index": 3,
       "tokens": "118712",
       "eth": "10000000000000000",
       "proof": [
-        "0x0f669496404ad87e9527677551dd3e2f85a14896a77bde5b2dfca3f4e30812c7",
-        "0x00615933d1353ce4878bfe0c321b8ce32ef182068b05726e9c7a4c124009735d",
-        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+        "0xc127f1226a7203f5d91622ef06e593eee4c6294488bd4bd96118659d5286c0b8",
+        "0xf76f2391d80f89dfacb1405ab59315f94721eb82a2e0dea041ec6d3be9c98909",
+        "0xf3575a08a1c25ac177f27c0a2a4da1a30b831d7da1515d6b8902b1991eeaf4ad"
       ]
     },
     "0xB6A290327bFAf8b303ED7cc6590a9D584fF92f89": {
-      "index": 3,
+      "index": 4,
       "tokens": "118716",
       "eth": "893180690802633986",
       "proof": [
-        "0x9c07bc14f88feb6699658ca670df2977fc03b521fd3ffdb0873dbaa9b65b2569",
-        "0x868849ce9165a0a4b73ae72ca23ef2d9b5be54cf42d06e26216865b3fc041739"
+        "0x2ade044426660cbe7c137823ab2dee73ddddedb3b9d66dfd402410bb406e8ef7",
+        "0x81d975ec2043f8b442a2f4b71a588b908c5f6bffd9409ea8978678919cffcc64",
+        "0xf6a531515dca4babf302e96db266530703503d63979e184c6b8cabc403ec221d"
       ]
     },
     "0xE33Cfa2B6ea374E38EFC0Ea08bfd2E3d5101e456": {
-      "index": 4,
+      "index": 5,
       "tokens": "118716",
       "eth": "347326323827312414",
       "proof": [
-        "0xb698871c3bce3b78c492a1078dba9af70a921734477eea2ec93f74d60b2751ae",
-        "0x868849ce9165a0a4b73ae72ca23ef2d9b5be54cf42d06e26216865b3fc041739"
+        "0x979b2bffaf623694a71d1a38d20e98f042a9d51aa2ebcb1fea6c99485238366e",
+        "0xeee6b51cebbb58ed913360db20edd0794e9e7aecfb0c2d1457bc5a53870345eb",
+        "0xf6a531515dca4babf302e96db266530703503d63979e184c6b8cabc403ec221d"
       ]
     },
     "0xe0B726D0dC19b1d137994a9A405A586a3b43F191": {
-      "index": 5,
+      "index": 6,
       "tokens": "118716",
       "eth": "893180690802633986",
       "proof": [
-        "0x26a530ed5ae9896c885e0655ec9b67acaa17fa1d15c2ab294d2a5e90b1fd8f7b",
-        "0x00615933d1353ce4878bfe0c321b8ce32ef182068b05726e9c7a4c124009735d",
-        "0x0715015b5cb55901a7b95a20eab13af35bde7d70b5f46a418de8f76093dbf266"
+        "0x79cad202faa2b90042059b94c97a8526982ea2756249bffa9ab148ed81957a55",
+        "0xeee6b51cebbb58ed913360db20edd0794e9e7aecfb0c2d1457bc5a53870345eb",
+        "0xf6a531515dca4babf302e96db266530703503d63979e184c6b8cabc403ec221d"
       ]
     }
   }

@@ -16,7 +16,7 @@ const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount
   return (
     <div className={s.block}>
       <Text type="p2" color="secondary">
-        {`${shortenAddr(wallet.account, 8, 8)} have successfully redeemed ${entrAmount} ENTR for ${ethAmount} ETH`}
+        {`${shortenAddr(wallet.account, 5, 3)} have successfully redeemed ${entrAmount} ENTR for ${ethAmount} ETH`}
       </Text>
       {/* TODO replace when you get real tx hash */}
       <ExternalLink

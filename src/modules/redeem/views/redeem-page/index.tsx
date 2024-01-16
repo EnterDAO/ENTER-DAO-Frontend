@@ -1,28 +1,23 @@
-//TODO remove all airdrop references
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { Contract } from '@ethersproject/contracts';
+import { useWeb3React } from '@web3-react/core';
 import { BigNumber as _BigNumber } from 'bignumber.js';
 import cn from 'classnames';
-import Lottie from 'lottie-react';
-import ContractListener from 'web3/components/contract-listener';
-import TxConfirmModal, { ConfirmTxModalArgs } from 'web3/components/tx-confirm-modal';
-import TxStatusModal from 'web3/components/tx-status-modal';
-import { formatToken, shortenAddr } from 'web3/utils';
+import { ethers } from 'ethers';
+import { shortenAddr } from 'web3/utils';
 
-import Button from 'components/antd/button';
 import Spin from 'components/antd/spin';
 import Grid from 'components/custom/grid';
 import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
-import { useGeneral } from 'components/providers/general-provider';
-import { EnterToken, EthToken } from 'components/providers/known-tokens-provider';
+import { EthToken } from 'components/providers/known-tokens-provider';
 import FAQs from 'modules/redeem/components/FAQs';
 import RedeemModal from 'modules/redeem/components/ReedemModal';
 import { useRedeem } from 'modules/redeem/providers/redeem-provider';
-import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
 import { useWallet } from 'wallets/wallet';
 
-import { useMediaQuery } from '../../../../hooks';
+import MerkleDistributorABI from '../../../../merkle-distributor/MerkleDistributor.json';
 import graphic1Img from '../../animations/graphic1.svg';
 import graphic2Img from '../../animations/graphic2.svg';
 import AlreadyRedeemed from '../../components/AlreadyRedeemed';
@@ -34,19 +29,38 @@ import s from './redeem.module.scss';
 
 const Redeem: FC = () => {
   const redeemCtx = useRedeem();
+  const { account, library } = useWeb3React();
+  const [currentPoolSize, setCurrentPoolSize] = useState('--');
   const [redeemModalVisible, showRedeemModal] = useState(false);
+  const [totalClaimed, setTotalClaimed] = useState('--');
   const merkleDistributorContract = redeemCtx.merkleDistributor;
 
   const wallet = useWallet();
-  const lockedAirDrop = !merkleDistributorContract?.redeemIndex;
+  const lockedRedeem = !merkleDistributorContract?.redeemIndex;
 
   const totalToBeRedeemed = new _BigNumber(merkleDistributorContract?.totalToBeRedeemed ?? 0).unscaleBy(
-    EnterToken.decimals,
+    EthToken.decimals,
   );
   const allocatedEth = new _BigNumber(merkleDistributorContract?.allocatedEth ?? 0).unscaleBy(EthToken.decimals);
-  const allocatedTokens = new _BigNumber(merkleDistributorContract?.allocatedTokens ?? 0).unscaleBy(
-    EnterToken.decimals,
-  );
+  const allocatedTokens = new _BigNumber(merkleDistributorContract?.allocatedTokens ?? 0);
+
+  useEffect(() => {
+    const fetchCurrentPoolSize = async () => {
+      if (!library || !merkleDistributorContract || !account) return;
+
+      const contract = new Contract(merkleDistributorContract.address, MerkleDistributorABI.abi, library);
+      const currentETHBalance = await library.getBalance(merkleDistributorContract.address);
+      const formattedCurrentETHBalance = ethers.utils.formatEther(currentETHBalance);
+      const size = await contract.currentPoolSize();
+      const formattedSize = ethers.utils.formatEther(size);
+      setCurrentPoolSize(formattedSize ?? '0');
+      const calculatedValue = totalToBeRedeemed?.minus(formattedCurrentETHBalance)?.toString();
+
+      setTotalClaimed(calculatedValue && !isNaN(parseFloat(calculatedValue)) ? calculatedValue : '--');
+    };
+
+    fetchCurrentPoolSize();
+  }, [library, merkleDistributorContract, account]);
 
   if (!merkleDistributorContract?.isInitialized && wallet.isActive) {
     return <Spin />;
@@ -82,7 +96,6 @@ const Redeem: FC = () => {
             <span style={{ fontSize: '12px' }}>Read Medium Article</span>
           </a>
         </div>
-        {/* </Grid> */}
         <Grid
           colsTemplate="1fr 1fr"
           rowsTemplate="auto auto"
@@ -99,19 +112,16 @@ const Redeem: FC = () => {
               <div className="flex flow-col align-center">
                 <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                 <Text type="h3" weight="bold" color="primary">
-                  {totalToBeRedeemed?.toString()}
-                  {formatToken(totalToBeRedeemed)}
+                  {totalClaimed}
                 </Text>
                 &nbsp;
-                <Text type="h3">ENTR</Text>
+                <Text type="h3">ETH</Text>
               </div>
             </div>
           </div>
           <div className={cn(s.info__vl, s.info__vl__last)}>
             <div>
-              <Hint
-                text="The amount of remaining $ENTR to be distributed across remaining recipients."
-                className="mb-8">
+              <Hint text="The amount of remaining $ETH to be distributed across remaining recipients." className="mb-8">
                 <Text type="p2" color="secondary" style={{ textTransform: 'none', color: 'black' }}>
                   Total Remaining
                 </Text>
@@ -119,12 +129,11 @@ const Redeem: FC = () => {
               <div className="flex flow-col align-center">
                 <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                 <Text type="h3" weight="bold" color="green">
-                  TODO calc remaining amount
-                  {/* {formatToken(totalRedistributed)} */}
+                  {currentPoolSize.toString()}
                 </Text>
                 &nbsp;
                 <Text type="h3" color="green">
-                  ENTR
+                  ETH
                 </Text>
               </div>
             </div>
@@ -132,38 +141,39 @@ const Redeem: FC = () => {
           <div
             style={{ gridColumn: '1 / -1' }}
             className={cn(s.card, {
-              [s.card__big]: !lockedAirDrop && !merkleDistributorContract?.isRedeemClaimed,
+              [s.card__big]: !lockedRedeem && !merkleDistributorContract?.isRedeemClaimed,
             })}>
-            {
-              // !wallet.isActive ? (
-              //   <div className={s.card__empty}>
-              //     <NotConnectWallet />
-              //   </div>
-              // ) : lockedAirDrop ? (
-              //   <div className={s.card__empty}>
-              //     <NotEligible />
-              //   </div>
-              // ) : merkleDistributorContract?.isAirdropClaimed ? (
-              //   <div className={s.card__empty}>
-              //     <AlreadyRedeemed entrAmount={'400'} ethAmount={'0.08'} />
-              //   </div>
-              // ) :
-
+            {!wallet.isActive ? (
+              <div className={s.card__empty}>
+                <NotConnectWallet />
+              </div>
+            ) : lockedRedeem ? (
+              <div className={s.card__empty}>
+                <NotEligible />
+              </div>
+            ) : merkleDistributorContract?.isRedeemClaimed ? (
+              <div className={s.card__empty}>
+                <AlreadyRedeemed entrAmount={allocatedTokens?.toString()} ethAmount={allocatedEth?.toString()!} />
+              </div>
+            ) : (
               <div className={s.redeem__info__details}>
                 <div className={s.redeem__container}>
-                  <Text type="h2">{`ENTR Tokens ${shortenAddr(wallet.account, 8, 8)} can redeem`}</Text>
-                  <Text type="h1">400 ENTR</Text>
-                  <Text type="h2"> 1 ENT = 0.002 ETH 400 ENT = 0.08 ETH</Text>
+                  <Text type="h2">{`ENTR Tokens ${shortenAddr(wallet.account, 5, 3)} can redeem`}</Text>
+                  <Text type="h1">{allocatedTokens?.toString()} ENTR</Text>
+                  <Text type="h2">
+                    {' '}
+                    1 ENTR = 0.002 ETH {allocatedTokens?.toString()} ENTR = {allocatedEth?.toString()} ETH
+                  </Text>
                 </div>
                 <div>
                   <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
                     Redeem {allocatedTokens?.toString()} ENTR for {allocatedEth?.toString()} ETH
                   </button>
-                  <span>Pay Attention</span>
+                  <span>Pay Attention</span> <br></br>
                   <span>You can redeem your tokens only once.</span>
                 </div>
               </div>
-            }
+            )}
           </div>
         </Grid>
       </Grid>
