@@ -11,7 +11,7 @@ import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
 import { EnterToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
-import BalanceRedeemTree from 'merkle-distributor/balance-redeem-tree';
+import BalanceTree from 'merkle-distributor/balance-tree';
 import { useWallet } from 'wallets/wallet';
 
 export type RedeemModalProps = ModalProps & {
@@ -35,38 +35,50 @@ const RedeemModal: FC<RedeemModalProps> = props => {
 
     const redeemAccounts = Object.entries(redeemData.redemptions).map(([address, data]) => ({
       account: address,
-      amount: BigNumber.from((data as any).eth),
-      // tokens: BigNumber.from((data as any).tokens)) //TODO Hris
+      tokens: BigNumber.from((data as any).tokens),
+      eth: BigNumber.from((data as any).eth),
     }));
 
-    return new BalanceRedeemTree(redeemAccounts);
+    return new BalanceTree(redeemAccounts);
   }, []);
 
   const redeemAmountETH = merkleDistributorContract?.allocatedEth || 0;
   const redeemAmountENTR = merkleDistributorContract?.allocatedTokens || 0;
 
-  const claimAmountETHFromJSON = BigNumber.from(FixedNumber.from(redeemAmountETH));
+  const claimAmountETHFromJSON = BigNumber.from(FixedNumber.from(redeemAmountETH)); //TODO where is this being used? 
   const claimAmountENTRFromJSON = BigNumber.from(FixedNumber.from(redeemAmountENTR));
 
-  const redeemIndex = merkleDistributorContract?.redeemIndex || -1;
-  console.log('redeemIndex, ', redeemIndex);
+  const redeemIndex = merkleDistributorContract?.redeemIndex ?? -1; //TODO this was merkleDistributorContract?.redeemIndex || -1. Not sure whether was correct tho but needs to be double checked
+
   const merkleProof = //TODO Hris
     redeemIndex !== -1
-      ? tree.getProof(redeemIndex || BigNumber.from(0), walletCtx.account || '', claimAmountETHFromJSON)
+      ? tree.getProof(
+          +redeemIndex,
+          walletCtx.account || '',
+          BigNumber.from(redeemAmountENTR),
+          BigNumber.from(redeemAmountETH),
+        )
       : [];
   // const adjustedAmount = _BigNumber.from(merkleDistributorContract?.adjustedAmount);
+
+  const obj = { // TODO nasty code fix it
+    index: redeemIndex,
+    account: walletCtx.account,
+    tokens: redeemAmountENTR,
+    eth: redeemAmountETH,
+    merkleProof: merkleProof,
+  };
+
+  merkleDistributorContract!.obj = obj; //TODO nasty code. Fix it
 
   async function claimRedeem() {
     console.log('Redeem initiated');
     setClaiming(true);
     try {
-      await merkleDistributorContract
-        ?.redeem
-        // redeemIndex || BigNumber.from(0),
-        // merkleDistributorContract.account || '',
-        // claimAmountFromJSON.toString(),
-        // merkleProof,
-        ();
+      await merkleDistributorContract?.redeem(
+      );
+
+      console.log('Redeem successful'); //TODO tx hash currently not redirect you anywhere
     } catch (e) {
       console.log('error =>>', e);
     }
