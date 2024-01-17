@@ -356,6 +356,10 @@
 .redeem__info__details {
   height: 448px;
   color: #fff;
+  align-items: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .redeem__container {
@@ -367,4 +371,5 @@
 
 .redeem__button {
   width: 100%;
+  margin: 0 auto;
 }

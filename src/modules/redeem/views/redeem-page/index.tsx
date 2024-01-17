@@ -36,7 +36,8 @@ const Redeem: FC = () => {
   const merkleDistributorContract = redeemCtx.merkleDistributor;
 
   const wallet = useWallet();
-  const lockedRedeem = !merkleDistributorContract?.redeemIndex;
+  const lockedRedeem =
+    merkleDistributorContract?.redeemIndex === -1 || merkleDistributorContract?.redeemIndex === undefined;
 
   const totalToBeRedeemed = new _BigNumber(merkleDistributorContract?.totalToBeRedeemed ?? 0).unscaleBy(
     EthToken.decimals,
@@ -53,9 +54,11 @@ const Redeem: FC = () => {
       const formattedCurrentETHBalance = ethers.utils.formatEther(currentETHBalance);
       const size = await contract.currentPoolSize();
       const formattedSize = ethers.utils.formatEther(size);
-      setCurrentPoolSize(formattedSize ?? '0');
-      const calculatedValue = totalToBeRedeemed?.minus(formattedCurrentETHBalance)?.toString();
+      const formattedSizeWithTwoDecimals = Number(formattedSize).toFixed(2);
 
+      setCurrentPoolSize(formattedSizeWithTwoDecimals ?? '0');
+
+      const calculatedValue = allocatedEth?.minus(formattedCurrentETHBalance)?.toFixed(2);
       setTotalClaimed(calculatedValue && !isNaN(parseFloat(calculatedValue)) ? calculatedValue : '--');
     };
 
@@ -104,7 +107,7 @@ const Redeem: FC = () => {
           className={cn(s.card, s.card__head, 'mb-32')}>
           <div className={s.info__vl}>
             <div>
-              <Hint text="The amount of $ENTR claimed to date." className="mb-8">
+              <Hint text="The amount of ETH you have already redeemed." className="mb-8">
                 <Text type="p2" color="secondary" style={{ textTransform: 'none' }}>
                   Total Claimed
                 </Text>
@@ -112,7 +115,7 @@ const Redeem: FC = () => {
               <div className="flex flow-col align-center">
                 <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                 <Text type="h3" weight="bold" color="primary">
-                  {totalClaimed}
+                  {merkleDistributorContract?.isRedeemClaimed ? allocatedEth?.toFixed(5) : '0.00'}
                 </Text>
                 &nbsp;
                 <Text type="h3">ETH</Text>
@@ -121,7 +124,7 @@ const Redeem: FC = () => {
           </div>
           <div className={cn(s.info__vl, s.info__vl__last)}>
             <div>
-              <Hint text="The amount of remaining $ETH to be distributed across remaining recipients." className="mb-8">
+              <Hint text="The amount of remaining ETH you have not redeemed." className="mb-8">
                 <Text type="p2" color="secondary" style={{ textTransform: 'none', color: 'black' }}>
                   Total Remaining
                 </Text>
@@ -129,7 +132,7 @@ const Redeem: FC = () => {
               <div className="flex flow-col align-center">
                 <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                 <Text type="h3" weight="bold" color="green">
-                  {currentPoolSize.toString()}
+                  {merkleDistributorContract?.isRedeemClaimed ? '0.00' : allocatedEth?.toFixed(5)}
                 </Text>
                 &nbsp;
                 <Text type="h3" color="green">
@@ -153,21 +156,30 @@ const Redeem: FC = () => {
               </div>
             ) : merkleDistributorContract?.isRedeemClaimed ? (
               <div className={s.card__empty}>
-                <AlreadyRedeemed entrAmount={allocatedTokens?.toString()} ethAmount={allocatedEth?.toString()!} />
+                <AlreadyRedeemed entrAmount={allocatedTokens?.toString()} ethAmount={allocatedEth?.toFixed(2)!} />
               </div>
             ) : (
               <div className={s.redeem__info__details}>
                 <div className={s.redeem__container}>
                   <Text type="h2">{`ENTR Tokens ${shortenAddr(wallet.account, 5, 3)} can redeem`}</Text>
-                  <Text type="h1">{allocatedTokens?.toString()} ENTR</Text>
-                  <Text type="h2">
-                    {' '}
-                    1 ENTR = 0.002 ETH {allocatedTokens?.toString()} ENTR = {allocatedEth?.toString()} ETH
+                  <Text type="h1" style={{ fontSize: '48px' }}>
+                    {allocatedTokens?.toString()} ENTR
                   </Text>
+                  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                    <Text type="h2" style={{ color: '#625F97', fontSize: '16px' }}>
+                      {' '}
+                      1 ENTR = 0.002 ETH
+                    </Text>
+
+                    <Text type="h2" style={{ color: 'white', fontSize: '16px' }}>
+                      {' '}
+                      {allocatedTokens?.toString()} ENTR = {allocatedEth?.toFixed(2)} ETH
+                    </Text>
+                  </div>
                 </div>
-                <div>
+                <div style={{ marginTop: '90px', width: '100%' }}>
                   <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                    Redeem {allocatedTokens?.toString()} ENTR for {allocatedEth?.toString()} ETH
+                    Redeem {allocatedTokens?.toString()} ENTR for {allocatedEth?.toFixed(2)} ETH
                   </button>
                   <span>Pay Attention</span> <br></br>
                   <span>You can redeem your tokens only once.</span>
@@ -213,7 +225,11 @@ const Redeem: FC = () => {
       </div>
       <FAQs />
       {redeemModalVisible && (
-        <RedeemModal merkleDistributor={merkleDistributorContract} onCancel={() => showRedeemModal(false)} />
+        <RedeemModal
+          merkleDistributor={merkleDistributorContract}
+          onCancel={() => showRedeemModal(false)}
+          className="redeem__modal"
+        />
       )}
     </section>
   );

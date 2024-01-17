@@ -71,7 +71,8 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
 }
 
 export function register(config?: Config): void {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
 
     if (publicUrl.origin !== window.location.origin) {

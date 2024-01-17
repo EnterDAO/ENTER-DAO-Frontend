@@ -13,15 +13,13 @@ interface AlreadyRedeemedProps {
 }
 const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount }) => {
   const wallet = useWallet();
+  const txHash = localStorage.getItem('transactionHash');
   return (
     <div className={s.block}>
       <Text type="p2" color="secondary">
         {`${shortenAddr(wallet.account, 5, 3)} have successfully redeemed ${entrAmount} ENTR for ${ethAmount} ETH`}
       </Text>
-      {/* TODO replace when you get real tx hash */}
-      <ExternalLink
-        style={{ color: 'white' }}
-        href={getEtherscanTxUrl('0x94AA6CF540CE63ECA0499E9537784665FB13B24DCA3FE3ACB62308A2C9C65C69')}>
+      <ExternalLink style={{ color: 'white' }} href={getEtherscanTxUrl(txHash!)}>
         View on Etherscan
         <img width={20} height={20} src={etherscanLink} alt="etherscan link img" />
       </ExternalLink>{' '}

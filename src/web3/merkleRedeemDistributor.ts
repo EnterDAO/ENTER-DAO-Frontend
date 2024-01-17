@@ -42,7 +42,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     super([...ABI, ...abi], address, '');
     this.isInitialized = false;
 
-    config.web3.chainId === 80001 //TODO fetch dynamically from env
+    config.web3.chainId === 11155111 //TODO fetch dynamically from env
       ? (this.redeemData = require(`../merkle-distributor/tree.json`))
       : (this.redeemData = require(`../merkle-distributor/airdrop.json`));
 
@@ -120,6 +120,12 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     const allocatedTokens = BigNumber.from(this.allocatedTokens);
     const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
 
+    const txHashListener = (txHash: string) => {
+      localStorage.setItem('transactionHash', txHash);
+      this.off('tx:hash', txHashListener);
+    };
+    this.on('tx:hash', txHashListener);
+
     return this.send('redeem', [this.userData, amountToRedeem.toString()], {
       from: this.account,
     }).then(() => {
@@ -138,8 +144,21 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       erc20: this.userData.erc20,
     };
 
+    const actualBalance = BigNumber.from(this.userData.actualBalance);
+    // const actualBalance = BigNumber.from(100);
+    const allocatedTokens = BigNumber.from(this.allocatedTokens);
+    const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
+    this.userData.tokens = amountToRedeem;
+    // this.userData.tokens = 55;
+    console.log('this.userData.tokens :>> ', this.userData?.tokens.toString());
     const user = await Builder.create().withSignObject(buildObj).build();
     await user.signPermit(this.userData.tokens.toString());
+
+    const txHashListener = (txHash: string) => {
+      localStorage.setItem('transactionHash', txHash);
+      this.off('tx:hash', txHashListener);
+    };
+    this.on('tx:hash', txHashListener);
 
     return this.send('permitRedeem', [this.userData, user.permitMessage], {
       from: this.account,

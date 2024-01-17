@@ -35,7 +35,7 @@ const ContractListener: React.FC<Props> = props => {
       setTxStatus(prevState => ({
         ...prevState,
         visible: true,
-        state: meta.state,
+        state: meta?.state,
         meta,
       }));
     }

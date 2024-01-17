@@ -15,7 +15,9 @@ import { useWallet } from 'wallets/wallet';
 
 import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
 
-const tokenAddress = '0x5EAcE625Cd0937a6349cAbB5AD0710D55512493B';
+import s from './RedeemModal.module.scss';
+
+const tokenAddress = '0xC11d929a6C6d6c68EeF19d305EFb04423f162620'; //TODO change to 0xd779eEA9936B4e323cDdff2529eb6F13d0A4d66e
 
 export type RedeemModalProps = ModalProps & {
   merkleDistributor?: MerkleRedeemDistributor;
@@ -100,8 +102,10 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       }
       await merkleDistributorContract?.redeem();
     } catch (e) {
+      console.error(e);
     } finally {
       setClaiming(false);
+      window.location.reload();
       props.onCancel?.();
     }
   }
@@ -113,9 +117,10 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       setClaiming(true);
       await merkleDistributorContract?.permitRedeem();
     } catch (e) {
+      console.error("error", e);
     } finally {
       setClaiming(false);
-      window.location.reload(); //TODO nasty fix
+      window.location.reload();
       props.onCancel?.();
     }
   }
@@ -125,23 +130,30 @@ const RedeemModal: FC<RedeemModalProps> = props => {
   }
 
   return (
-    <Modal width={416} {...modalProps}>
+    <Modal width={416} {...modalProps} className={s.redeemModal}>
       <div className="flex flow-row">
-        <div className="flex flow-row mb-32">
-          <Text type="h2" weight="semibold" color="primary" className="mb-8" font="secondary">
-            Redeem reward
-          </Text>
-          <Text type="p1" weight="500" color="secondary">
-            You have claimable tokens from the $ENTR Redeem. <br></br>
-            <Text type="p1" tag="span" weight="bold" style={{ textTransform: 'uppercase' }}>
-              Warning: You can only claim once!
+        {claiming === true ? (
+          <div className="flex flow-row mb-32" style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Text type="h2" weight="semibold" color="primary" className="mb-8" font="secondary">
+              Processing...
             </Text>
-          </Text>
-          <br></br>
-          <Text type="p1" weight="bold" color="primary" className="mb-8">
-            {/* Available to claim now: {formatToken(adjustedAmount?.unscaleBy(EnterToken.decimals))} */}
-          </Text>
-        </div>
+            <Text type="h2" weight="semibold" color="primary" className="mb-8" font="secondary">
+              Please wait for Metamask pop-up
+            </Text>
+          </div>
+        ) : (
+          <div className="flex flow-row mb-32">
+            <Text type="h2" weight="semibold" color="primary" className="mb-8" font="secondary">
+              Redeem reward
+            </Text>
+            <Text type="p1" weight="500" color="secondary">
+              You have redeemable ETH from the $ENTR Redeem. <br></br>
+              <Text type="p1" tag="span" weight="bold" style={{ textTransform: 'uppercase' }}>
+                Warning: You can only claim once!
+              </Text>
+            </Text>
+          </div>
+        )}
         <Grid flow="col" justify="space-between">
           <Spin spinning={claiming === true}>
             <Button type="primary" onClick={() => claimRedeem()}>
@@ -153,9 +165,11 @@ const RedeemModal: FC<RedeemModalProps> = props => {
               Permit Redeem
             </Button>
           </Spin>
-          <Button type="ghost" onClick={() => cancelRedeemModal()}>
-            Cancel
-          </Button>
+          <Spin spinning={claiming === true}>
+            <Button type="ghost" onClick={() => cancelRedeemModal()}>
+              Cancel
+            </Button>
+          </Spin>
         </Grid>
       </div>
     </Modal>
