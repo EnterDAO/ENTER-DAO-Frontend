@@ -52,11 +52,12 @@ const RedeemModal: FC<RedeemModalProps> = props => {
     if (account && library) {
       const fetchBalance = async () => {
         const balance = await erc20TokenContract.balanceOf(account);
+        console.log('balance :>> ', balance.toString());
         setTokenBalance(balance.toString());
       };
       fetchBalance().catch(console.error);
     }
-  }, [account, library, tokenAddress, tokenAbi]);
+  }, [account, library, tokenAddress, tokenAbi, merkleDistributor]);
 
   const redeemAmountETH = merkleDistributorContract?.allocatedEth || 0;
   const redeemAmountENTR = merkleDistributorContract?.allocatedTokens || 0;
@@ -83,7 +84,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
     library: library,
     erc20: erc20TokenContract,
   };
-
+  console.log('userData.actualBalance :>> ', userData.actualBalance);
   merkleDistributorContract!.loadUserData(userData);
 
   async function claimRedeem() {

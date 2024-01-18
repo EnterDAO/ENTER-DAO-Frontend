@@ -38,7 +38,7 @@ const Redeem: FC = () => {
   const wallet = useWallet();
   const lockedRedeem =
     merkleDistributorContract?.redeemIndex === -1 || merkleDistributorContract?.redeemIndex === undefined;
-
+  console.log('merkleDistributorContract?.isRedeemClaimed :>> ', merkleDistributorContract?.isRedeemClaimed);
   const totalToBeRedeemed = new _BigNumber(merkleDistributorContract?.totalToBeRedeemed ?? 0).unscaleBy(
     EthToken.decimals,
   );

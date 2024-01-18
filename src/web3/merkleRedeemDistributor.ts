@@ -64,7 +64,8 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       this.merkleProof = this.redeemData.redemptions[this.account ?? '']?.proof;
       this.allocatedEth = this.redeemData.redemptions[this.account ?? '']?.eth;
       this.allocatedTokens = this.redeemData.redemptions[this.account ?? '']?.tokens;
-      this.redeemableAmount = undefined;
+      // this.redeemableAmount = undefined;
+      this.isRedeemClaimed = false;
       this.totalToBeRedeemed = _BigNumber.from(this.redeemData.ethTotal);
     });
   }
@@ -76,19 +77,20 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       return;
     }
 
-    if (this.allocatedEth !== null && this.allocatedEth !== undefined && this.redeemIndex !== -1) {
-      const [isRedeemed, redeemableAmount] = await this.batch([
-        { method: 'isRedeemed', methodArgs: [this.redeemIndex], callArgs: { from: account } },
-        {
-          method: 'calcRedeemableAmount',
-          methodArgs: [this.allocatedTokens, this.actualAllocatedTokens, this.allocatedEth],
-          callArgs: { from: account },
-        },
-      ]);
-
-      this.isRedeemClaimed = isRedeemed;
-      this.redeemableAmount = redeemableAmount;
-    }
+    // if (this.allocatedEth !== null && this.allocatedEth !== undefined && this.redeemIndex !== -1) {
+    //   const [isRedeemed, redeemableAmount] = await this.batch([
+    //     { method: 'isRedeemed', methodArgs: [this.redeemIndex], callArgs: { from: account } },
+    //     {
+    //       method: 'calcRedeemableAmount',
+    //       methodArgs: [this.allocatedTokens, this.actualAllocatedTokens, this.allocatedEth],
+    //       callArgs: { from: account },
+    //     },
+    //   ]);
+    //   console.log('this.allocatedTokens :>> ', this.allocatedTokens);
+    //   // this.isRedeemClaimed = isRedeemed;
+    //   this.redeemableAmount = redeemableAmount;
+    //   console.log('this.redeemableAmount :>> ', this.redeemableAmount);
+    // }
     this.userData = userData;
     this.isInitialized = true;
     this.emit(Web3Contract.UPDATE_DATA);
@@ -103,17 +105,17 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     });
   }
 
-  async calcRedeemableAmount(): Promise<void> {
-    return this.send('calcRedeemableAmount', [this.allocatedTokens, this.redeemableAmount, this.allocatedEth], {
-      from: this.account,
-    }).then(() => {
-      this.isRedeemClaimed = true;
-      this.redeemIndex = -1;
-      this.allocatedTokens = undefined;
-      this.allocatedEth = undefined;
-      this.emit(Web3Contract.UPDATE_DATA);
-    });
-  }
+  // async calcRedeemableAmount(): Promise<void> {
+  //   return this.send('calcRedeemableAmount', [this.allocatedTokens, this.redeemableAmount, this.allocatedEth], {
+  //     from: this.account,
+  //   }).then(() => {
+  //     this.isRedeemClaimed = true;
+  //     this.redeemIndex = -1;
+  //     this.allocatedTokens = undefined;
+  //     this.allocatedEth = undefined;
+  //     this.emit(Web3Contract.UPDATE_DATA);
+  //   });
+  // }
 
   async redeem(): Promise<void> {
     const actualBalance = BigNumber.from(this.userData.actualBalance);
@@ -144,14 +146,17 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       erc20: this.userData.erc20,
     };
 
-    const actualBalance = BigNumber.from(this.userData.actualBalance);
-    // const actualBalance = BigNumber.from(100);
+    //const actualBalance = BigNumber.from(this.userData.actualBalance);
+    const actualBalance = BigNumber.from(743564377);
+    console.log('actualBalance in distributor :>> ', actualBalance.toString());
     const allocatedTokens = BigNumber.from(this.allocatedTokens);
+    console.log('allocatedTokens in distributor :>> ', allocatedTokens.toString());
     const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
     this.userData.tokens = amountToRedeem;
     // this.userData.tokens = 55;
     console.log('this.userData.tokens :>> ', this.userData?.tokens.toString());
     const user = await Builder.create().withSignObject(buildObj).build();
+    console.log('user :>> ', user);
     await user.signPermit(this.userData.tokens.toString());
 
     const txHashListener = (txHash: string) => {
@@ -160,14 +165,14 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     };
     this.on('tx:hash', txHashListener);
 
-    return this.send('permitRedeem', [this.userData, user.permitMessage], {
-      from: this.account,
-    }).then(() => {
-      this.isRedeemClaimed = true;
-      this.redeemIndex = -1;
-      this.allocatedTokens = undefined;
-      this.allocatedEth = undefined;
-      this.emit(Web3Contract.UPDATE_DATA);
-    });
+    // return this.send('permitRedeem', [this.userData, user.permitMessage], {
+    //   from: this.account,
+    // }).then(() => {
+    //   this.isRedeemClaimed = true;
+    //   this.redeemIndex = -1;
+    //   this.allocatedTokens = undefined;
+    //   this.allocatedEth = undefined;
+    //   this.emit(Web3Contract.UPDATE_DATA);
+    // });
   }
 }
