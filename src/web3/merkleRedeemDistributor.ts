@@ -77,20 +77,20 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       return;
     }
 
-    // if (this.allocatedEth !== null && this.allocatedEth !== undefined && this.redeemIndex !== -1) {
-    //   const [isRedeemed, redeemableAmount] = await this.batch([
-    //     { method: 'isRedeemed', methodArgs: [this.redeemIndex], callArgs: { from: account } },
-    //     {
-    //       method: 'calcRedeemableAmount',
-    //       methodArgs: [this.allocatedTokens, this.actualAllocatedTokens, this.allocatedEth],
-    //       callArgs: { from: account },
-    //     },
-    //   ]);
-    //   console.log('this.allocatedTokens :>> ', this.allocatedTokens);
-    //   // this.isRedeemClaimed = isRedeemed;
-    //   this.redeemableAmount = redeemableAmount;
-    //   console.log('this.redeemableAmount :>> ', this.redeemableAmount);
-    // }
+    if (this.allocatedEth !== null && this.allocatedEth !== undefined && this.redeemIndex !== -1) {
+      const [isRedeemed, redeemableAmount] = await this.batch([
+        { method: 'isRedeemed', methodArgs: [this.redeemIndex], callArgs: { from: account } },
+        {
+          method: 'calcRedeemableAmount',
+          methodArgs: [this.allocatedTokens, this.actualAllocatedTokens, this.allocatedEth],
+          callArgs: { from: account },
+        },
+      ]);
+      console.log('this.allocatedTokens :>> ', this.allocatedTokens);
+      this.isRedeemClaimed = isRedeemed;
+      this.redeemableAmount = redeemableAmount;
+      console.log('this.redeemableAmount :>> ', this.redeemableAmount);
+    }
     this.userData = userData;
     this.isInitialized = true;
     this.emit(Web3Contract.UPDATE_DATA);

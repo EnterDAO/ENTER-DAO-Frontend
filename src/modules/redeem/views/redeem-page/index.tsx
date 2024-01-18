@@ -156,7 +156,7 @@ const Redeem: FC = () => {
               </div>
             ) : merkleDistributorContract?.isRedeemClaimed ? (
               <div className={s.card__empty}>
-                <AlreadyRedeemed entrAmount={allocatedTokens?.toString()} ethAmount={allocatedEth?.toFixed(2)!} />
+                <AlreadyRedeemed entrAmount={allocatedTokens?.toString()} ethAmount={allocatedEth?.toFixed(5)!} />
               </div>
             ) : (
               <div className={s.redeem__info__details}>
@@ -173,13 +173,13 @@ const Redeem: FC = () => {
 
                     <Text type="h2" style={{ color: 'white', fontSize: '16px' }}>
                       {' '}
-                      {allocatedTokens?.toString()} ENTR = {allocatedEth?.toFixed(2)} ETH
+                      {allocatedTokens?.toString()} ENTR = {allocatedEth?.toFixed(5)} ETH
                     </Text>
                   </div>
                 </div>
                 <div style={{ marginTop: '90px', width: '100%' }}>
                   <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                    Redeem {allocatedTokens?.toString()} ENTR for {allocatedEth?.toFixed(2)} ETH
+                    Redeem {allocatedTokens?.toString()} ENTR for {allocatedEth?.toFixed(5)} ETH
                   </button>
                   <span>Pay Attention</span> <br></br>
                   <span>You can redeem your tokens only once.</span>
