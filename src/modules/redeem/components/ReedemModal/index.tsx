@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Contract } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'ethers';
@@ -9,9 +9,6 @@ import Modal, { ModalProps } from 'components/antd/modal';
 import Spin from 'components/antd/spin';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
-import config from 'config';
-import BalanceTree from 'merkle-distributor/balance-tree';
-import { useWallet } from 'wallets/wallet';
 
 import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
 
@@ -21,72 +18,28 @@ const tokenAddress = '0xC11d929a6C6d6c68EeF19d305EFb04423f162620'; //TODO change
 
 export type RedeemModalProps = ModalProps & {
   merkleDistributor?: MerkleRedeemDistributor;
+  userData?: any;
 };
 
 const RedeemModal: FC<RedeemModalProps> = props => {
-  const { merkleDistributor, ...modalProps } = props;
+  const { merkleDistributor, userData, ...modalProps } = props;
   const { account, library } = useWeb3React();
+
   const [tokenBalance, setTokenBalance] = useState(0);
-  const walletCtx = useWallet();
+
   const erc20TokenContract = new Contract(tokenAddress, tokenAbi, library.getSigner());
   const [claiming, setClaiming] = useState(false);
 
   const merkleDistributorContract = merkleDistributor;
-
-  const tree = useMemo(() => {
-    let redeemData;
-    config.isDev
-      ? (redeemData = require(`../../../../merkle-distributor/tree.json`))
-      : (redeemData = require(`../../../../merkle-distributor/airdrop.json`));
-
-    const redeemAccounts = Object.entries(redeemData.redemptions).map(([address, data]) => ({
-      account: address,
-      tokens: BigNumber.from((data as any).tokens),
-      eth: BigNumber.from((data as any).eth),
-    }));
-
-    return new BalanceTree(redeemAccounts);
-  }, []);
-
   useEffect(() => {
     if (account && library) {
       const fetchBalance = async () => {
         const balance = await erc20TokenContract.balanceOf(account);
-        console.log('balance :>> ', balance.toString());
         setTokenBalance(balance.toString());
       };
       fetchBalance().catch(console.error);
     }
   }, [account, library, tokenAddress, tokenAbi, merkleDistributor]);
-
-  const redeemAmountETH = merkleDistributorContract?.allocatedEth || 0;
-  const redeemAmountENTR = merkleDistributorContract?.allocatedTokens || 0;
-
-  const redeemIndex = merkleDistributorContract?.redeemIndex ?? -1;
-
-  const merkleProof =
-    redeemIndex !== -1
-      ? tree.getProof(
-          +redeemIndex,
-          walletCtx.account || '',
-          BigNumber.from(redeemAmountENTR),
-          BigNumber.from(redeemAmountETH),
-        )
-      : [];
-
-  const userData = {
-    index: redeemIndex,
-    account: walletCtx.account,
-    tokens: redeemAmountENTR,
-    eth: redeemAmountETH,
-    merkleProof: merkleProof,
-    actualBalance: tokenBalance,
-    library: library,
-    erc20: erc20TokenContract,
-  };
-  console.log('userData.actualBalance :>> ', userData.actualBalance);
-  merkleDistributorContract!.loadUserData(userData);
-
   async function claimRedeem() {
     if (!account || !library || !merkleDistributorContract) return;
 
@@ -118,7 +71,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       setClaiming(true);
       await merkleDistributorContract?.permitRedeem();
     } catch (e) {
-      console.error("error", e);
+      console.error('error', e);
     } finally {
       setClaiming(false);
       window.location.reload();

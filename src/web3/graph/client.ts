@@ -14,7 +14,6 @@ export class GraphClient {
    */
   public static async get(options: any, primary: boolean = true, graphName?: string): Promise<ApolloQueryResult<any>> {
     const client = GraphClient._getClient(primary, graphName);
-
     try {
       return await client.query(options);
     } catch (e) {
@@ -35,11 +34,11 @@ export class GraphClient {
    * @private
    */
   private static _getClient(primary: boolean, graphName?: string): ApolloClient<any> {
-    const primaryURI = graphName === 'landworks' ? config.graph.landworks : config.graph.primaryUrl;
-    const fallbackURI = graphName === 'landworks' ? config.graph.landworksFallback : config.graph.fallbackUrl;
+    // const primaryURI = graphName === 'landworks' ? config.graph.landworks : config.graph.sepoliaUrl;
+    // const fallbackURI = graphName === 'landworks' ? config.graph.landworksFallback : config.graph.fallbackUrl;
 
     return new ApolloClient({
-      uri: primary ? primaryURI : fallbackURI,
+      uri: config.graph.sepoliaUrl,
       cache: new InMemoryCache(),
     });
   }

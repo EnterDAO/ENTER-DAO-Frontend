@@ -8,6 +8,7 @@ const config = {
   isProd: String(process.env.REACT_APP_ENV) === 'production',
   isTestnet: String(process.env.REACT_APP_ENV) === 'testnet',
   graph: {
+    sepoliaUrl: String(process.env.REACT_APP_SEPOLIA_GRAPH_URL),
     primaryUrl: String(process.env.REACT_APP_PRIMARY_GRAPH_URL),
     fallbackUrl: String(process.env.REACT_APP_FALLBACK_GRAPH_URL),
     landworks: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),

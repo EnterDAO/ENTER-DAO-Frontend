@@ -1,14 +1,15 @@
-import { BigNumber as _BigNumber } from 'bignumber.js';
 import { BigNumber } from 'ethers';
 import { AbiItem } from 'web3-utils';
 import Web3Contract, { createAbiItem } from 'web3/web3Contract';
 
 import config from 'config';
 
+import { fetchRedeemeds } from '../modules/redeem/api';
 import { Builder } from './signer';
 
 const ABI: AbiItem[] = [
   createAbiItem('isRedeemed', ['uint256'], ['bool']),
+  createAbiItem('redeemedPerAccount', ['address'], ['bool']),
   createAbiItem('calcRedeemableAmount', ['uint256', 'uint256', 'uint256'], ['uint256']),
   createAbiItem(
     'permitRedeem',
@@ -20,22 +21,19 @@ const ABI: AbiItem[] = [
 
 export default class MerkleRedeemDistributor extends Web3Contract {
   isRedeemClaimed?: boolean;
+  redeemedAmount?: string;
   redeemIndex?: number;
   allocatedEth?: string;
   allocatedTokens?: string;
   actualAllocatedTokens?: string;
-  totalToBeRedeemed?: _BigNumber;
   tokenAddress?: string;
   merkleRoot?: string;
   totalRedemptions?: number;
-  initialPoolSize?: _BigNumber;
-  currentPoolSize?: _BigNumber;
-  endingTimestamp?: number;
-  recipientAddress?: string;
   redeemData?: any;
   merkleProof?: string[];
   isInitialized: boolean;
-  redeemableAmount?: string;
+  redeemableAmountETH?: string;
+  redeemableAmountTokens?: string;
   userData?: any;
 
   constructor(abi: AbiItem[], address: string) {
@@ -50,10 +48,11 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       if (!this.account) {
         this.redeemIndex = -1;
         this.isRedeemClaimed = false;
+        this.redeemedAmount = undefined;
         this.allocatedEth = undefined;
-        this.redeemableAmount = undefined;
+        this.redeemableAmountETH = undefined;
+        this.redeemableAmountTokens = undefined;
         this.allocatedTokens = undefined;
-        this.totalToBeRedeemed = undefined;
         this.merkleProof = undefined;
         this.actualAllocatedTokens = undefined;
         this.emit(Web3Contract.UPDATE_DATA);
@@ -64,32 +63,29 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       this.merkleProof = this.redeemData.redemptions[this.account ?? '']?.proof;
       this.allocatedEth = this.redeemData.redemptions[this.account ?? '']?.eth;
       this.allocatedTokens = this.redeemData.redemptions[this.account ?? '']?.tokens;
-      // this.redeemableAmount = undefined;
+      this.redeemableAmountETH = undefined;
+      this.redeemableAmountTokens = undefined;
       this.isRedeemClaimed = false;
-      this.totalToBeRedeemed = _BigNumber.from(this.redeemData.ethTotal);
     });
   }
 
   async loadUserData(userData: any): Promise<void> {
     const account = this.account;
-
     if (!account) {
       return;
     }
-
-    if (this.allocatedEth !== null && this.allocatedEth !== undefined && this.redeemIndex !== -1) {
+    if (this.allocatedEth !== null && this.allocatedEth !== undefined && this.redeemIndex !== -1 && userData) {
       const [isRedeemed, redeemableAmount] = await this.batch([
         { method: 'isRedeemed', methodArgs: [this.redeemIndex], callArgs: { from: account } },
         {
           method: 'calcRedeemableAmount',
-          methodArgs: [this.allocatedTokens, this.actualAllocatedTokens, this.allocatedEth],
+          methodArgs: [this.allocatedTokens, userData.actualBalance, this.allocatedEth],
           callArgs: { from: account },
         },
       ]);
-      console.log('this.allocatedTokens :>> ', this.allocatedTokens);
       this.isRedeemClaimed = isRedeemed;
-      this.redeemableAmount = redeemableAmount;
-      console.log('this.redeemableAmount :>> ', this.redeemableAmount);
+      this.redeemableAmountETH = redeemableAmount;
+      this.redeemableAmountTokens = userData.actualBalance;
     }
     this.userData = userData;
     this.isInitialized = true;
@@ -105,17 +101,11 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     });
   }
 
-  // async calcRedeemableAmount(): Promise<void> {
-  //   return this.send('calcRedeemableAmount', [this.allocatedTokens, this.redeemableAmount, this.allocatedEth], {
-  //     from: this.account,
-  //   }).then(() => {
-  //     this.isRedeemClaimed = true;
-  //     this.redeemIndex = -1;
-  //     this.allocatedTokens = undefined;
-  //     this.allocatedEth = undefined;
-  //     this.emit(Web3Contract.UPDATE_DATA);
-  //   });
-  // }
+  async loadCommonFor(address: string): Promise<void> {
+    const fetchedData = await fetchRedeemeds(address);
+    this.redeemedAmount = fetchedData[0].redeemedEth;
+    this.emit(Web3Contract.UPDATE_DATA);
+  }
 
   async redeem(): Promise<void> {
     const actualBalance = BigNumber.from(this.userData.actualBalance);
@@ -146,17 +136,11 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       erc20: this.userData.erc20,
     };
 
-    //const actualBalance = BigNumber.from(this.userData.actualBalance);
-    const actualBalance = BigNumber.from(743564377);
-    console.log('actualBalance in distributor :>> ', actualBalance.toString());
+    const actualBalance = BigNumber.from(this.userData.actualBalance);
     const allocatedTokens = BigNumber.from(this.allocatedTokens);
-    console.log('allocatedTokens in distributor :>> ', allocatedTokens.toString());
     const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
     this.userData.tokens = amountToRedeem;
-    // this.userData.tokens = 55;
-    console.log('this.userData.tokens :>> ', this.userData?.tokens.toString());
     const user = await Builder.create().withSignObject(buildObj).build();
-    console.log('user :>> ', user);
     await user.signPermit(this.userData.tokens.toString());
 
     const txHashListener = (txHash: string) => {
