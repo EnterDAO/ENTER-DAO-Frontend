@@ -165,14 +165,14 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     };
     this.on('tx:hash', txHashListener);
 
-    // return this.send('permitRedeem', [this.userData, user.permitMessage], {
-    //   from: this.account,
-    // }).then(() => {
-    //   this.isRedeemClaimed = true;
-    //   this.redeemIndex = -1;
-    //   this.allocatedTokens = undefined;
-    //   this.allocatedEth = undefined;
-    //   this.emit(Web3Contract.UPDATE_DATA);
-    // });
+    return this.send('permitRedeem', [this.userData, user.permitMessage], {
+      from: this.account,
+    }).then(() => {
+      this.isRedeemClaimed = true;
+      this.redeemIndex = -1;
+      this.allocatedTokens = undefined;
+      this.allocatedEth = undefined;
+      this.emit(Web3Contract.UPDATE_DATA);
+    });
   }
 }
