@@ -105,6 +105,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     });
   }
 
+  //TODO add redeemed tokens when available
   async loadCommonFor(address: string): Promise<void> {
     this.redeemedAmount = (await fetchRedeemeds(address))[0].redeemedEth;
     this.emit(Web3Contract.UPDATE_DATA);
