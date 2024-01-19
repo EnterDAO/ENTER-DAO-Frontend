@@ -2,9 +2,9 @@
   background-color: var(--L11-D11);
   border: 2px solid var(--theme-border-color);
   border-radius: 8px;
-  padding: 17px 24px;
+  padding: 12px;
   position: relative;
-  max-height: 448px;
+  height: 448px;
 
   &__empty {
     padding-top: 30px;
@@ -28,6 +28,7 @@
     display: flex;
     justify-content: center;
     width: 100%;
+    min-width: 241px;
     padding-bottom: 70px;
   }
 
@@ -36,9 +37,8 @@
   }
 
   &__big {
-    background: url('../../../../resources/svg/mountain.svg') 0 150% no-repeat;
-
-    padding: 40px;
+    background: url('../../../../resources/svg/mountain2.svg') center bottom no-repeat;
+    background-size: contain; /* or 'contain' depending on your needs */
     position: relative;
 
     @media (max-width: 720px) {
@@ -48,10 +48,9 @@
     &::after {
       content: '';
       position: absolute;
-      background-size: contain;
+      bottom: 0;
       height: calc(100% - -24px);
       width: 100%;
-      top: -24px;
       pointer-events: none;
 
       @media (max-width: 720px) {
@@ -354,22 +353,36 @@
 }
 
 .redeem__info__details {
-  height: 448px;
   color: #fff;
   align-items: center;
   text-align: center;
   display: flex;
   flex-direction: column;
+  box-sizing: content-box;
 }
 
 .redeem__container {
   display: flex;
-  justify-content: center;
   width: 100%;
   flex-direction: column;
+  height: 220px;
 }
 
 .redeem__button {
   width: 100%;
   margin: 0 auto;
+}
+
+.redeem__button_container {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.warning__container {
+  background: rgb(37, 34, 94);
+  margin-top: 12px;
+  text-align: start;
+  padding: 8px 14px;
+  display: flex;
 }

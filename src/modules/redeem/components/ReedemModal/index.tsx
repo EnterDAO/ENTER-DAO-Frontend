@@ -9,12 +9,11 @@ import Modal, { ModalProps } from 'components/antd/modal';
 import Spin from 'components/antd/spin';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
+import config from 'config';
 
 import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
 
 import s from './RedeemModal.module.scss';
-
-const tokenAddress = '0xC11d929a6C6d6c68EeF19d305EFb04423f162620'; //TODO change to 0xd779eEA9936B4e323cDdff2529eb6F13d0A4d66e
 
 export type RedeemModalProps = ModalProps & {
   merkleDistributor?: MerkleRedeemDistributor;
@@ -27,7 +26,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
 
   const [tokenBalance, setTokenBalance] = useState(0);
 
-  const erc20TokenContract = new Contract(tokenAddress, tokenAbi, library.getSigner());
+  const erc20TokenContract = new Contract(config.tokens.entr, tokenAbi, library.getSigner());
   const [claiming, setClaiming] = useState(false);
 
   const merkleDistributorContract = merkleDistributor;
@@ -39,7 +38,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       };
       fetchBalance().catch(console.error);
     }
-  }, [account, library, tokenAddress, tokenAbi, merkleDistributor]);
+  }, [account, library, config.tokens.entr, tokenAbi, merkleDistributor]);
   async function claimRedeem() {
     if (!account || !library || !merkleDistributorContract) return;
 
@@ -55,11 +54,11 @@ const RedeemModal: FC<RedeemModalProps> = props => {
         await approvalTx.wait();
       }
       await merkleDistributorContract?.redeem();
+      window.location.reload();
     } catch (e) {
       console.error(e);
     } finally {
       setClaiming(false);
-      window.location.reload();
       props.onCancel?.();
     }
   }
@@ -70,11 +69,11 @@ const RedeemModal: FC<RedeemModalProps> = props => {
     try {
       setClaiming(true);
       await merkleDistributorContract?.permitRedeem();
+      window.location.reload();
     } catch (e) {
       console.error('error', e);
     } finally {
       setClaiming(false);
-      window.location.reload();
       props.onCancel?.();
     }
   }

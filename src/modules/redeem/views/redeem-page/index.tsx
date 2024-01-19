@@ -17,9 +17,11 @@ import BalanceTree from 'merkle-distributor/balance-tree';
 import FAQs from 'modules/redeem/components/FAQs';
 import RedeemModal from 'modules/redeem/components/ReedemModal';
 import { useRedeem } from 'modules/redeem/providers/redeem-provider';
+import warning from 'resources/svg/warning.svg';
 import { useWallet } from 'wallets/wallet';
 
 import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
+import redeemData from '../../../../merkle-distributor/tree.json';
 import graphic1Img from '../../animations/graphic1.svg';
 import graphic2Img from '../../animations/graphic2.svg';
 import AlreadyRedeemed from '../../components/AlreadyRedeemed';
@@ -29,8 +31,6 @@ import TextAndImage from '../../components/TextAndImage';
 
 import s from './redeem.module.scss';
 
-const tokenAddress = '0xC11d929a6C6d6c68EeF19d305EFb04423f162620'; //TODO change to 0xd779eEA9936B4e323cDdff2529eb6F13d0A4d66e
-
 const Redeem: FC = () => {
   const redeemCtx = useRedeem();
   const walletCtx = useWallet();
@@ -38,9 +38,9 @@ const Redeem: FC = () => {
   const { account, library } = useWeb3React();
   const erc20TokenContract = useMemo(() => {
     if (library) {
-      return new Contract(tokenAddress, tokenAbi, library.getSigner());
+      return new Contract(config.tokens.entr, tokenAbi, library.getSigner());
     }
-  }, [library, tokenAddress, tokenAbi]);
+  }, [library, config.tokens.entr, tokenAbi]);
 
   const [redeemModalVisible, showRedeemModal] = useState(false);
   const merkleDistributorContract = redeemCtx.merkleDistributor;
@@ -52,23 +52,20 @@ const Redeem: FC = () => {
   const redeemIndex = merkleDistributorContract?.redeemIndex ?? -1;
 
   const tree = useMemo(() => {
-    let redeemData;
-    config.isDev
-      ? (redeemData = require(`../../../../merkle-distributor/tree.json`))
-      : (redeemData = require(`../../../../merkle-distributor/airdrop.json`));
+    if (walletCtx.account) {
+      const redeemAccounts = Object.entries(redeemData.redemptions).map(([address, data]) => ({
+        account: address,
+        tokens: BigNumber.from((data as any).tokens),
+        eth: BigNumber.from((data as any).eth),
+      }));
 
-    const redeemAccounts = Object.entries(redeemData.redemptions).map(([address, data]) => ({
-      account: address,
-      tokens: BigNumber.from((data as any).tokens),
-      eth: BigNumber.from((data as any).eth),
-    }));
-
-    return new BalanceTree(redeemAccounts);
-  }, []);
+      return new BalanceTree(redeemAccounts);
+    }
+  }, [walletCtx]);
 
   const merkleProof =
     redeemIndex !== -1
-      ? tree.getProof(
+      ? tree?.getProof(
           +redeemIndex,
           walletCtx.account || '',
           BigNumber.from(redeemAmountENTR),
@@ -77,14 +74,24 @@ const Redeem: FC = () => {
       : [];
 
   useEffect(() => {
-    if (account && library && erc20TokenContract) {
+    if (account && library && erc20TokenContract && walletCtx.account) {
       const fetchBalance = async () => {
         const balance = await erc20TokenContract?.balanceOf(account);
         setTokenBalance(balance.toString());
       };
+      merkleDistributorContract?.loadCommonFor(walletCtx.account).catch(Error);
+
       fetchBalance().catch(console.error);
     }
-  }, [account, library, tokenAddress, tokenAbi, merkleDistributorContract, erc20TokenContract]);
+  }, [
+    account,
+    library,
+    config.tokens.entr,
+    tokenAbi,
+    merkleDistributorContract,
+    erc20TokenContract,
+    walletCtx.account,
+  ]);
 
   const userData = {
     index: redeemIndex,
@@ -109,15 +116,6 @@ const Redeem: FC = () => {
     EthToken.decimals,
   );
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (merkleDistributorContract?.isRedeemClaimed && wallet.isActive) {
-        await merkleDistributorContract?.loadCommonFor(wallet.account!).catch(Error);
-      }
-    };
-    loadData();
-  }, [wallet.isActive, merkleDistributorContract?.isRedeemClaimed]);
-
   if (!merkleDistributorContract?.isInitialized && wallet.isActive) {
     return <Spin />;
   }
@@ -128,7 +126,7 @@ const Redeem: FC = () => {
 
   return (
     <section className={s.page}>
-      <Grid colsTemplate={'1fr 1fr'} className={s.grid__container}>
+      <Grid colsTemplate={'1fr 1fr'} className={cn(s.grid__container, s.card__big)}>
         <div className={s.general__info}>
           <Text
             type="h1"
@@ -165,9 +163,17 @@ const Redeem: FC = () => {
                 </Text>
               </Hint>
               <div className="flex flow-col align-center">
-                <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                <Icon width={30} height={30} name="png/eth" className="mr-6" />
                 <Text type="h3" weight="bold" color="primary">
-                  {merkleDistributorContract?.isRedeemClaimed ? redeemedAmountETH?.toFixed(5) : '0.00'}
+                  {!wallet.isActive || lockedRedeem ? (
+                    '--'
+                  ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
+                    <Spin />
+                  ) : merkleDistributorContract?.isRedeemClaimed ? (
+                    redeemedAmountETH?.toFixed(5)
+                  ) : (
+                    '0.00000'
+                  )}
                 </Text>
                 &nbsp;
                 <Text type="h3">ETH</Text>
@@ -182,11 +188,17 @@ const Redeem: FC = () => {
                 </Text>
               </Hint>
               <div className="flex flow-col align-center">
-                <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                <Icon width={30} height={30} name="png/eth" className="mr-6" />
                 <Text type="h3" weight="bold" color="green">
-                  {merkleDistributorContract?.isRedeemClaimed
-                    ? allocatedEth?.minus(redeemedAmountETH!).toFixed(5)
-                    : allocatedEth?.toFixed(5)}
+                  {!wallet.isActive || lockedRedeem ? (
+                    '--'
+                  ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
+                    <Spin />
+                  ) : merkleDistributorContract?.isRedeemClaimed ? (
+                    allocatedEth?.minus(redeemedAmountETH!).toFixed(5)
+                  ) : (
+                    allocatedEth?.toFixed(5)
+                  )}
                 </Text>
                 &nbsp;
                 <Text type="h3" color="green">
@@ -195,11 +207,7 @@ const Redeem: FC = () => {
               </div>
             </div>
           </div>
-          <div
-            style={{ gridColumn: '1 / -1' }}
-            className={cn(s.card, {
-              [s.card__big]: !lockedRedeem && !merkleDistributorContract?.isRedeemClaimed,
-            })}>
+          <div style={{ gridColumn: '1 / -1' }}>
             {!wallet.isActive ? (
               <div className={s.card__empty}>
                 <NotConnectWallet />
@@ -208,9 +216,16 @@ const Redeem: FC = () => {
               <div className={s.card__empty}>
                 <NotEligible />
               </div>
+            ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
+              <div className={s.card__empty}>
+                <Spin />
+              </div>
             ) : merkleDistributorContract?.isRedeemClaimed ? (
               <div className={s.card__empty}>
-                <AlreadyRedeemed entrAmount={allocatedTokens?.toString()} ethAmount={allocatedEth?.toFixed(5)!} />
+                <AlreadyRedeemed
+                  entrAmount={redeemableAmountTokens?.toString()}
+                  ethAmount={redeemedAmountETH?.toFixed(5)!}
+                />
               </div>
             ) : (
               <div className={s.redeem__info__details}>
@@ -227,23 +242,34 @@ const Redeem: FC = () => {
 
                     <Text type="h2" style={{ color: 'white', fontSize: '16px' }}>
                       {' '}
-                      {allocatedTokens?.toString()} ENTR = {allocatedEth?.toFixed(5)} ETH
+                      {redeemableAmountTokens?.toString()} ENTR = {redeemableAmountETH?.toFixed(5)} ETH
                     </Text>
                   </div>
                 </div>
-                <div style={{ marginTop: '90px', width: '100%' }}>
+                <div className={s.redeem__button_container}>
                   <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
                     Redeem {redeemableAmountTokens?.toString()} ENTR for {redeemableAmountETH?.toFixed(5)} ETH
                   </button>
-                  <span>Pay Attention</span> <br></br>
-                  <span>You can redeem your tokens only once.</span>
+                  <div className={s.warning__container}>
+                    <div>
+                      <img src={warning} alt="" style={{ marginRight: '10px' }} />
+                    </div>
+                    <div>
+                      <span style={{ textTransform: 'revert' }}>
+                        <b>Pay Attention</b>
+                      </span>{' '}
+                      <br />
+                      <span style={{ color: '#B9B9D3', textTransform: 'revert' }}>
+                        You can redeem your tokens only once.
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </Grid>
       </Grid>
-      <div className={s.wavy__background}></div>
       <div className={s.container}>
         <TextAndImage image={graphic1Img} imageFirst>
           <div className={s.flex__column}>
