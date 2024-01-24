@@ -3,6 +3,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import AntdSpin, { SpinProps as AntdSpinProps } from 'antd/lib/spin';
 import cn from 'classnames';
 
+import loading from 'resources/svg/loading.svg';
+
 import s from './s.module.scss';
 
 type Props = AntdSpinProps & {
@@ -15,7 +17,7 @@ const Spin: React.FC<Props> = props => {
   const indicator = React.useMemo(() => {
     switch (type) {
       case 'circle':
-        return <LoadingOutlined spin />;
+        return <img src={loading} alt="Loading" className={s.spinner} style={{ width: '128px', height: '128px' }} />; // Use SVG
       default:
         break;
     }

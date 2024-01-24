@@ -1,11 +1,14 @@
 import { FC, createContext, useContext, useEffect, useMemo } from 'react';
+import { BigNumber as _BigNumber } from 'bignumber.js';
 import { AbiItem } from 'web3-utils';
 import ContractListener from 'web3/components/contract-listener';
 import MerkleRedeemDistributor from 'web3/merkleRedeemDistributor';
 import Web3Contract from 'web3/web3Contract';
 
+import { EthToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import { useReload } from 'hooks/useReload';
+import { formatBigNumber } from 'modules/redeem/views/redeem-page';
 import { useWallet } from 'wallets/wallet';
 
 import MerkleDistributorABI from '../../../../merkle-distributor/MerkleDistributor.json';
@@ -49,10 +52,19 @@ const RedeemProvider: FC = props => {
     merkleDistributor,
   };
 
+  const redeemableAmountETH = formatBigNumber(
+    new _BigNumber(merkleDistributor?.redeemableAmountETH ?? 0).unscaleBy(EthToken.decimals)!,
+  );
+  const redeemableAmountTokens = new _BigNumber(merkleDistributor?.redeemableAmountTokens ?? 0);
+
   return (
     <RedeemContext.Provider value={value}>
       {children}
-      <ContractListener contract={merkleDistributor} />
+      <ContractListener
+        contract={merkleDistributor}
+        redeemableAmountETH={redeemableAmountETH}
+        redeemableAmountTokens={redeemableAmountTokens.toString()}
+      />
     </RedeemContext.Provider>
   );
 };

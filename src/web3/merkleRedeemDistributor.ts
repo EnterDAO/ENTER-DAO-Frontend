@@ -163,4 +163,16 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       this.emit(Web3Contract.UPDATE_DATA);
     });
   }
+
+  async calcRedeemableAmount(): Promise<void> {
+    return this.send('calcRedeemableAmount', ['50', '100', this.allocatedEth], {
+      from: this.account,
+    }).then(() => {
+      this.isRedeemClaimed = true;
+      this.redeemIndex = -1;
+      this.allocatedTokens = undefined;
+      this.allocatedEth = undefined;
+      this.emit(Web3Contract.UPDATE_DATA);
+    });
+  }
 }

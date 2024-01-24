@@ -365,12 +365,13 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  height: 220px;
+  height: 290px;
 }
 
 .redeem__button {
   width: 100%;
   margin: 0 auto;
+  background: var(--Linear, linear-gradient(93deg, #ef9c92 0%, #dd3dcb 100%)) !important;
 }
 
 .redeem__button_container {
@@ -385,4 +386,8 @@
   text-align: start;
   padding: 8px 14px;
   display: flex;
+}
+
+.info__hint {
+  color: #ed9199 !important;
 }

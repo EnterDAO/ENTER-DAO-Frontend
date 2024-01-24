@@ -21,12 +21,6 @@ const RedeemPageView: React.FC = () => {
         closable: true,
         storageIdentity: 'bb_desktop_metamask_tx_warn',
       });
-    } else {
-      warningDestructor = warning.addWarn({
-        text: 'Do not send funds directly to the contract!',
-        closable: true,
-        storageIdentity: 'bb_send_funds_warn',
-      });
     }
 
     return () => {

@@ -1,4 +1,14 @@
 .redeemModal {
   width: 400px;
   height: 300px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.redeem__modal__button {
+  width: 100%;
+  margin: 0 auto;
+  color: white !important;
+  background: var(--Linear, linear-gradient(93deg, #ef9c92 0%, #dd3dcb 100%)) !important;
+  border-radius: 4px !important;
+  height: 40px !important;
 }

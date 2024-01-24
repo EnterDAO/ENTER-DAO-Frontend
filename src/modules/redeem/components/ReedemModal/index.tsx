@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Contract } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
-import { BigNumber } from 'ethers';
+import { BigNumber as _BigNumber } from 'bignumber.js';
 import MerkleRedeemDistributor from 'web3/merkleRedeemDistributor';
 
 import Button from 'components/antd/button';
@@ -9,7 +9,9 @@ import Modal, { ModalProps } from 'components/antd/modal';
 import Spin from 'components/antd/spin';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
+import { EthToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
+import warning from 'resources/svg/warning-2.svg';
 
 import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
 
@@ -18,10 +20,11 @@ import s from './RedeemModal.module.scss';
 export type RedeemModalProps = ModalProps & {
   merkleDistributor?: MerkleRedeemDistributor;
   userData?: any;
+  redeemableAmountETH?: string;
 };
 
 const RedeemModal: FC<RedeemModalProps> = props => {
-  const { merkleDistributor, userData, ...modalProps } = props;
+  const { merkleDistributor, userData, redeemableAmountETH, ...modalProps } = props;
   const { account, library } = useWeb3React();
 
   const [tokenBalance, setTokenBalance] = useState(0);
@@ -30,6 +33,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
   const [claiming, setClaiming] = useState(false);
 
   const merkleDistributorContract = merkleDistributor;
+
   useEffect(() => {
     if (account && library) {
       const fetchBalance = async () => {
@@ -39,29 +43,6 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       fetchBalance().catch(console.error);
     }
   }, [account, library, config.tokens.entr, tokenAbi, merkleDistributor]);
-  async function claimRedeem() {
-    if (!account || !library || !merkleDistributorContract) return;
-
-    const actualTokenBalance = BigNumber.from(tokenBalance);
-    const allocatedTokens = BigNumber.from(userData.tokens);
-    const amountToApprove = actualTokenBalance.lt(allocatedTokens) ? actualTokenBalance : allocatedTokens;
-
-    try {
-      setClaiming(true);
-      const currentAllowance = await erc20TokenContract.allowance(account, merkleDistributorContract.address);
-      if (currentAllowance.lt(amountToApprove)) {
-        const approvalTx = await erc20TokenContract.approve(merkleDistributorContract.address, amountToApprove);
-        await approvalTx.wait();
-      }
-      await merkleDistributorContract?.redeem();
-      window.location.reload();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setClaiming(false);
-      props.onCancel?.();
-    }
-  }
 
   async function claimPermitRedeem() {
     if (!account || !library || !merkleDistributorContract) return;
@@ -70,6 +51,20 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       setClaiming(true);
       await merkleDistributorContract?.permitRedeem();
       window.location.reload();
+    } catch (e) {
+      console.error('error', e);
+    } finally {
+      setClaiming(false);
+      props.onCancel?.();
+    }
+  }
+
+  async function calcRedeemableAmount() {
+    if (!account || !library || !merkleDistributorContract) return;
+
+    try {
+      setClaiming(true);
+      await merkleDistributorContract?.calcRedeemableAmount();
     } catch (e) {
       console.error('error', e);
     } finally {
@@ -87,43 +82,71 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       <div className="flex flow-row">
         {claiming === true ? (
           <div className="flex flow-row mb-32" style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <Text type="h2" weight="semibold" color="primary" className="mb-8" font="secondary">
-              Processing...
+            <Spin type="circle" style={{ padding: '44px 64px 10px 64px' }} />
+            <Text type="h2" style={{ fontWeight: '400' }} color="primary" className="mb-8" font="secondary">
+              Waiting For Confirmation
             </Text>
-            <Text type="h2" weight="semibold" color="primary" className="mb-8" font="secondary">
-              Please wait for Metamask pop-up
+            <Text
+              type="h2"
+              style={{ fontWeight: '400', fontSize: '16px', lineHeight: '24px' }}
+              color="primary"
+              className="mb-8"
+              font="secondary">
+              Redeeming {userData.tokens.toString()} ENTR for {redeemableAmountETH!.toString()} ETH
+            </Text>
+            <Text
+              type="h2"
+              style={{ fontWeight: '400', fontSize: '12px', lineHeight: '16px' }}
+              color="primary"
+              className="mb-8"
+              font="secondary">
+              Confirm this transaction in your wallet
             </Text>
           </div>
         ) : (
-          <div className="flex flow-row mb-32">
-            <Text type="h2" weight="semibold" color="primary" className="mb-8" font="secondary">
-              Redeem reward
-            </Text>
-            <Text type="p1" weight="500" color="secondary">
-              You have redeemable ETH from the $ENTR Redeem. <br></br>
-              <Text type="p1" tag="span" weight="bold" style={{ textTransform: 'uppercase' }}>
-                Warning: You can only claim once!
+          <div>
+            <div className="flex flow-row mb-32 justify-center align-center">
+              <Text
+                type="p1"
+                color="white"
+                className="mb-8"
+                font="secondary"
+                style={{ alignSelf: 'flex-start', fontWeight: '400', fontSize: '12px' }}>
+                Redeem ETH
               </Text>
-            </Text>
+              <img src={warning} alt="" style={{ marginRight: '10px', width: '128px', height: '128px' }} />
+              <Text type="h3" tag="span" color="primary" style={{ margin: '16px 0', fontSize: '24px', color: 'white' }}>
+                You can only redeem once!
+              </Text>
+              <Text type="p1" weight="500" color="secondary" className="mb-16">
+                {tokenBalance < userData.tokens ? (
+                  <Text type="p1" weight="500" color="secondary" align="center">
+                    You have {tokenBalance.toString()} ENTR in wallet but you are eligible for{' '}
+                    {userData.tokens.toString()} ENTR.
+                    <br />
+                    Are you sure?
+                  </Text>
+                ) : (
+                  <Text type="p1" weight="500" color="secondary" align="center">
+                    You have {tokenBalance.toString()} ENTR in wallet and you will burn {userData.tokens.toString()}{' '}
+                    ENTR.
+                  </Text>
+                )}
+              </Text>
+            </div>
+            <Spin spinning={claiming}>
+              <Button type="primary" onClick={() => claimPermitRedeem()} className={s.redeem__modal__button}>
+                Confirm Redeem
+              </Button>
+            </Spin>
+            <Spin spinning={claiming}>
+              <Button type="primary" onClick={() => calcRedeemableAmount()} className={s.redeem__modal__button}>
+                Test revert
+              </Button>
+            </Spin>
           </div>
         )}
-        <Grid flow="col" justify="space-between">
-          <Spin spinning={claiming === true}>
-            <Button type="primary" onClick={() => claimRedeem()}>
-              Redeem
-            </Button>
-          </Spin>
-          <Spin spinning={claiming === true}>
-            <Button type="primary" onClick={() => claimPermitRedeem()}>
-              Permit Redeem
-            </Button>
-          </Spin>
-          <Spin spinning={claiming === true}>
-            <Button type="ghost" onClick={() => cancelRedeemModal()}>
-              Cancel
-            </Button>
-          </Spin>
-        </Grid>
+        <Grid flow="col" justify="space-between"></Grid>
       </div>
     </Modal>
   );
