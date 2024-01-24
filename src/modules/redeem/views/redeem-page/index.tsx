@@ -7,6 +7,7 @@ import { BigNumber } from 'ethers';
 import { shortenAddr } from 'web3/utils';
 
 import Spin from 'components/antd/spin';
+import ExternalLink from 'components/custom/externalLink';
 import Grid from 'components/custom/grid';
 import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
@@ -116,7 +117,11 @@ const Redeem: FC = () => {
 
   const allocatedEth = new _BigNumber(merkleDistributorContract?.allocatedEth ?? 0).unscaleBy(EthToken.decimals);
   const allocatedTokens = new _BigNumber(merkleDistributorContract?.allocatedTokens ?? 0);
-  const redeemedAmountETH = new _BigNumber(merkleDistributorContract?.redeemedAmount ?? 0).unscaleBy(EthToken.decimals);
+  const redeemedAmountETH = new _BigNumber(merkleDistributorContract?.redeemedAmountETH ?? 0).unscaleBy(
+    EthToken.decimals,
+  );
+  const redeemedAmountTokens = new _BigNumber(merkleDistributorContract?.redeemedAmountTokens ?? 0);
+  const txHash = merkleDistributorContract?.txHash ?? '';
   const redeemableAmountTokens = new _BigNumber(merkleDistributorContract?.redeemableAmountTokens ?? 0);
   const redeemableAmountETH = new _BigNumber(merkleDistributorContract?.redeemableAmountETH ?? 0).unscaleBy(
     EthToken.decimals,
@@ -134,26 +139,30 @@ const Redeem: FC = () => {
     <section className={s.page}>
       <Grid colsTemplate={'1fr 1fr'} className={cn(s.grid__container, s.card__big)}>
         <div className={s.general__info}>
+          <span style={{ fontWeight: '300' }}>REDEEM </span>
+          <span>ETH</span>
+          <br />
+          <span style={{ fontWeight: '300' }}>FOR </span>
+          <span>ENTR</span>
           <Text
-            type="h1"
-            color="primary"
-            className="mb-8"
-            style={{ width: '400px', fontSize: '48px', textTransform: 'uppercase' }}>
-            {/* TODO ask for thin fonts */}
-            Redeem <b>ETH</b> for <b>ENTR</b>
-          </Text>
-          <Text type="p1" color="secondary" className="mb-32" style={{ width: '480px', color: 'white' }}>
+            type="p1"
+            color="secondary"
+            className="mb-32"
+            style={{ width: '480px', color: 'white', marginTop: '32px' }}>
             Use the ENTR Redemption Portal to redeem your ENTR for ETH. You can redeem your ENTR at a fixed rate of
             0.0025376 ETH until November 2nd 2024 at 23h59 UTC.
           </Text>
-          <a
+          <ExternalLink
             type="button"
             className="button-ghost"
-            style={{ height: '44px', width: '200px', fontSize: '16px' }}
+            style={{ height: '44px', width: '215px', fontSize: '16px' }}
             href="https://medium.com/enterdao">
             {/* TODO add real link to article */}
-            <span style={{ fontSize: '12px' }}>Read Medium Article</span>
-          </a>
+            <span
+              style={{ fontSize: '16px', fontWeight: '500', fontFamily: 'Poppins, sans-serif', textTransform: 'none' }}>
+              Read Medium Article
+            </span>
+          </ExternalLink>
         </div>
         <Grid
           colsTemplate="1fr 1fr"
@@ -164,7 +173,7 @@ const Redeem: FC = () => {
           <div className={s.info__vl}>
             <div>
               <Hint text="The amount of ETH you have already redeemed." className="mb-8">
-                <Text type="p2" color="secondary" style={{ textTransform: 'none' }}>
+                <Text type="p2" color="secondary" style={{ textTransform: 'none', fontSize: '12px' }}>
                   Total Redeemed
                 </Text>
               </Hint>
@@ -201,7 +210,7 @@ const Redeem: FC = () => {
                   ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
                     <Spin />
                   ) : merkleDistributorContract?.isRedeemClaimed ? (
-                    formatBigNumber(allocatedEth?.minus(redeemedAmountETH!)!)
+                    '0'
                   ) : (
                     formatBigNumber(allocatedEth!)
                   )}
@@ -229,8 +238,9 @@ const Redeem: FC = () => {
             ) : merkleDistributorContract?.isRedeemClaimed ? (
               <div className={s.card__empty}>
                 <AlreadyRedeemed
-                  entrAmount={redeemableAmountTokens?.toString()}
+                  entrAmount={redeemedAmountTokens?.toString()}
                   ethAmount={formatBigNumber(redeemedAmountETH!, 5)}
+                  txHash={txHash}
                 />
               </div>
             ) : (
@@ -250,7 +260,7 @@ const Redeem: FC = () => {
                   </Text>
                   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                     <Text type="h2" style={{ color: '#625F97', fontSize: '16px' }}>
-                      {/* TODO change this frod prod */}1 ENTR = 0.002 ETH
+                      {/* TODO change this for prod */}1 ENTR = 0.002 ETH
                     </Text>
 
                     <Text type="h2" style={{ color: 'white', fontSize: '16px' }}>

@@ -21,7 +21,7 @@ type TxStatus = {
 const ContractListener: React.FC<Props> = props => {
   const { contract, renderProgress, renderSuccess, redeemableAmountETH, redeemableAmountTokens } = props;
 
-  const [userRejectedVisible, setUserRejected] = React.useState(false);
+  const [userRejected, setUserRejected] = React.useState(false);
 
   const [txStatus, setTxStatus] = React.useState<TxStatus>({
     visible: false,
@@ -95,7 +95,7 @@ const ContractListener: React.FC<Props> = props => {
 
   return (
     <>
-      {userRejectedVisible && <UserRejectedModal onCancel={handleUserRejectedCancel} />}
+      {userRejected && <UserRejectedModal onCancel={handleUserRejectedCancel} />}
       {txStatus.visible && (
         <TxStatusModal
           state={txStatus.state}

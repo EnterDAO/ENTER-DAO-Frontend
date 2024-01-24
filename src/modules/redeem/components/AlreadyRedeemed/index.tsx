@@ -10,6 +10,7 @@ import s from './AlreadyRedeemed.module.scss';
 interface AlreadyRedeemedProps {
   entrAmount: string;
   ethAmount: string;
+  txHash: string;
 }
 
 export const boldWhiteStyle: React.CSSProperties = {
@@ -28,9 +29,8 @@ export const whiteStyle: React.CSSProperties = {
   lineHeight: '36px',
 };
 
-const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount }) => {
+const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount, txHash }) => {
   const wallet = useWallet();
-  const txHash = localStorage.getItem('transactionHash');
 
   return (
     <div className={s.block}>
@@ -48,7 +48,13 @@ const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount
           href={getEtherscanTxUrl(txHash!)}
           className={s.external__link}>
           View on Etherscan
-          <img width={20} height={20} src={etherscanLink} alt="etherscan link img" />
+          <img
+            width={16}
+            height={16}
+            src={etherscanLink}
+            alt="etherscan link img"
+            style={{ marginTop: '1px' }}
+          />
         </ExternalLink>{' '}
         <Text style={{ marginTop: '15px', color: 'white', fontSize: '16px' }} type="p2" color="secondary">
           Thank you for being part of EnterDAO!

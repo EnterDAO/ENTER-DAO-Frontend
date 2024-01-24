@@ -21,7 +21,8 @@ const ABI: AbiItem[] = [
 
 export default class MerkleRedeemDistributor extends Web3Contract {
   isRedeemClaimed?: boolean;
-  redeemedAmount?: string;
+  redeemedAmountETH?: string;
+  redeemedAmountTokens?: string;
   redeemIndex?: number;
   allocatedEth?: string;
   allocatedTokens?: string;
@@ -35,6 +36,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
   redeemableAmountETH?: string;
   redeemableAmountTokens?: string;
   userData?: any;
+  txHash?: string;
 
   constructor(abi: AbiItem[], address: string) {
     super([...ABI, ...abi], address, '');
@@ -48,7 +50,9 @@ export default class MerkleRedeemDistributor extends Web3Contract {
       if (!this.account) {
         this.redeemIndex = -1;
         this.isRedeemClaimed = false;
-        this.redeemedAmount = undefined;
+        this.redeemedAmountETH = undefined;
+        this.redeemedAmountTokens = undefined;
+        this.txHash = undefined;
         this.allocatedEth = undefined;
         this.redeemableAmountETH = undefined;
         this.redeemableAmountTokens = undefined;
@@ -105,32 +109,13 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     });
   }
 
-  //TODO add redeemed tokens when available
   async loadCommonFor(address: string): Promise<void> {
-    this.redeemedAmount = (await fetchRedeemeds(address))[0].redeemedEth;
+    const data = (await fetchRedeemeds(address))[0];
+    this.txHash = data.transactionHash;
+    this.redeemedAmountTokens = data.actualBalance;
+    this.redeemedAmountETH = data.redeemedEth;
+
     this.emit(Web3Contract.UPDATE_DATA);
-  }
-
-  async redeem(): Promise<void> {
-    const actualBalance = BigNumber.from(this.userData.actualBalance);
-    const allocatedTokens = BigNumber.from(this.allocatedTokens);
-    const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
-
-    const txHashListener = (txHash: string) => {
-      localStorage.setItem('transactionHash', txHash);
-      this.off('tx:hash', txHashListener);
-    };
-    this.on('tx:hash', txHashListener);
-
-    return this.send('redeem', [this.userData, amountToRedeem.toString()], {
-      from: this.account,
-    }).then(() => {
-      this.isRedeemClaimed = true;
-      this.redeemIndex = -1;
-      this.allocatedTokens = undefined;
-      this.allocatedEth = undefined;
-      this.emit(Web3Contract.UPDATE_DATA);
-    });
   }
 
   async permitRedeem(): Promise<void> {
@@ -143,7 +128,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     const actualBalance = BigNumber.from(this.userData.actualBalance);
     const allocatedTokens = BigNumber.from(this.allocatedTokens);
     const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
-    this.userData.tokens = amountToRedeem;
+    this.userData.tokens = amountToRedeem.toString();
     const user = await Builder.create().withSignObject(buildObj).build();
     await user.signPermit(this.userData.tokens.toString());
 
@@ -154,18 +139,6 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     this.on('tx:hash', txHashListener);
 
     return this.send('permitRedeem', [this.userData, user.permitMessage], {
-      from: this.account,
-    }).then(() => {
-      this.isRedeemClaimed = true;
-      this.redeemIndex = -1;
-      this.allocatedTokens = undefined;
-      this.allocatedEth = undefined;
-      this.emit(Web3Contract.UPDATE_DATA);
-    });
-  }
-
-  async calcRedeemableAmount(): Promise<void> {
-    return this.send('calcRedeemableAmount', ['50', '100', this.allocatedEth], {
       from: this.account,
     }).then(() => {
       this.isRedeemClaimed = true;

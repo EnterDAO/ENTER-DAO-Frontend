@@ -3,7 +3,6 @@ import Spin from 'antd/lib/spin';
 import { getEtherscanTxUrl } from 'web3/utils';
 import { Web3SendState } from 'web3/web3Contract';
 
-import Button from 'components/antd/button';
 import Modal, { ModalProps } from 'components/antd/modal';
 import ExternalLink from 'components/custom/externalLink';
 import Icon from 'components/custom/icon';

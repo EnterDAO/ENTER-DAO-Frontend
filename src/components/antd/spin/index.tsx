@@ -1,5 +1,4 @@
 import React from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
 import AntdSpin, { SpinProps as AntdSpinProps } from 'antd/lib/spin';
 import cn from 'classnames';
 

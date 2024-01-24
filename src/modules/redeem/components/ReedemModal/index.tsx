@@ -9,7 +9,6 @@ import Modal, { ModalProps } from 'components/antd/modal';
 import Spin from 'components/antd/spin';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
-import { EthToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import warning from 'resources/svg/warning-2.svg';
 
@@ -57,24 +56,6 @@ const RedeemModal: FC<RedeemModalProps> = props => {
       setClaiming(false);
       props.onCancel?.();
     }
-  }
-
-  async function calcRedeemableAmount() {
-    if (!account || !library || !merkleDistributorContract) return;
-
-    try {
-      setClaiming(true);
-      await merkleDistributorContract?.calcRedeemableAmount();
-    } catch (e) {
-      console.error('error', e);
-    } finally {
-      setClaiming(false);
-      props.onCancel?.();
-    }
-  }
-
-  async function cancelRedeemModal() {
-    props.onCancel?.();
   }
 
   return (
@@ -137,11 +118,6 @@ const RedeemModal: FC<RedeemModalProps> = props => {
             <Spin spinning={claiming}>
               <Button type="primary" onClick={() => claimPermitRedeem()} className={s.redeem__modal__button}>
                 Confirm Redeem
-              </Button>
-            </Spin>
-            <Spin spinning={claiming}>
-              <Button type="primary" onClick={() => calcRedeemableAmount()} className={s.redeem__modal__button}>
-                Test revert
               </Button>
             </Spin>
           </div>
