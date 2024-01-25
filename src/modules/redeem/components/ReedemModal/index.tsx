@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Contract } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
-import { BigNumber as _BigNumber } from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import MerkleRedeemDistributor from 'web3/merkleRedeemDistributor';
 
 import Button from 'components/antd/button';
@@ -20,13 +20,14 @@ export type RedeemModalProps = ModalProps & {
   merkleDistributor?: MerkleRedeemDistributor;
   userData?: any;
   redeemableAmountETH?: string;
+  redeemableAmountTokens?: string;
 };
 
 const RedeemModal: FC<RedeemModalProps> = props => {
-  const { merkleDistributor, userData, redeemableAmountETH, ...modalProps } = props;
+  const { merkleDistributor, userData, redeemableAmountETH, redeemableAmountTokens, ...modalProps } = props;
   const { account, library } = useWeb3React();
 
-  const [tokenBalance, setTokenBalance] = useState(0);
+  const [tokenBalance, setTokenBalance] = useState(new BigNumber(0));
 
   const erc20TokenContract = new Contract(config.tokens.entr, tokenAbi, library.getSigner());
   const [claiming, setClaiming] = useState(false);
@@ -37,7 +38,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
     if (account && library) {
       const fetchBalance = async () => {
         const balance = await erc20TokenContract.balanceOf(account);
-        setTokenBalance(balance.toString());
+        setTokenBalance(new BigNumber(balance.toString()));
       };
       fetchBalance().catch(console.error);
     }
@@ -73,7 +74,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
               color="primary"
               className="mb-8"
               font="secondary">
-              Redeeming {userData.tokens.toString()} ENTR for {redeemableAmountETH!.toString()} ETH
+              Redeeming {redeemableAmountTokens!.toString()} ENTR for {redeemableAmountETH!.toString()} ETH
             </Text>
             <Text
               type="h2"
@@ -100,8 +101,8 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                 You can only redeem once!
               </Text>
               <Text type="p1" weight="500" color="secondary" className="mb-16">
-                {tokenBalance < userData.tokens ? (
-                  <Text type="p1" weight="500" color="secondary" align="center">
+                {tokenBalance.lt(new BigNumber(userData.tokens)) ? (
+                  <Text type="p1" weight="500" color="secondary" align="center" style={{ color: 'white' }}>
                     You have {tokenBalance.toString()} ENTR in wallet but you are eligible for{' '}
                     {userData.tokens.toString()} ENTR.
                     <br />

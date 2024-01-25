@@ -41,7 +41,7 @@ export const formatBigNumber = (number: _BigNumber, decimalPlaces = 5) => {
 const Redeem: FC = () => {
   const redeemCtx = useRedeem();
   const walletCtx = useWallet();
-  const [tokenBalance, setTokenBalance] = useState(0);
+  const [tokenBalance, setTokenBalance] = useState<_BigNumber>(new _BigNumber(0));
   const { account, library } = useWeb3React();
   const erc20TokenContract = useMemo(() => {
     if (library) {
@@ -84,7 +84,7 @@ const Redeem: FC = () => {
     if (account && library && erc20TokenContract && walletCtx.account) {
       const fetchBalance = async () => {
         const balance = await erc20TokenContract?.balanceOf(account);
-        setTokenBalance(balance.toString());
+        setTokenBalance(new _BigNumber(balance.toString()));
       };
       merkleDistributorContract?.loadCommonFor(walletCtx.account).catch(Error);
 
@@ -106,7 +106,7 @@ const Redeem: FC = () => {
     tokens: redeemAmountENTR,
     eth: redeemAmountETH,
     merkleProof: merkleProof,
-    actualBalance: tokenBalance,
+    actualBalance: tokenBalance.toString(),
     library: library,
     erc20: erc20TokenContract,
   };
@@ -333,6 +333,7 @@ const Redeem: FC = () => {
           userData={userData}
           merkleDistributor={merkleDistributorContract}
           redeemableAmountETH={redeemableAmountETH && formatBigNumber(redeemableAmountETH!)}
+          redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
           onCancel={() => showRedeemModal(false)}
           className="redeem__modal"
         />

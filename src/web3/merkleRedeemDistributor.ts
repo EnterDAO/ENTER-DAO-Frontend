@@ -130,7 +130,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
     this.userData.tokens = amountToRedeem.toString();
     const user = await Builder.create().withSignObject(buildObj).build();
-    await user.signPermit(this.userData.tokens.toString());
+    await user.signPermit(amountToRedeem.toString());
 
     const txHashListener = (txHash: string) => {
       localStorage.setItem('transactionHash', txHash);
