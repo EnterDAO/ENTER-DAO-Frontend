@@ -1,51 +1,130 @@
-//TODO remove all airdrop references
-import { FC, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { Contract } from '@ethersproject/contracts';
+import { useWeb3React } from '@web3-react/core';
 import { BigNumber as _BigNumber } from 'bignumber.js';
 import cn from 'classnames';
-import Lottie from 'lottie-react';
-import ContractListener from 'web3/components/contract-listener';
-import TxConfirmModal, { ConfirmTxModalArgs } from 'web3/components/tx-confirm-modal';
-import TxStatusModal from 'web3/components/tx-status-modal';
-import { formatToken, shortenAddr } from 'web3/utils';
+import { BigNumber } from 'ethers';
+import { shortenAddr } from 'web3/utils';
 
-import Button from 'components/antd/button';
 import Spin from 'components/antd/spin';
+import ExternalLink from 'components/custom/externalLink';
 import Grid from 'components/custom/grid';
 import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
-import { useGeneral } from 'components/providers/general-provider';
-import { EnterToken, EthToken } from 'components/providers/known-tokens-provider';
+import { EthToken } from 'components/providers/known-tokens-provider';
+import config from 'config';
+import BalanceTree from 'merkle-distributor/balance-tree';
 import FAQs from 'modules/redeem/components/FAQs';
 import RedeemModal from 'modules/redeem/components/ReedemModal';
 import { useRedeem } from 'modules/redeem/providers/redeem-provider';
-import { useLandworksYf } from 'modules/yield-farming/providers/landworks-yf-provider';
+import warning from 'resources/svg/warning.svg';
 import { useWallet } from 'wallets/wallet';
 
-import { useMediaQuery } from '../../../../hooks';
+import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
+import redeemData from '../../../../merkle-distributor/tree.json';
 import graphic1Img from '../../animations/graphic1.svg';
 import graphic2Img from '../../animations/graphic2.svg';
-import AlreadyRedeemed from '../../components/AlreadyRedeemed';
+import AlreadyRedeemed, { boldWhiteStyle, whiteStyle } from '../../components/AlreadyRedeemed';
 import NotConnectWallet from '../../components/NotConnectWallet';
 import NotEligible from '../../components/NotEligible';
 import TextAndImage from '../../components/TextAndImage';
 
 import s from './redeem.module.scss';
 
+export const formatBigNumber = (number: _BigNumber, decimalPlaces = 5) => {
+  if (!number) return '0';
+
+  return parseFloat(number.toFixed(decimalPlaces)).toString();
+};
+
 const Redeem: FC = () => {
   const redeemCtx = useRedeem();
+  const walletCtx = useWallet();
+  const [tokenBalance, setTokenBalance] = useState<_BigNumber>(new _BigNumber(0));
+  const { account, library } = useWeb3React();
+  const erc20TokenContract = useMemo(() => {
+    if (library) {
+      return new Contract(config.tokens.entr, tokenAbi, library.getSigner());
+    }
+  }, [library, config.tokens.entr, tokenAbi]);
+
   const [redeemModalVisible, showRedeemModal] = useState(false);
   const merkleDistributorContract = redeemCtx.merkleDistributor;
 
   const wallet = useWallet();
-  const lockedAirDrop = !merkleDistributorContract?.redeemIndex;
 
-  const totalToBeRedeemed = new _BigNumber(merkleDistributorContract?.totalToBeRedeemed ?? 0).unscaleBy(
-    EnterToken.decimals,
-  );
+  const redeemAmountETH = merkleDistributorContract?.allocatedEth || 0;
+  const redeemAmountENTR = merkleDistributorContract?.allocatedTokens || 0;
+  const redeemIndex = merkleDistributorContract?.redeemIndex ?? -1;
+
+  const tree = useMemo(() => {
+    if (walletCtx.account) {
+      const redeemAccounts = Object.entries(redeemData.redemptions).map(([address, data]) => ({
+        account: address,
+        tokens: BigNumber.from((data as any).tokens),
+        eth: BigNumber.from((data as any).eth),
+      }));
+
+      return new BalanceTree(redeemAccounts);
+    }
+  }, [walletCtx]);
+
+  const merkleProof =
+    redeemIndex !== -1
+      ? tree?.getProof(
+          +redeemIndex,
+          walletCtx.account || '',
+          BigNumber.from(redeemAmountENTR),
+          BigNumber.from(redeemAmountETH),
+        )
+      : [];
+
+  useEffect(() => {
+    if (account && library && erc20TokenContract && walletCtx.account) {
+      const fetchBalance = async () => {
+        const balance = await erc20TokenContract?.balanceOf(account);
+        setTokenBalance(new _BigNumber(balance.toString()));
+      };
+      merkleDistributorContract?.loadCommonFor(walletCtx.account).catch(Error);
+
+      fetchBalance().catch(console.error);
+    }
+  }, [
+    account,
+    library,
+    config.tokens.entr,
+    tokenAbi,
+    merkleDistributorContract,
+    erc20TokenContract,
+    walletCtx.account,
+  ]);
+
+  const userData = {
+    index: redeemIndex,
+    account: walletCtx.account,
+    tokens: redeemAmountENTR,
+    eth: redeemAmountETH,
+    merkleProof: merkleProof,
+    actualBalance: tokenBalance.toString(),
+    library: library,
+    erc20: erc20TokenContract,
+  };
+  merkleDistributorContract!.loadUserData(userData);
+
+  const lockedRedeem =
+    merkleDistributorContract?.redeemIndex === -1 || merkleDistributorContract?.redeemIndex === undefined;
+
   const allocatedEth = new _BigNumber(merkleDistributorContract?.allocatedEth ?? 0).unscaleBy(EthToken.decimals);
-  const allocatedTokens = new _BigNumber(merkleDistributorContract?.allocatedTokens ?? 0).unscaleBy(
-    EnterToken.decimals,
+  const allocatedTokens = new _BigNumber(merkleDistributorContract?.allocatedTokens ?? 0);
+  const redeemedAmountETH = new _BigNumber(merkleDistributorContract?.redeemedAmountETH ?? 0).unscaleBy(
+    EthToken.decimals,
+  );
+  const redeemedAmountTokens = new _BigNumber(merkleDistributorContract?.redeemedAmountTokens ?? 0);
+  const txHash = merkleDistributorContract?.txHash ?? '';
+  const redeemableAmountTokens = new _BigNumber(merkleDistributorContract?.redeemableAmountTokens ?? 0);
+  const redeemableAmountETH = new _BigNumber(merkleDistributorContract?.redeemableAmountETH ?? 0).unscaleBy(
+    EthToken.decimals,
   );
 
   if (!merkleDistributorContract?.isInitialized && wallet.isActive) {
@@ -58,31 +137,33 @@ const Redeem: FC = () => {
 
   return (
     <section className={s.page}>
-      <Grid colsTemplate={'1fr 1fr'} className={s.grid__container}>
-        {/* <Grid> */}
+      <Grid colsTemplate={'1fr 1fr'} className={cn(s.grid__container, s.card__big)}>
         <div className={s.general__info}>
+          <span style={{ fontWeight: '300' }}>REDEEM </span>
+          <span>ETH</span>
+          <br />
+          <span style={{ fontWeight: '300' }}>FOR </span>
+          <span>ENTR</span>
           <Text
-            type="h1"
-            color="primary"
-            className="mb-8"
-            style={{ width: '400px', fontSize: '48px', textTransform: 'uppercase' }}>
-            {/* TODO ask for thin fonts */}
-            Redeem <b>ETH</b> for <b>ENTR</b>
-          </Text>
-          <Text type="p1" color="secondary" className="mb-32" style={{ width: '480px', color: 'white' }}>
+            type="p1"
+            color="secondary"
+            className="mb-32"
+            style={{ width: '480px', color: 'white', marginTop: '32px' }}>
             Use the ENTR Redemption Portal to redeem your ENTR for ETH. You can redeem your ENTR at a fixed rate of
             0.0025376 ETH until November 2nd 2024 at 23h59 UTC.
           </Text>
-          <a
+          <ExternalLink
             type="button"
             className="button-ghost"
-            style={{ height: '44px', width: '200px', fontSize: '16px' }}
+            style={{ height: '44px', width: '215px', fontSize: '16px' }}
             href="https://medium.com/enterdao">
             {/* TODO add real link to article */}
-            <span style={{ fontSize: '12px' }}>Read Medium Article</span>
-          </a>
+            <span
+              style={{ fontSize: '16px', fontWeight: '500', fontFamily: 'Poppins, sans-serif', textTransform: 'none' }}>
+              Read Medium Article
+            </span>
+          </ExternalLink>
         </div>
-        {/* </Grid> */}
         <Grid
           colsTemplate="1fr 1fr"
           rowsTemplate="auto auto"
@@ -91,83 +172,128 @@ const Redeem: FC = () => {
           className={cn(s.card, s.card__head, 'mb-32')}>
           <div className={s.info__vl}>
             <div>
-              <Hint text="The amount of $ENTR claimed to date." className="mb-8">
-                <Text type="p2" color="secondary" style={{ textTransform: 'none' }}>
-                  Total Claimed
+              <Hint text="The amount of ETH you have already redeemed." className="mb-8">
+                <Text type="p2" color="secondary" style={{ textTransform: 'none', fontSize: '12px' }}>
+                  Total Redeemed
                 </Text>
               </Hint>
-              <div className="flex flow-col align-center">
-                <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+              <div className="flex flow-col align-center justify-center mr-8">
+                <Icon width={30} height={30} name="png/eth" className="mr-6" />
                 <Text type="h3" weight="bold" color="primary">
-                  {totalToBeRedeemed?.toString()}
-                  {formatToken(totalToBeRedeemed)}
+                  {!wallet.isActive || lockedRedeem ? (
+                    '--'
+                  ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
+                    <Spin />
+                  ) : merkleDistributorContract?.isRedeemClaimed ? (
+                    formatBigNumber(redeemedAmountETH!, 5)
+                  ) : (
+                    '0'
+                  )}
                 </Text>
                 &nbsp;
-                <Text type="h3">ENTR</Text>
+                <Text type="h3">ETH</Text>
               </div>
             </div>
           </div>
           <div className={cn(s.info__vl, s.info__vl__last)}>
             <div>
-              <Hint
-                text="The amount of remaining $ENTR to be distributed across remaining recipients."
-                className="mb-8">
-                <Text type="p2" color="secondary" style={{ textTransform: 'none', color: 'black' }}>
-                  Total Remaining
+              <Hint text="The amount of ETH you are eligible for." className="mb-8">
+                <Text type="p2" color="secondary" style={{ textTransform: 'none', color: '#25225E', fontSize: '12px' }}>
+                  Eligible For
                 </Text>
               </Hint>
-              <div className="flex flow-col align-center">
-                <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+              <div className="flex flow-col align-center align-center mr-8">
+                <Icon width={30} height={30} name="png/eth" className="mr-6" />
                 <Text type="h3" weight="bold" color="green">
-                  TODO calc remaining amount
-                  {/* {formatToken(totalRedistributed)} */}
+                  {!wallet.isActive || lockedRedeem ? (
+                    '--'
+                  ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
+                    <Spin />
+                  ) : merkleDistributorContract?.isRedeemClaimed ? (
+                    '0'
+                  ) : (
+                    formatBigNumber(allocatedEth!)
+                  )}
                 </Text>
                 &nbsp;
                 <Text type="h3" color="green">
-                  ENTR
+                  ETH
                 </Text>
               </div>
             </div>
           </div>
-          <div
-            style={{ gridColumn: '1 / -1' }}
-            className={cn(s.card, {
-              [s.card__big]: !lockedAirDrop && !merkleDistributorContract?.isRedeemClaimed,
-            })}>
-            {
-              // !wallet.isActive ? (
-              //   <div className={s.card__empty}>
-              //     <NotConnectWallet />
-              //   </div>
-              // ) : lockedAirDrop ? (
-              //   <div className={s.card__empty}>
-              //     <NotEligible />
-              //   </div>
-              // ) : merkleDistributorContract?.isAirdropClaimed ? (
-              //   <div className={s.card__empty}>
-              //     <AlreadyRedeemed entrAmount={'400'} ethAmount={'0.08'} />
-              //   </div>
-              // ) :
-
+          <div style={{ gridColumn: '1 / -1' }}>
+            {!wallet.isActive ? (
+              <div className={s.card__empty}>
+                <NotConnectWallet />
+              </div>
+            ) : lockedRedeem ? (
+              <div className={s.card__empty}>
+                <NotEligible />
+              </div>
+            ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
+              <div className={s.card__empty}>
+                <Spin />
+              </div>
+            ) : merkleDistributorContract?.isRedeemClaimed ? (
+              <div className={s.card__empty}>
+                <AlreadyRedeemed
+                  entrAmount={redeemedAmountTokens?.toString()}
+                  ethAmount={formatBigNumber(redeemedAmountETH!, 5)}
+                  txHash={txHash}
+                />
+              </div>
+            ) : (
               <div className={s.redeem__info__details}>
                 <div className={s.redeem__container}>
-                  <Text type="h2">{`ENTR Tokens ${shortenAddr(wallet.account, 8, 8)} can redeem`}</Text>
-                  <Text type="h1">400 ENTR</Text>
-                  <Text type="h2"> 1 ENT = 0.002 ETH 400 ENT = 0.08 ETH</Text>
+                  <Text type="h1">
+                    <span style={{ ...boldWhiteStyle, fontSize: '16px' }}>{`${shortenAddr(
+                      wallet.account,
+                      5,
+                      3,
+                    )}`}</span>
+                    <span style={{ ...whiteStyle, fontSize: '16px' }}> can redeem</span>
+                  </Text>
+                  <Text type="h1">
+                    <span style={{ ...boldWhiteStyle, fontSize: '48px' }}>{redeemableAmountTokens?.toString()}</span>
+                    <span style={{ ...whiteStyle, fontSize: '48px' }}> ENTR</span>
+                  </Text>
+                  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                    <Text type="h2" style={{ color: '#625F97', fontSize: '16px' }}>
+                      {/* TODO change this for prod */}1 ENTR = 0.002 ETH
+                    </Text>
+
+                    <Text type="h2" style={{ color: 'white', fontSize: '16px' }}>
+                      {redeemableAmountTokens?.toString()} ENTR = {formatBigNumber(redeemableAmountETH!)} ETH
+                    </Text>
+                  </div>
                 </div>
-                <div>
+                <div className={s.redeem__button_container}>
                   <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                    Redeem {allocatedTokens?.toString()} ENTR for {allocatedEth?.toString()} ETH
+                    Redeem {redeemableAmountTokens?.toString()} ENTR for {formatBigNumber(redeemableAmountETH!)} ETH
                   </button>
-                  <span>Pay Attention</span>
-                  <span>You can redeem your tokens only once.</span>
+                  <div className={s.warning__container}>
+                    <div style={{ marginTop: '-3px' }}>
+                      <img src={warning} alt="" style={{ marginRight: '10px' }} />
+                    </div>
+                    <div style={{ fontSize: '12px', lineHeight: '18px' }}>
+                      <span style={{ textTransform: 'revert' }}>
+                        <b>Pay Attention</b>
+                      </span>{' '}
+                      <br />
+                      <span style={{ color: '#B9B9D3', textTransform: 'revert' }}>
+                        If you redeem half of the tokens you lose the option to redeem the rest!
+                      </span>
+                      <br />
+                      <span style={{ color: '#B9B9D3' }}>YOU CAN EXECUTE A REDEEM TRANSACTION ONLY ONCE!</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            }
+            )}
           </div>
         </Grid>
       </Grid>
-      <div className={s.wavy__background}></div>
       <div className={s.container}>
         <TextAndImage image={graphic1Img} imageFirst>
           <div className={s.flex__column}>
@@ -203,7 +329,14 @@ const Redeem: FC = () => {
       </div>
       <FAQs />
       {redeemModalVisible && (
-        <RedeemModal merkleDistributor={merkleDistributorContract} onCancel={() => showRedeemModal(false)} />
+        <RedeemModal
+          userData={userData}
+          merkleDistributor={merkleDistributorContract}
+          redeemableAmountETH={redeemableAmountETH && formatBigNumber(redeemableAmountETH!)}
+          redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
+          onCancel={() => showRedeemModal(false)}
+          className="redeem__modal"
+        />
       )}
     </section>
   );

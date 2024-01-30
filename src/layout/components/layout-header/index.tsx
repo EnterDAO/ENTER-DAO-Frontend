@@ -228,7 +228,7 @@ const LayoutHeader: React.FC = () => {
                         wallet.showWalletsModal();
                       }}
                       style={{ margin: '20px auto 0' }}>
-                      <span>Sign in</span>
+                      <span>Connect</span>
                     </button>
                   </div>
                 ) : null}

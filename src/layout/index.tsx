@@ -37,7 +37,7 @@ const LayoutView: React.FC = () => {
             </ErrorBoundary>
           </main>
           <LayoutFooter />
-          <ThemeSwitcher />
+          {/* <ThemeSwitcher /> */}
         </WarningProvider>
       </div>
     </div>

@@ -64,6 +64,10 @@ export function getEtherscanTxUrl(txHash?: string, chainId = config.web3.chainId
         return `https://rinkeby.etherscan.io/tx/${txHash}`;
       case 42:
         return `https://kovan.etherscan.io/tx/${txHash}`;
+      case 80001:
+        return `https://mumbai.polygonscan.com/tx/${txHash}`;
+      case 11155111:
+        return `https://sepolia.etherscan.io/tx/${txHash}`;
       default:
     }
   }
@@ -81,7 +85,9 @@ export function getEtherscanAddressUrl(address?: string, chainId = config.web3.c
       case 42:
         return `https://kovan.etherscan.io/address/${address}`;
       case 80001:
-        return 'https://mumbai.polygonscan.com/';
+        return `https://mumbai.polygonscan.com/address/${address}`;
+      case 11155111:
+        return `https://sepolia.etherscan.io/address/${address}`;
       default:
     }
   }
@@ -104,6 +110,8 @@ export function getEtherscanABIUrl(
         return `https://api-kovan.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
       case 80001:
         return `https://api-testnet.polygonscan.com/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
+      case 11155111:
+        return `https://api-sepolia.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
       default:
     }
   }

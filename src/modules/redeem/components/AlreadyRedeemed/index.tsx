@@ -10,24 +10,56 @@ import s from './AlreadyRedeemed.module.scss';
 interface AlreadyRedeemedProps {
   entrAmount: string;
   ethAmount: string;
+  txHash: string;
 }
-const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount }) => {
+
+export const boldWhiteStyle: React.CSSProperties = {
+  color: 'white',
+  fontWeight: 700,
+  textTransform: 'none' as const,
+  fontSize: '24px',
+  lineHeight: '36px',
+};
+
+export const whiteStyle: React.CSSProperties = {
+  color: 'white',
+  textTransform: 'none' as const,
+  fontWeight: 300,
+  fontSize: '24px',
+  lineHeight: '36px',
+};
+
+const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount, txHash }) => {
   const wallet = useWallet();
+
   return (
     <div className={s.block}>
-      <Text type="p2" color="secondary">
-        {`${shortenAddr(wallet.account, 8, 8)} have successfully redeemed ${entrAmount} ENTR for ${ethAmount} ETH`}
+      <Text type="p2" color="secondary" style={{ fontSize: '24px', margin: '50px 0' }}>
+        <span style={boldWhiteStyle}>{shortenAddr(wallet.account, 5, 3)}</span>
+        <span style={whiteStyle}> have successfully</span>
+        <br />
+        <span style={whiteStyle}> redeemed</span>
+        <span style={boldWhiteStyle}> {entrAmount} ENTR</span>
+        <span style={whiteStyle}> for</span> <span style={boldWhiteStyle}>{ethAmount} ETH</span>
       </Text>
-      {/* TODO replace when you get real tx hash */}
-      <ExternalLink
-        style={{ color: 'white' }}
-        href={getEtherscanTxUrl('0x94AA6CF540CE63ECA0499E9537784665FB13B24DCA3FE3ACB62308A2C9C65C69')}>
-        View on Etherscan
-        <img width={20} height={20} src={etherscanLink} alt="etherscan link img" />
-      </ExternalLink>{' '}
-      <Text type="p2" color="secondary">
-        Thank you for being part of EnterDAO!
-      </Text>
+      <div style={{ marginTop: '50px' }}>
+        <ExternalLink
+          style={{ color: 'white', fontSize: '16px' }}
+          href={getEtherscanTxUrl(txHash!)}
+          className={s.external__link}>
+          View on Etherscan
+          <img
+            width={16}
+            height={16}
+            src={etherscanLink}
+            alt="etherscan link img"
+            style={{ marginTop: '1px' }}
+          />
+        </ExternalLink>{' '}
+        <Text style={{ marginTop: '15px', color: 'white', fontSize: '16px' }} type="p2" color="secondary">
+          Thank you for being part of EnterDAO!
+        </Text>
+      </div>
     </div>
   );
 };

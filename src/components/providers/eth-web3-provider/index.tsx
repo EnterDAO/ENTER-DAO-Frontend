@@ -27,6 +27,8 @@ export function getNetworkName(chainId: number | undefined): string {
       return 'Kovan';
     case 80001:
       return 'Mumbai';
+    case 11155111:
+      return 'Sepolia';
     default:
       return '-';
   }

@@ -6,11 +6,13 @@
   :global(.ant-modal-content) {
     box-shadow: var(--theme-modal-shadow);
     border-radius: 12px;
+    min-width: 450px;
+    background-color: #383467;
   }
 
   :global(.ant-modal-close) {
-    top: 32px;
-    right: 32px;
+    top: 20px;
+    right: 30px;
   }
 
   :global(.ant-modal-close-x) {
@@ -20,11 +22,11 @@
   }
 
   :global(.ant-modal-close-x) svg {
-    color: var(--theme-icon-color);
+    color: white;
   }
 
   :global(.ant-modal-header) {
-    padding: 32px;
+    padding: 12px;
     background: var(--theme-card-color);
     border-bottom: 1px solid var(--theme-border-color);
     border-radius: 12px 12px 0 0;
@@ -38,9 +40,12 @@
   }
 
   :global(.ant-modal-body) {
-    background: var(--theme-card-color);
-    overflow-y: auto;
+    background-color: #383467;
+    overflow-y: hidden; /* Keeps vertical scroll if content is taller than modal */
+    overflow-x: hidden; /* Hides horizontal scrollbar */
     border-radius: 12px;
+    padding: 5px;
+    max-width: 100%; /* Ensure the content does not overflow */
   }
 
   :global(.ant-modal-header) + :global(.ant-modal-body) {

@@ -1,12 +1,14 @@
-import React, { FC, createContext, useContext, useEffect, useMemo } from 'react';
+import { FC, createContext, useContext, useEffect, useMemo } from 'react';
+import { BigNumber as _BigNumber } from 'bignumber.js';
 import { AbiItem } from 'web3-utils';
 import ContractListener from 'web3/components/contract-listener';
-import MerkleDistributor from 'web3/merkleDistributor';
 import MerkleRedeemDistributor from 'web3/merkleRedeemDistributor';
 import Web3Contract from 'web3/web3Contract';
 
+import { EthToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import { useReload } from 'hooks/useReload';
+import { formatBigNumber } from 'modules/redeem/views/redeem-page';
 import { useWallet } from 'wallets/wallet';
 
 import MerkleDistributorABI from '../../../../merkle-distributor/MerkleDistributor.json';
@@ -16,7 +18,7 @@ export type RedeemType = {
 };
 
 const RedeemContext = createContext<RedeemType>({
-  merkleDistributor: undefined, // TODO add merkleDistributor
+  merkleDistributor: undefined,
 });
 
 export function useRedeem(): RedeemType {
@@ -29,21 +31,13 @@ const RedeemProvider: FC = props => {
   const walletCtx = useWallet();
   const [reload] = useReload();
   const merkleDistributor = useMemo(() => {
-    //TODO Hris
     const merkleDistributor = new MerkleRedeemDistributor(
       MerkleDistributorABI.abi as AbiItem[],
-      '0xf3bFEC2EAE9AdaaDedF8BDcbCAC1A11F4A907353',
+      config.contracts.merkleDistributor,
     );
-
-    //const merkleDistributor = new MerkleDistributor(MerkleDistributorABI, '0x008cC6e39B764c2AfAd0fdcd1Dd452a2573d7B9F');
     merkleDistributor.on(Web3Contract.UPDATE_DATA, reload);
-
     return merkleDistributor;
   }, []);
-
-  // useEffect(() => {
-  //   merkleDistributor.loadCommonFor().catch(Error);
-  // }, []);
 
   useEffect(() => {
     merkleDistributor.setProvider(walletCtx.provider);
@@ -51,17 +45,26 @@ const RedeemProvider: FC = props => {
 
   useEffect(() => {
     merkleDistributor.setAccount(walletCtx.account);
-    merkleDistributor.loadUserData().catch(Error);
+    merkleDistributor.loadUserData(undefined).catch(Error);
   }, [walletCtx.account]);
 
   const value: RedeemType = {
     merkleDistributor,
   };
 
+  const redeemableAmountETH = formatBigNumber(
+    new _BigNumber(merkleDistributor?.redeemableAmountETH ?? 0).unscaleBy(EthToken.decimals)!,
+  );
+  const redeemableAmountTokens = new _BigNumber(merkleDistributor?.redeemableAmountTokens ?? 0);
+
   return (
     <RedeemContext.Provider value={value}>
       {children}
-      <ContractListener contract={merkleDistributor} />
+      <ContractListener
+        contract={merkleDistributor}
+        redeemableAmountETH={redeemableAmountETH}
+        redeemableAmountTokens={redeemableAmountTokens.toString()}
+      />
     </RedeemContext.Provider>
   );
 };
