@@ -13,7 +13,11 @@ export class GraphClient {
    * @param primary Whether to use the primary or the fallback node. Defaults to primary
    */
   public static async get(options: any, primary: boolean = true, graphName?: string): Promise<ApolloQueryResult<any>> {
-    const client = GraphClient._getClient(primary, graphName);
+    const client = new ApolloClient({
+      uri: config.graph,
+      cache: new InMemoryCache(),
+    });
+
     try {
       return await client.query(options);
     } catch (e) {
@@ -26,19 +30,5 @@ export class GraphClient {
         throw e;
       }
     }
-  }
-
-  /**
-   * Returns an instance of an ApolloClient
-   * @param primary whether to use to primary or fallback node
-   * @private
-   */
-  private static _getClient(primary: boolean, graphName?: string): ApolloClient<any> {
-    const primaryURI = graphName === 'landworks' ? config.graph.landworks : config.graph.primaryUrl;
-
-    return new ApolloClient({
-      uri: graphName === 'redeemUrl' ? config.graph.redeemUrl : primaryURI,
-      cache: new InMemoryCache(),
-    });
   }
 }

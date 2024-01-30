@@ -1,16 +1,11 @@
 import { gql } from '@apollo/client';
 import BigNumber from 'bignumber.js';
 
+import config from 'config';
+
 import { GraphClient } from '../../web3/graph/client';
 
 import { PaginatedResult } from 'utils/fetch';
-import config from 'config';
-
-export const GRAPHS = {
-  LANDWORKS: 'landworks',
-  DAO_GOVERNANCE: 'primaryUrl',
-  REDEEM: 'redeemUrl'
-};
 
 export enum APIYFPoolActionType {
   DEPOSIT = 'DEPOSIT',
@@ -91,7 +86,7 @@ export type UserNotStakedAsset = {
   id: string;
   unclaimedRentFee: string;
   decentralandData: DecentralandData;
-}
+};
 
 export type UserStakedAssets = {
   tokenId: string;
@@ -108,45 +103,41 @@ export type UserStakedAssetsWithData = {
  * @param address The address of the user
  */
 export function fetchNotStakedAssets(address: string): Promise<UserNotStakedAsset[]> {
-  return GraphClient.get(
-    {
-      query: gql`
-        query GetUser($id: String) {
-          assets(where: { owner: $id, status: "LISTED" }) {
+  return GraphClient.get({
+    query: gql`
+      query GetUser($id: String) {
+        assets(where: { owner: $id, status: "LISTED" }) {
+          id
+          metaverseAssetId
+          minPeriod
+          maxPeriod
+          maxFutureTime
+          unclaimedRentFee
+          pricePerSecond
+          lastRentEnd
+          status
+          paymentToken {
             id
-            metaverseAssetId
-            minPeriod
-            maxPeriod
-            maxFutureTime
-            unclaimedRentFee
-            pricePerSecond
-            lastRentEnd
-            status
-            paymentToken {
+            name
+            symbol
+            decimals
+          }
+          decentralandData {
+            metadata
+            isLAND
+            coordinates {
               id
-              name
-              symbol
-              decimals
-            }
-            decentralandData {
-              metadata
-              isLAND
-              coordinates {
-                id
-                x
-                y
-              }
+              x
+              y
             }
           }
         }
-      `,
-      variables: {
-        id: address.toLowerCase(),
-      },
+      }
+    `,
+    variables: {
+      id: address.toLowerCase(),
     },
-    true,
-    GRAPHS.LANDWORKS,
-  )
+  })
     .then(async response => {
       const result = [...response.data.assets];
       return result;
@@ -183,32 +174,28 @@ export function fetchStakedAssets(address: string): Promise<UserStakedAssets[]> 
 }
 
 export function fetchAssetsById(ids: string[]): Promise<UserStakedAssetsWithData[]> {
-  return GraphClient.get(
-    {
-      query: gql`
-        query fetchAssetsDecentralandData($ids: [String]) {
-          assets(where: { id_in: $ids }) {
-            id
-            unclaimedRentFee
-            decentralandData {
-              metadata
-              isLAND
-              coordinates {
-                id
-                x
-                y
-              }
+  return GraphClient.get({
+    query: gql`
+      query fetchAssetsDecentralandData($ids: [String]) {
+        assets(where: { id_in: $ids }) {
+          id
+          unclaimedRentFee
+          decentralandData {
+            metadata
+            isLAND
+            coordinates {
+              id
+              x
+              y
             }
           }
         }
-      `,
-      variables: {
-        ids: ids,
-      },
+      }
+    `,
+    variables: {
+      ids: ids,
     },
-    true,
-    GRAPHS.LANDWORKS,
-  )
+  })
     .then(async response => {
       const result = [...response.data.assets];
       return result;

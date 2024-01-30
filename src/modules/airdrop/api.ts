@@ -9,7 +9,7 @@ export type APIAirdropTotal = {
   totalAirdropRedistributed: string;
 };
 
-export function fetchAirdropTotal(first = 1): Promise<APIAirdropTotal> {
+export async function fetchAirdropTotal(first = 1): Promise<APIAirdropTotal> {
   return GraphClient.get({
     query: gql`
       query($first: Int) {
