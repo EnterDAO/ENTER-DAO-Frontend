@@ -119,6 +119,7 @@
     "classnames": "2.2.6",
     "date-fns": "2.19.0",
     "ejs": "^3.1.9",
+    "ethereumjs-util": "^7.1.5",
     "ethers": "^5.4.1",
     "graphql": "^15.5.1",
     "identicon.js": "2.3.3",

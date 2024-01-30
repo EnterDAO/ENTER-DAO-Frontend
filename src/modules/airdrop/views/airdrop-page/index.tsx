@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { BigNumber as _BigNumber } from 'bignumber.js';
 import cn from 'classnames';
 import Lottie from 'lottie-react';
@@ -12,10 +12,9 @@ import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
 import { useGeneral } from 'components/providers/general-provider';
 import { EnterToken } from 'components/providers/known-tokens-provider';
+import base from 'resources/svg/base.svg';
 import loaderForDark from 'resources/svg/dark.svg';
 import loaderForWhite from 'resources/svg/light.svg';
-import base from 'resources/svg/base.svg';
-
 import { useWallet } from 'wallets/wallet';
 
 import { useMediaQuery } from '../../../../hooks';
@@ -44,7 +43,6 @@ const Airdrop: FC = () => {
   const totalRedistributed = new _BigNumber(
     merkleDistributorContract?.totalInfo?.totalAirdropRedistributed ?? 0,
   ).unscaleBy(EnterToken.decimals);
-
   const userAmount = new _BigNumber(merkleDistributorContract?.claimAmount ?? 0).unscaleBy(EnterToken.decimals);
   const userAvailable = new _BigNumber(merkleDistributorContract?.adjustedAmount?.airdropAmount ?? 0).unscaleBy(
     EnterToken.decimals,
@@ -73,8 +71,8 @@ const Airdrop: FC = () => {
     }
   };
 
-  if(!merkleDistributorContract?.isInitialized && wallet.isActive) {
-    return <Spin />
+  if (!merkleDistributorContract?.isInitialized && wallet.isActive) {
+    return <Spin />;
   }
 
   return (
@@ -98,9 +96,7 @@ const Airdrop: FC = () => {
               justify="space-between"
               className={cn(s.card, s.card__head, 'mb-32')}>
               <div className={s.info__vl}>
-                <Hint
-                  text="This number shows the $ENTR token rewards distributed so far."
-                  className="mb-8">
+                <Hint text="This number shows the $ENTR token rewards distributed so far." className="mb-8">
                   <Text type="p2" color="secondary">
                     Total airdropped
                   </Text>
@@ -108,7 +104,7 @@ const Airdrop: FC = () => {
                 <div className="flex flow-col align-center">
                   <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                   <Text type="h2" weight="bold" color="primary">
-                  {formatToken(merkleDistributorContract?.totalAirdropped?.unscaleBy(EnterToken.decimals)) ?? 0}
+                    {formatToken(merkleDistributorContract?.totalAirdropped) ?? 0}
                   </Text>
                 </div>
               </div>
@@ -178,12 +174,9 @@ const Airdrop: FC = () => {
                       className={s.grid}
                       colsTemplate={!isMobile ? 'max-content max-content' : '1fr'}
                       gap={24}
-                      justify="center"
-                      >
-                        <div className={`${s.total__airdropped} ${s.general__info}`}>
-                        <Hint
-                          text="The amount of $ENTR token airdrop assigned to you."
-                          className="mb-8">
+                      justify="center">
+                      <div className={`${s.total__airdropped} ${s.general__info}`}>
+                        <Hint text="The amount of $ENTR token airdrop assigned to you." className="mb-8">
                           <Text type="p2" color="secondary">
                             Total airdropped
                           </Text>
@@ -194,20 +187,20 @@ const Airdrop: FC = () => {
                         </span>
                       </div>
                       <div className={`${s.total__bonuses} ${s.general__info}`}>
-                      <Hint
-                        text="This is the amount of additional $ENTR you have received as a result of early claimants
+                        <Hint
+                          text="This is the amount of additional $ENTR you have received as a result of early claimants
                       forfeiting a portion of their airdrop."
-                        className="mb-8">
-                        <Text type="p2" color="secondary">
-                          Your bonus amount
-                        </Text>
-                      </Hint>
-                      <div className="flex flow-col align-center">
-                        <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
-                        <Text type="h3" weight="bold" color="green">
-                          +{formatToken(userBonus)}
-                        </Text>
-                      </div>
+                          className="mb-8">
+                          <Text type="p2" color="secondary">
+                            Your bonus amount
+                          </Text>
+                        </Hint>
+                        <div className="flex flow-col align-center">
+                          <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                          <Text type="h3" weight="bold" color="green">
+                            +{formatToken(userBonus)}
+                          </Text>
+                        </div>
                       </div>
                     </Grid>
                   </div>
@@ -215,75 +208,86 @@ const Airdrop: FC = () => {
               )}
             </div>
           </Grid>
-          <div className={cn(s.card, s.card__table, { [s.card__table__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed })}>
-            <Grid gap={15} className={cn(s.airdrop__animateBlock, { [s.airdrop__animateBlock__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed })}>
+          <div
+            className={cn(s.card, s.card__table, {
+              [s.card__table__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed,
+            })}>
+            <Grid
+              gap={15}
+              className={cn(s.airdrop__animateBlock, {
+                [s.airdrop__animateBlock__empty]: lockedAirDrop || merkleDistributorContract?.isAirdropClaimed,
+              })}>
               <div className={s.phoneBlock}>
-                   <div className={s.week}>
-                     <Text type="small" color="secondary">WEEK</Text>
-                     <Text type="small" weight="bold" color="secondary">{merkleDistributorContract?.airdropCurrentWeek}/
-                   {merkleDistributorContract?.airdropDurationInWeeks}</Text>
-                  </div>
-                  <img src={isDarkTheme ? loaderForDark : loaderForWhite} alt="" />
+                <div className={s.week}>
+                  <Text type="small" color="secondary">
+                    WEEK
+                  </Text>
+                  <Text type="small" weight="bold" color="secondary">
+                    {merkleDistributorContract?.airdropCurrentWeek}/{merkleDistributorContract?.airdropDurationInWeeks}
+                  </Text>
+                </div>
+                <img src={isDarkTheme ? loaderForDark : loaderForWhite} alt="" />
                 {!wallet.isActive && (
                   <Lottie
-                  animationData={waves2}
-                  style={{
-                    transform: `translateY(calc(-${
-                      22
-                    }%))`,
-                  }}
-                  className={s.waveAnimation}
-                  type="loop"
-                />
+                    animationData={waves2}
+                    style={{
+                      transform: `translateY(calc(-${22}%))`,
+                    }}
+                    className={s.waveAnimation}
+                    type="loop"
+                  />
                 )}
-                {wallet.isActive && <Lottie
-                  animationData={waves2}
-                  style={{
-                    transform: `translateY(calc(-${
-                      isNaN(progressPercent as number) ? 22 : (progressPercent as number) < 22 ? 22 : progressPercent
-                    }%))`,
-                  }}
-                  className={s.waveAnimation}
-                />}
+                {wallet.isActive && (
+                  <Lottie
+                    animationData={waves2}
+                    style={{
+                      transform: `translateY(calc(-${
+                        isNaN(progressPercent as number) ? 22 : (progressPercent as number) < 22 ? 22 : progressPercent
+                      }%))`,
+                    }}
+                    className={s.waveAnimation}
+                  />
+                )}
               </div>
-              {lockedAirDrop || !merkleDistributorContract?.isAirdropClaimed && (
-                <>
-                  <div>
-                    <Text type="p2" color="secondary" className={s.uppercase}>
-                      Available to claim now:
-                    </Text>
-                    <div className="flex flow-col align-center">
-                      <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
-                      <Text type="h2" weight="bold" color="primary">
-                        {formatToken(userAvailable)}
+              {lockedAirDrop ||
+                (!merkleDistributorContract?.isAirdropClaimed && (
+                  <>
+                    <div>
+                      <Text type="p2" color="secondary" className={s.uppercase}>
+                        Available to claim now:
                       </Text>
+                      <div className="flex flow-col align-center">
+                        <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                        <Text type="h2" weight="bold" color="primary">
+                          {formatToken(userAvailable)}
+                        </Text>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <Text type="p2" color="secondary" className={s.uppercase}>
-                      You forfeit:
-                    </Text>
-                    <div className="flex flow-col align-center">
-                      <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
-                      <Text type="p2" weight="bold" color="red">
-                        {formatToken(userBonus?.plus(userAmount ?? 0)?.minus(userAvailable ?? 0))}
+                    <div>
+                      <Text type="p2" color="secondary" className={s.uppercase}>
+                        You forfeit:
                       </Text>
+                      <div className="flex flow-col align-center">
+                        <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
+                        <Text type="p2" weight="bold" color="red">
+                          {formatToken(userBonus?.plus(userAmount ?? 0)?.minus(userAvailable ?? 0))}
+                        </Text>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <Button
-                      type="primary"
-                      onClick={handleClaim}
-                      disabled={
-                        merkleDistributorContract?.adjustedAmount?.airdropAmount === undefined ||
-                        merkleDistributorContract?.isAirdropClaimed ||
-                        isClaim
-                      }>
-                      Claim
-                    </Button>
-                  </div>
-                </>
-              )}
+                    <div>
+                      <Button
+                        type="primary"
+                        onClick={handleClaim}
+                        disabled={
+                          merkleDistributorContract?.adjustedAmount?.airdropAmount === undefined ||
+                          merkleDistributorContract?.isAirdropClaimed ||
+                          isClaim
+                        }>
+                        Claim
+                      </Button>
+                    </div>
+                  </>
+                ))}
             </Grid>
           </div>
         </Grid>
