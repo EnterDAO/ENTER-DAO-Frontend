@@ -8,8 +8,8 @@ type Props = {
   contract?: Web3Contract;
   renderProgress?: (meta?: Web3SendMeta) => React.ReactNode;
   renderSuccess?: (meta?: Web3SendMeta) => React.ReactNode;
-  redeemableAmountETH: string;
-  redeemableAmountTokens: string;
+  redeemableAmountETH?: string;
+  redeemableAmountTokens?: string;
 };
 
 type TxStatus = {
@@ -105,6 +105,7 @@ const ContractListener: React.FC<Props> = props => {
           redeemableAmountETH={redeemableAmountETH}
           redeemableAmountTokens={redeemableAmountTokens}
           onCancel={handleStatusModalCancel}
+          isRedeem={!!redeemableAmountTokens}
         />
       )}
     </>

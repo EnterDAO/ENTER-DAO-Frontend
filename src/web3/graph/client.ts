@@ -34,11 +34,10 @@ export class GraphClient {
    * @private
    */
   private static _getClient(primary: boolean, graphName?: string): ApolloClient<any> {
-    // const primaryURI = graphName === 'landworks' ? config.graph.landworks : config.graph.sepoliaUrl;
-    // const fallbackURI = graphName === 'landworks' ? config.graph.landworksFallback : config.graph.fallbackUrl;
+    const primaryURI = graphName === 'landworks' ? config.graph.landworks : config.graph.primaryUrl;
 
     return new ApolloClient({
-      uri: config.graph.sepoliaUrl,
+      uri: graphName === 'redeemUrl' ? config.graph.redeemUrl : primaryURI,
       cache: new InMemoryCache(),
     });
   }

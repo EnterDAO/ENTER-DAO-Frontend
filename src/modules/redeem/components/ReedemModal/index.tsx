@@ -12,7 +12,7 @@ import { Text } from 'components/custom/typography';
 import config from 'config';
 import warning from 'resources/svg/warning-2.svg';
 
-import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
+import tokenAbi from '../../../../ABI/ENTR_TOKEN_ABI.json';
 
 import s from './RedeemModal.module.scss';
 

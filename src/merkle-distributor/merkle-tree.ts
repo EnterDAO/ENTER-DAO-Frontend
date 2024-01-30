@@ -1,3 +1,5 @@
+// @ts-ignore
+//TODO tbd
 import { bufferToHex, keccak256 } from 'ethereumjs-util';
 
 export default class MerkleTree {

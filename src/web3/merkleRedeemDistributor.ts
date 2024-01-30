@@ -42,9 +42,7 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     super([...ABI, ...abi], address, '');
     this.isInitialized = false;
 
-    config.web3.chainId === 11155111 //TODO fetch dynamically from env
-      ? (this.redeemData = require(`../merkle-distributor/tree.json`))
-      : (this.redeemData = require(`../merkle-distributor/airdrop.json`));
+    this.redeemData = require(`../merkle-distributor/redeem-tree.json`);
 
     this.on(Web3Contract.UPDATE_ACCOUNT, () => {
       if (!this.account) {

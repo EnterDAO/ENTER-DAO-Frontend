@@ -8,7 +8,7 @@ const config = {
   isProd: String(process.env.REACT_APP_ENV) === 'production',
   isTestnet: String(process.env.REACT_APP_ENV) === 'testnet',
   graph: {
-    sepoliaUrl: String(process.env.REACT_APP_SEPOLIA_GRAPH_URL),
+    redeemUrl: String(process.env.REACT_APP_REDEEM_GRAPH_URL),
     primaryUrl: String(process.env.REACT_APP_PRIMARY_GRAPH_URL),
     fallbackUrl: String(process.env.REACT_APP_FALLBACK_GRAPH_URL),
     landworks: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),
@@ -52,7 +52,8 @@ const config = {
       barn: toLowerCase(process.env.REACT_APP_CONTRACT_DAO_BARN_ADDR),
       reward: toLowerCase(process.env.REACT_APP_CONTRACT_DAO_REWARD_ADDR),
     },
-    merkleDistributor: toLowerCase(process.env.REACT_APP_CONTRACT_MERKLE_DISTRIBUTOR_ADDR),
+    merkleRedeemDistributor: toLowerCase(process.env.REACT_APP_CONTRACT_REDEEM_MERKLE_DISTRIBUTOR_ADDR),
+    merkleAirdropDistributor: toLowerCase(process.env.REACT_APP_CONTRACT_AIRDROP_MERKLE_DISTRIBUTOR_ADDR),
   },
   web3: {
     chainId: Number(process.env.REACT_APP_WEB3_CHAIN_ID),

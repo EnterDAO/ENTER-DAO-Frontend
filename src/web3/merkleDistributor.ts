@@ -1,12 +1,12 @@
 import { BigNumber as _BigNumber } from 'bignumber.js';
+import add from 'date-fns/add';
+import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks';
 import { AbiItem } from 'web3-utils';
 import Web3Contract, { createAbiItem } from 'web3/web3Contract';
 
 import config from 'config';
 
 import { fetchAirdropTotal } from '../modules/airdrop/api';
-import add from 'date-fns/add';
-import differenceInCalendarWeeks from 'date-fns/differenceInCalendarWeeks';
 
 const ABI: AbiItem[] = [
   createAbiItem('isClaimed', ['uint256'], ['bool']),
@@ -41,9 +41,7 @@ export default class MerkleDistributor extends Web3Contract {
     this.airdropDurationInWeeks = 26;
     this.isInitialized = false;
 
-    config.web3.chainId === 4
-      ? (this.airdropData = require(`../merkle-distributor/airdrop-test.json`))
-      : (this.airdropData = require(`../merkle-distributor/airdrop.json`));
+    this.airdropData = require(`../merkle-distributor/airdrop-tree.json`);
 
     this.on(Web3Contract.UPDATE_ACCOUNT, () => {
       if (!this.account) {
@@ -60,10 +58,9 @@ export default class MerkleDistributor extends Web3Contract {
       }
 
       this.claimIndex = this.airdropData.claims[this.account ?? '']?.index;
-      this.merkleProof = this.airdropData.claims[this.account ?? '']?.proof
-      this.claimAmount = this.airdropData.claims[this.account ?? '']?.amount
-      this.totalAirdropped = _BigNumber.from(this.airdropData.tokenTotal)
-
+      this.merkleProof = this.airdropData.claims[this.account ?? '']?.proof;
+      this.claimAmount = this.airdropData.claims[this.account ?? '']?.amount;
+      this.totalAirdropped = _BigNumber.from(this.airdropData.tokenTotal);
 
       this.adjustedAmount = undefined;
       this.bonusStart = undefined;
@@ -71,7 +68,7 @@ export default class MerkleDistributor extends Web3Contract {
   }
 
   async loadCommonFor(): Promise<void> {
-    this.totalInfo = await fetchAirdropTotal()
+    this.totalInfo = await fetchAirdropTotal();
     this.emit(Web3Contract.UPDATE_DATA);
   }
 
@@ -82,9 +79,7 @@ export default class MerkleDistributor extends Web3Contract {
       return;
     }
 
-    const [ bonusStart] = await this.batch([
-      { method: 'bonusStart', methodArgs: [], callArgs: { from: account } },
-    ]);
+    const [bonusStart] = await this.batch([{ method: 'bonusStart', methodArgs: [], callArgs: { from: account } }]);
 
     this.bonusStart = bonusStart;
 
@@ -105,7 +100,7 @@ export default class MerkleDistributor extends Web3Contract {
       this.adjustedAmount = {
         airdropAmount: adjustedAmount[0],
         bonus: adjustedAmount[1],
-        bonusPart: adjustedAmount[2]
+        bonusPart: adjustedAmount[2],
       };
     }
     this.isInitialized = true;

@@ -14,15 +14,15 @@ import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
 import { EthToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
-import BalanceTree from 'merkle-distributor/balance-tree';
+import BalanceTree from 'merkle-distributor/balance-redeem-tree';
 import FAQs from 'modules/redeem/components/FAQs';
 import RedeemModal from 'modules/redeem/components/ReedemModal';
 import { useRedeem } from 'modules/redeem/providers/redeem-provider';
 import warning from 'resources/svg/warning.svg';
 import { useWallet } from 'wallets/wallet';
 
-import tokenAbi from '../../../../ABI/ERC20_Mock_ABI.json';
-import redeemData from '../../../../merkle-distributor/tree.json';
+import tokenAbi from '../../../../ABI/ENTR_TOKEN_ABI.json';
+import redeemData from '../../../../merkle-distributor/redeem-tree.json';
 import graphic1Img from '../../animations/graphic1.svg';
 import graphic2Img from '../../animations/graphic2.svg';
 import AlreadyRedeemed, { boldWhiteStyle, whiteStyle } from '../../components/AlreadyRedeemed';

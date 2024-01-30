@@ -33,7 +33,7 @@ const RedeemProvider: FC = props => {
   const merkleDistributor = useMemo(() => {
     const merkleDistributor = new MerkleRedeemDistributor(
       MerkleDistributorABI.abi as AbiItem[],
-      config.contracts.merkleDistributor,
+      config.contracts.merkleRedeemDistributor,
     );
     merkleDistributor.on(Web3Contract.UPDATE_DATA, reload);
     return merkleDistributor;

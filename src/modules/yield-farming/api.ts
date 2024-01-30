@@ -6,9 +6,10 @@ import { GraphClient } from '../../web3/graph/client';
 import { PaginatedResult } from 'utils/fetch';
 import config from 'config';
 
-const GRAPHS = {
+export const GRAPHS = {
   LANDWORKS: 'landworks',
   DAO_GOVERNANCE: 'primaryUrl',
+  REDEEM: 'redeemUrl'
 };
 
 export enum APIYFPoolActionType {
