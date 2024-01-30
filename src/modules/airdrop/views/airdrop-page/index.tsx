@@ -37,11 +37,19 @@ const Airdrop: FC = () => {
   const wallet = useWallet();
   const lockedAirDrop = !merkleDistributorContract?.claimIndex;
 
-  const totalClaimed = new _BigNumber(merkleDistributorContract?.totalInfo?.totalAirdropClaimed ?? 0);
-  const totalRedistributed = new _BigNumber(merkleDistributorContract?.totalInfo?.totalAirdropRedistributed ?? 0);
+  const totalClaimed = new _BigNumber(merkleDistributorContract?.totalInfo?.totalAirdropClaimed ?? 0).unscaleBy(
+    EnterToken.decimals,
+  );
+  const totalRedistributed = new _BigNumber(
+    merkleDistributorContract?.totalInfo?.totalAirdropRedistributed ?? 0,
+  ).unscaleBy(EnterToken.decimals);
   const userAmount = new _BigNumber(merkleDistributorContract?.claimAmount ?? 0).unscaleBy(EnterToken.decimals);
-  const userAvailable = new _BigNumber(merkleDistributorContract?.adjustedAmount?.airdropAmount ?? 0);
-  const userBonus = new _BigNumber(merkleDistributorContract?.adjustedAmount?.bonusPart ?? 0);
+  const userAvailable = new _BigNumber(merkleDistributorContract?.adjustedAmount?.airdropAmount ?? 0).unscaleBy(
+    EnterToken.decimals,
+  );
+  const userBonus = new _BigNumber(merkleDistributorContract?.adjustedAmount?.bonusPart ?? 0).unscaleBy(
+    EnterToken.decimals,
+  );
 
   const [isClaim, setIsClaim] = useState(false);
 
