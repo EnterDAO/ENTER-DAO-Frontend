@@ -15,7 +15,7 @@ const NotEligible = () => {
         animationData={lockAnimation}
       />
       <Text type="p2" color="secondary">
-        Sorry, you are not eligible for a redeem.
+        Sorry, you are not eligible to redeem.
       </Text>
     </div>
   )

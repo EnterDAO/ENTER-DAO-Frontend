@@ -104,7 +104,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                 {tokenBalance.lt(new BigNumber(userData.tokens)) ? (
                   <Text type="p1" weight="500" color="secondary" align="center" style={{ color: 'white' }}>
                     You have {tokenBalance.toString()} ENTR in wallet but you are eligible for{' '}
-                    {userData.tokens.toString()} ENTR.
+                    {userData.tokens.toString()} ENTR. You will lose ETH by not providing the required ENTR amount.
                     <br />
                     Are you sure?
                   </Text>

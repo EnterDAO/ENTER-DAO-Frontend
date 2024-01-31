@@ -36,7 +36,7 @@ const AlreadyRedeemed: React.FC<AlreadyRedeemedProps> = ({ entrAmount, ethAmount
     <div className={s.block}>
       <Text type="p2" color="secondary" style={{ fontSize: '24px', margin: '50px 0' }}>
         <span style={boldWhiteStyle}>{shortenAddr(wallet.account, 5, 3)}</span>
-        <span style={whiteStyle}> have successfully</span>
+        <span style={whiteStyle}> has successfully</span>
         <br />
         <span style={whiteStyle}> redeemed</span>
         <span style={boldWhiteStyle}> {entrAmount} ENTR</span>

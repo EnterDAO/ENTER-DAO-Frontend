@@ -104,7 +104,7 @@ const Airdrop: FC = () => {
                 <div className="flex flow-col align-center">
                   <Icon width={30} height={30} name="png/enterdao" className="mr-6" />
                   <Text type="h2" weight="bold" color="primary">
-                    {formatToken(merkleDistributorContract?.totalAirdropped) ?? 0}
+                    {formatToken(merkleDistributorContract?.totalAirdropped?.unscaleBy(EnterToken.decimals)) ?? 0}
                   </Text>
                 </div>
               </div>
