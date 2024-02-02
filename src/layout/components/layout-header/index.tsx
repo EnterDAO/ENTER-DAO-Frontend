@@ -158,6 +158,11 @@ const LayoutHeader: React.FC = () => {
           </button>
         </div>
       )}
+      <div className={s.addTokenWrapper}>
+        <Link to="/redeem" className={s.redeem} >
+          Redeem ETH
+        </Link>
+      </div>
       <ConnectedWallet />
       <Button type="link" className={s.burger} onClick={() => setNavOpen(prevState => !prevState)}>
         <Icon name={navOpen ? 'burger-close' : 'burger'} style={{ color: 'var(--theme-primary-color)' }} />
