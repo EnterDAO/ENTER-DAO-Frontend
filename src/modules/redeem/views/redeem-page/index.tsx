@@ -273,16 +273,6 @@ const Redeem: FC = () => {
                       ETH
                     </span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Text
-                      type="h2"
-                      style={{ color: '#625F97', fontSize: '16px', marginRight: '8px', lineHeight: '24px' }}>
-                      1 ENTR ≈ 0.002 ETH
-                    </Text>
-                    <Text type="h2" style={{ color: 'white', fontSize: '16px', lineHeight: '24px' }}>
-                      {redeemableAmountTokens?.toString()} ENTR = {formatBigNumber(redeemableAmountETH!)} ETH
-                    </Text>
-                  </div>
                   <Text
                     type="p1"
                     weight="500"
@@ -293,10 +283,11 @@ const Redeem: FC = () => {
                       fontSize: '16px',
                       fontWeight: '400',
                       lineHeight: '24px',
+                      marginTop: '20px',
                     }}>
                     You must burn
                     <span style={{ fontWeight: '700' }}> {userData.tokens.toString()}</span> ENTR to redeem
-                    <span style={{ fontWeight: '700' }}> {allocatedEth?.toString()} </span> ETH (total)
+                    <span style={{ fontWeight: '700' }}> {allocatedEth?.toString()} </span> ETH
                     <br />
                     Your wallet's ENTR balance is: <span style={{ fontWeight: '700' }}>
                       {' '}
@@ -337,27 +328,34 @@ const Redeem: FC = () => {
             </Text>
             <Text type="h3">
               {' '}
-              <b>Step 1</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              <b className="mr-8">Step 1</b> Connect your wallet
             </Text>
             <Text type="h3">
               {' '}
-              <b>Step 2</b> Lorem ipsum dolor sit amet, consectetur.
+              <b className="mr-8">Step 2</b> Ensure you have the ENTR tokens you are eligible for in your wallet
             </Text>
             <Text type="h3">
               {' '}
-              <b>Step 3</b> Lorem ipsum dolor sit amet, consectetur adipiscing.
+              <b className="mr-8">Step 3</b> Complete the transaction
             </Text>
           </div>
         </TextAndImage>
         <TextAndImage image={graphic2Img}>
           <div className={s.flex__column}>
             <Text type="h1" style={{ alignSelf: 'flex-start', textTransform: 'uppercase', marginBottom: '32px' }}>
-              Lorem Ipsum
+              WHO IS ELIGIBLE
             </Text>
             <Text type="h3">
-              Sorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis
-              tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum tellus elit
-              sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus.
+              All addresses holding ENTR tokens on October 31, 2023 are eligible to redeem. The snapshot includes:
+              <ol>
+                <li>ENTR balance in wallet</li>
+                <li> tokens staked in the DAO</li>
+                <li>tokens in liquidity pools</li>
+                <li>tokens from LW rewards</li>
+                <li>vesting contracts</li>
+              </ol>
+              There is an additional boost for Sharded Minds NFT holders - a boost of 5% for 1 to 10 NFTs in the same
+              wallet, boost of 10% for 11 to 20 NFTs and a boost of 15% for more than 20 NFTs in the same wallet.
             </Text>
           </div>
         </TextAndImage>

@@ -38,6 +38,10 @@ const RedeemModal: FC<RedeemModalProps> = props => {
 
   const [tokenBalance, setTokenBalance] = useState(new BigNumber(0));
 
+  const hasLessThanAllocatedTokens = (): boolean => {
+    return tokenBalance.lt(new BigNumber(userData.tokens));
+  };
+
   const erc20TokenContract = new Contract(config.tokens.entr, tokenAbi, library.getSigner());
   const [claiming, setClaiming] = useState(false);
 
@@ -106,14 +110,16 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                 Redeem ETH
               </Text>
               <img src={warning} alt="" style={{ margin: '12px 0', width: '128px', height: '128px' }} />
-              <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
-                You will lose ETH because
-              </Text>
+              {hasLessThanAllocatedTokens() && (
+                <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
+                  You will miss out on ETH
+                </Text>
+              )}
               <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
                 YOU CAN ONLY REDEEM ONCE!
               </Text>
               <Text type="p1" weight="500" color="secondary">
-                {tokenBalance.lt(new BigNumber(userData.tokens)) ? (
+                {hasLessThanAllocatedTokens() ? (
                   <Text
                     type="p1"
                     weight="500"
@@ -130,7 +136,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                     <span style={{ fontWeight: '700' }}> {tokenBalance.toString()}</span> ENTR to redeem
                     <span style={{ fontWeight: '700' }}> {redeemableAmountETH?.toString()}</span> ETH.{' '}
                     <span style={{ fontWeight: '800', color: '#fff' }}>
-                      You will lose out on{' '}
+                      You will miss out on{' '}
                       {new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)).toString()} ETH.
                     </span>{' '}
                     Collect{' '}
@@ -148,7 +154,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                         fontWeight: '400',
                         lineHeight: '18px',
                       }}>
-                      For detailed information on the redeem mechanism please visit{' '}
+                      For detailed information on the redeem mechanism please check{' '}
                       <ExternalLink type="button" href="https://medium.com/enterdao">
                         {/* TODO add real link to article */}
                         <span
@@ -157,14 +163,21 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                             fontSize: '12px',
                             fontWeight: '600',
                           }}>
-                          Link
+                          our announcement
                         </span>
                       </ExternalLink>
                       .
                     </Text>
                   </Text>
                 ) : (
-                  <Text type="p1" weight="500" color="secondary" align="center">
+                  <Text
+                    type="p1"
+                    weight="500"
+                    color="secondary"
+                    align="center"
+                    style={{
+                      marginTop: '20px',
+                    }}>
                     You have {tokenBalance.toString()} ENTR in wallet and you will burn {userData.tokens.toString()}{' '}
                     ENTR.
                   </Text>
