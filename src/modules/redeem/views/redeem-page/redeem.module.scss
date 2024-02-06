@@ -342,9 +342,9 @@
   padding-top: 96px;
   padding-bottom: 142px;
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Adjust if more columns are needed */
-  width: 100%; /* Make sure it spans the full width */
-  margin-left: 0; /* Reset any default margins */
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  margin-left: 0;
   padding-left: 0;
 }
 
@@ -366,13 +366,14 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  height: 290px;
+  height: 316px;
 }
 
 .redeem__button {
   width: 100%;
   margin: 0 auto;
   background: var(--Linear, linear-gradient(93deg, #ef9c92 0%, #dd3dcb 100%)) !important;
+  box-shadow: 0px 4px 8px 0px rgba(221, 61, 203, 0.3803921569);
 }
 
 .redeem__button_container {
@@ -387,6 +388,7 @@
   text-align: start;
   padding: 8px 14px;
   display: flex;
+  border-radius: 4px;
 }
 
 .info__hint {

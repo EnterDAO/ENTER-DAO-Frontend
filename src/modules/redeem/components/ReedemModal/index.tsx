@@ -7,6 +7,7 @@ import MerkleRedeemDistributor from 'web3/merkleRedeemDistributor';
 import Button from 'components/antd/button';
 import Modal, { ModalProps } from 'components/antd/modal';
 import Spin from 'components/antd/spin';
+import ExternalLink from 'components/custom/externalLink';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
 import config from 'config';
@@ -21,10 +22,18 @@ export type RedeemModalProps = ModalProps & {
   userData?: any;
   redeemableAmountETH?: string;
   redeemableAmountTokens?: string;
+  allocatedEth?: string;
 };
 
 const RedeemModal: FC<RedeemModalProps> = props => {
-  const { merkleDistributor, userData, redeemableAmountETH, redeemableAmountTokens, ...modalProps } = props;
+  const {
+    merkleDistributor,
+    userData,
+    redeemableAmountETH,
+    redeemableAmountTokens,
+    allocatedEth,
+    ...modalProps
+  } = props;
   const { account, library } = useWeb3React();
 
   const [tokenBalance, setTokenBalance] = useState(new BigNumber(0));
@@ -63,7 +72,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
     <Modal width={416} {...modalProps} className={s.redeemModal}>
       <div className="flex flow-row">
         {claiming === true ? (
-          <div className="flex flow-row mb-32" style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <div className="flex flow-row" style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Spin type="circle" style={{ padding: '44px 64px 10px 64px' }} />
             <Text type="h2" style={{ fontWeight: '400' }} color="primary" className="mb-8" font="secondary">
               Waiting For Confirmation
@@ -93,20 +102,66 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                 color="white"
                 className="mb-8"
                 font="secondary"
-                style={{ alignSelf: 'flex-start', fontWeight: '400', fontSize: '12px' }}>
+                style={{ alignSelf: 'flex-start', fontWeight: '400', fontSize: '12px', lineHeight: '16px' }}>
                 Redeem ETH
               </Text>
-              <img src={warning} alt="" style={{ marginRight: '10px', width: '128px', height: '128px' }} />
-              <Text type="h3" tag="span" color="primary" style={{ margin: '16px 0', fontSize: '24px', color: 'white' }}>
-                You can only redeem once!
+              <img src={warning} alt="" style={{ margin: '12px 0', width: '128px', height: '128px' }} />
+              <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
+                You will lose ETH because
               </Text>
-              <Text type="p1" weight="500" color="secondary" className="mb-16">
+              <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
+                YOU CAN ONLY REDEEM ONCE!
+              </Text>
+              <Text type="p1" weight="500" color="secondary">
                 {tokenBalance.lt(new BigNumber(userData.tokens)) ? (
-                  <Text type="p1" weight="500" color="secondary" align="center" style={{ color: 'white' }}>
-                    You have {tokenBalance.toString()} ENTR in wallet but you are eligible for{' '}
-                    {userData.tokens.toString()} ENTR. You will lose ETH by not providing the required ENTR amount.
+                  <Text
+                    type="p1"
+                    weight="500"
+                    color="secondary"
+                    align="center"
+                    style={{
+                      color: '#B9B9D3',
+                      fontSize: '12px',
+                      fontWeight: '400',
+                      lineHeight: '18px',
+                      margin: '16px 0',
+                    }}>
+                    You are about to burn
+                    <span style={{ fontWeight: '700' }}> {tokenBalance.toString()}</span> ENTR to redeem
+                    <span style={{ fontWeight: '700' }}> {redeemableAmountETH?.toString()}</span> ETH.{' '}
+                    <span style={{ fontWeight: '800', color: '#fff' }}>
+                      You will lose out on{' '}
+                      {new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)).toString()} ETH.
+                    </span>{' '}
+                    Collect{' '}
+                    <span style={{ fontWeight: '700' }}>
+                      {new BigNumber(userData.tokens).minus(tokenBalance!).toString()}{' '}
+                    </span>
+                    ENTR to redeem the full <span style={{ fontWeight: '700' }}>{allocatedEth} </span>ETH amount you are
+                    eligible for.
                     <br />
-                    Are you sure?
+                    <Text
+                      type="p1"
+                      style={{
+                        color: '#B9B9D3',
+                        fontSize: '12px',
+                        fontWeight: '400',
+                        lineHeight: '18px',
+                      }}>
+                      For detailed information on the redeem mechanism please visit{' '}
+                      <ExternalLink type="button" href="https://medium.com/enterdao">
+                        {/* TODO add real link to article */}
+                        <span
+                          style={{
+                            color: '#ED9199',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                          }}>
+                          Link
+                        </span>
+                      </ExternalLink>
+                      .
+                    </Text>
                   </Text>
                 ) : (
                   <Text type="p1" weight="500" color="secondary" align="center">

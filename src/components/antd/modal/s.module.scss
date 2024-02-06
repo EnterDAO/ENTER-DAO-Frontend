@@ -7,7 +7,7 @@
     box-shadow: var(--theme-modal-shadow);
     border-radius: 12px;
     min-width: 450px;
-    background-color: #383467;
+    background-color: #25225E;
   }
 
   :global(.ant-modal-close) {
@@ -40,7 +40,7 @@
   }
 
   :global(.ant-modal-body) {
-    background-color: #383467;
+    background-color: #25225E;
     overflow-y: hidden; /* Keeps vertical scroll if content is taller than modal */
     overflow-x: hidden; /* Hides horizontal scrollbar */
     border-radius: 12px;
