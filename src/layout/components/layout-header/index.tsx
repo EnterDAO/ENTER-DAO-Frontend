@@ -52,6 +52,7 @@ const LayoutHeader: React.FC = () => {
 
   const isGovernancePage = useRouteMatch('/governance');
   const isAirdropPage = useRouteMatch('/airdrop');
+  const isRedeemPage = useRouteMatch('/redeem');
 
   async function handleAddProjectToken() {
     if (wallet.connector?.id === 'metamask') {
@@ -78,7 +79,9 @@ const LayoutHeader: React.FC = () => {
         <Icon name="png/enterdao" width="auto" height="auto" className={s.logo} />
       </ExternalLink>
       <div className={s.titleDelimiter} />
-      <h1 className={s.title}>{isGovernancePage ? 'Governance' : isAirdropPage ? 'Airdrop' : 'Yield Farming'}</h1>
+      <h1 className={s.title}>
+        {isGovernancePage ? 'Governance' : isAirdropPage ? 'Airdrop' : isRedeemPage ? 'Redeem' : 'Yield Farming'}
+      </h1>
 
       <nav className={s.nav}>
         <Popover
@@ -159,7 +162,7 @@ const LayoutHeader: React.FC = () => {
         </div>
       )}
       <div className={s.addTokenWrapper}>
-        <Link to="/redeem" className={s.redeem} >
+        <Link to="/redeem" className={s.redeem}>
           Redeem ETH
         </Link>
       </div>
