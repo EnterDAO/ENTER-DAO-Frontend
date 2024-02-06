@@ -149,8 +149,8 @@ const Redeem: FC = () => {
             color="secondary"
             className="mb-32"
             style={{ width: '480px', color: 'white', marginTop: '32px' }}>
-            Use the ENTR Redemption Portal to redeem your ENTR for ETH. You can redeem your ENTR at a fixed rate of
-            0.0025376 ETH until November 2nd 2024 at 23h59 UTC.
+            Use the ENTR Redemption Portal to redeem your ETH for ENTR. You can redeem your ETH at a fixed rate of
+            0.0025376 ETH per 1 ENTR until November 2nd 2024 at 23h59 UTC.
           </Text>
           <ExternalLink
             type="button"
@@ -167,7 +167,7 @@ const Redeem: FC = () => {
         <Grid
           colsTemplate="1fr 1fr"
           rowsTemplate="auto auto"
-          gap={24}
+          gap={16}
           justify="space-between"
           className={cn(s.card, s.card__head, 'mb-32')}>
           <div className={s.info__vl}>
@@ -179,7 +179,7 @@ const Redeem: FC = () => {
               </Hint>
               <div className="flex flow-col align-center justify-center mr-8">
                 <Icon width={30} height={30} name="png/eth" className="mr-6" />
-                <Text type="h3" weight="bold" color="primary">
+                <Text type="h3" weight="bold" color="primary" style={{ lineHeight: '18px' }}>
                   {!wallet.isActive || lockedRedeem ? (
                     '--'
                   ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
@@ -191,7 +191,9 @@ const Redeem: FC = () => {
                   )}
                 </Text>
                 &nbsp;
-                <Text type="h3">ETH</Text>
+                <Text type="h3" style={{ color: '#fff', lineHeight: '18px' }}>
+                  ETH
+                </Text>
               </div>
             </div>
           </div>
@@ -247,30 +249,65 @@ const Redeem: FC = () => {
               <div className={s.redeem__info__details}>
                 <div className={s.redeem__container}>
                   <Text type="h1">
-                    <span style={{ ...boldWhiteStyle, fontSize: '16px' }}>{`${shortenAddr(
+                    <span style={{ ...boldWhiteStyle, fontSize: '16px', lineHeight: '24px' }}>{`${shortenAddr(
                       wallet.account,
                       5,
                       3,
                     )}`}</span>
-                    <span style={{ ...whiteStyle, fontSize: '16px' }}> can redeem</span>
+                    <span style={{ ...whiteStyle, fontSize: '16px', lineHeight: '24px' }}> is eligible for</span>
                   </Text>
-                  <Text type="h1">
-                    <span style={{ ...boldWhiteStyle, fontSize: '48px' }}>{redeemableAmountTokens?.toString()}</span>
-                    <span style={{ ...whiteStyle, fontSize: '48px' }}> ENTR</span>
-                  </Text>
-                  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <Text type="h2" style={{ color: '#625F97', fontSize: '16px' }}>
-                      {/* TODO change this for prod */}1 ENTR = 0.002 ETH
+                  <div className="flex flow-col align-center align-center justify-center">
+                    <span style={{ fontSize: '64px', lineHeight: '64px', fontWeight: '700' }}>
+                      {!wallet.isActive || lockedRedeem ? (
+                        '--'
+                      ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
+                        <Spin />
+                      ) : merkleDistributorContract?.isRedeemClaimed ? (
+                        '0'
+                      ) : (
+                        formatBigNumber(allocatedEth!)
+                      )}
+                    </span>
+                    &nbsp;
+                    <span style={{ fontSize: '48px', lineHeight: '48px ', height: '37px', fontWeight: '300' }}>
+                      ETH
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Text
+                      type="h2"
+                      style={{ color: '#625F97', fontSize: '16px', marginRight: '8px', lineHeight: '24px' }}>
+                      1 ENTR ≈ 0.002 ETH
                     </Text>
-
-                    <Text type="h2" style={{ color: 'white', fontSize: '16px' }}>
+                    <Text type="h2" style={{ color: 'white', fontSize: '16px', lineHeight: '24px' }}>
                       {redeemableAmountTokens?.toString()} ENTR = {formatBigNumber(redeemableAmountETH!)} ETH
                     </Text>
                   </div>
+                  <Text
+                    type="p1"
+                    weight="500"
+                    color="secondary"
+                    align="center"
+                    style={{
+                      color: '#fff',
+                      fontSize: '16px',
+                      fontWeight: '400',
+                      lineHeight: '24px',
+                    }}>
+                    You must burn
+                    <span style={{ fontWeight: '700' }}> {userData.tokens.toString()}</span> ENTR to redeem
+                    <span style={{ fontWeight: '700' }}> {allocatedEth?.toString()} </span> ETH (total)
+                    <br />
+                    Your wallet's ENTR balance is: <span style={{ fontWeight: '700' }}>
+                      {' '}
+                      {tokenBalance.toString()}
+                    </span>{' '}
+                    ENTR
+                  </Text>
                 </div>
                 <div className={s.redeem__button_container}>
                   <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                    Redeem {redeemableAmountTokens?.toString()} ENTR for {formatBigNumber(redeemableAmountETH!)} ETH
+                    Burn {redeemableAmountTokens?.toString()} ENTR to redeem {formatBigNumber(redeemableAmountETH!)} ETH
                   </button>
                   <div className={s.warning__container}>
                     <div style={{ marginTop: '-3px' }}>
@@ -282,10 +319,8 @@ const Redeem: FC = () => {
                       </span>{' '}
                       <br />
                       <span style={{ color: '#B9B9D3', textTransform: 'revert' }}>
-                        If you redeem half of the tokens you lose the option to redeem the rest!
+                        You can redeem your tokens only once.
                       </span>
-                      <br />
-                      <span style={{ color: '#B9B9D3' }}>YOU CAN EXECUTE A REDEEM TRANSACTION ONLY ONCE!</span>
                     </div>
                   </div>
                 </div>
@@ -334,6 +369,7 @@ const Redeem: FC = () => {
           merkleDistributor={merkleDistributorContract}
           redeemableAmountETH={redeemableAmountETH && formatBigNumber(redeemableAmountETH!)}
           redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
+          allocatedEth={formatBigNumber(allocatedEth!)}
           onCancel={() => showRedeemModal(false)}
           className="redeem__modal"
         />
