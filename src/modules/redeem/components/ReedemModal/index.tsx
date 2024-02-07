@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Contract } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'bignumber.js';
