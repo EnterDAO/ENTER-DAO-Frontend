@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Contract } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'bignumber.js';
@@ -36,22 +36,24 @@ const RedeemModal: FC<RedeemModalProps> = props => {
   } = props;
   const { account, library } = useWeb3React();
 
-  const [tokenBalance, setTokenBalance] = useState(new BigNumber(0));
-
-  const hasLessThanAllocatedTokens = (): boolean => {
-    return tokenBalance.lt(new BigNumber(userData.tokens));
-  };
-
+  const [tokenBalance, setTokenBalance] = useState<BigNumber>(new BigNumber(0));
+  const [isLoading, setIsLoading] = useState(true);
   const erc20TokenContract = new Contract(config.tokens.entr, tokenAbi, library.getSigner());
   const [claiming, setClaiming] = useState(false);
 
   const merkleDistributorContract = merkleDistributor;
 
+  const hasLessThanAllocatedTokens = (): boolean => {
+    return tokenBalance.lt(new BigNumber(userData.tokens));
+  };
+
   useEffect(() => {
     if (account && library) {
+      setIsLoading(true);
       const fetchBalance = async () => {
         const balance = await erc20TokenContract.balanceOf(account);
         setTokenBalance(new BigNumber(balance.toString()));
+        setIsLoading(false);
       };
       fetchBalance().catch(console.error);
     }
@@ -109,80 +111,86 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                 style={{ alignSelf: 'flex-start', fontWeight: '400', fontSize: '12px', lineHeight: '16px' }}>
                 Redeem ETH
               </Text>
-              <img src={warning} alt="" style={{ margin: '12px 0', width: '128px', height: '128px' }} />
-              {hasLessThanAllocatedTokens() && (
-                <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
-                  You will miss out on ETH
-                </Text>
-              )}
-              <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
-                YOU CAN ONLY REDEEM ONCE!
-              </Text>
-              <Text type="p1" weight="500" color="secondary">
-                {hasLessThanAllocatedTokens() ? (
-                  <Text
-                    type="p1"
-                    weight="500"
-                    color="secondary"
-                    align="center"
-                    style={{
-                      color: '#B9B9D3',
-                      fontSize: '12px',
-                      fontWeight: '400',
-                      lineHeight: '18px',
-                      margin: '16px 0',
-                    }}>
-                    You are about to burn
-                    <span style={{ fontWeight: '700' }}> {tokenBalance.toString()}</span> ENTR to redeem
-                    <span style={{ fontWeight: '700' }}> {redeemableAmountETH?.toString()}</span> ETH.{' '}
-                    <span style={{ fontWeight: '800', color: '#fff' }}>
-                      You will miss out on{' '}
-                      {new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)).toString()} ETH.
-                    </span>{' '}
-                    Collect{' '}
-                    <span style={{ fontWeight: '700' }}>
-                      {new BigNumber(userData.tokens).minus(tokenBalance!).toString()}{' '}
-                    </span>
-                    ENTR to redeem the full <span style={{ fontWeight: '700' }}>{allocatedEth} </span>ETH amount you are
-                    eligible for.
-                    <br />
-                    <Text
-                      type="p1"
-                      style={{
-                        color: '#B9B9D3',
-                        fontSize: '12px',
-                        fontWeight: '400',
-                        lineHeight: '18px',
-                      }}>
-                      For detailed information on the redeem mechanism please check{' '}
-                      <ExternalLink type="button" href="https://medium.com/enterdao">
-                        {/* TODO add real link to article */}
-                        <span
-                          style={{
-                            color: '#ED9199',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                          }}>
-                          our announcement
-                        </span>
-                      </ExternalLink>
-                      .
+              {isLoading ? (
+                <Spin type="circle" style={{ padding: '44px 64px 10px 64px' }} />
+              ) : (
+                <>
+                  <img src={warning} alt="" style={{ margin: '12px 0', width: '128px', height: '128px' }} />
+                  {hasLessThanAllocatedTokens() && (
+                    <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
+                      You will miss out on ETH
                     </Text>
+                  )}
+                  <Text type="h3" tag="span" color="primary" style={{ fontSize: '20px', color: 'white' }}>
+                    YOU CAN ONLY REDEEM ONCE!
                   </Text>
-                ) : (
-                  <Text
-                    type="p1"
-                    weight="500"
-                    color="secondary"
-                    align="center"
-                    style={{
-                      marginTop: '20px',
-                    }}>
-                    You have {tokenBalance.toString()} ENTR in wallet and you will burn {userData.tokens.toString()}{' '}
-                    ENTR.
+                  <Text type="p1" weight="500" color="secondary">
+                    {hasLessThanAllocatedTokens() ? (
+                      <Text
+                        type="p1"
+                        weight="500"
+                        color="secondary"
+                        align="center"
+                        style={{
+                          color: '#B9B9D3',
+                          fontSize: '12px',
+                          fontWeight: '400',
+                          lineHeight: '18px',
+                          margin: '16px 0',
+                        }}>
+                        You are about to burn
+                        <span style={{ fontWeight: '700' }}> {tokenBalance.toString()}</span> ENTR to redeem
+                        <span style={{ fontWeight: '700' }}> {redeemableAmountETH?.toString()}</span> ETH.{' '}
+                        <span style={{ fontWeight: '800', color: '#fff' }}>
+                          You will miss out on{' '}
+                          {new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)).toString()} ETH.
+                        </span>{' '}
+                        Collect{' '}
+                        <span style={{ fontWeight: '700' }}>
+                          {new BigNumber(userData.tokens).minus(tokenBalance!).toString()}{' '}
+                        </span>
+                        ENTR to redeem the full <span style={{ fontWeight: '700' }}>{allocatedEth} </span>ETH amount you
+                        are eligible for.
+                        <br />
+                        <Text
+                          type="p1"
+                          style={{
+                            color: '#B9B9D3',
+                            fontSize: '12px',
+                            fontWeight: '400',
+                            lineHeight: '18px',
+                          }}>
+                          For detailed information on the redeem mechanism please check{' '}
+                          <ExternalLink type="button" href="https://medium.com/enterdao">
+                            {/* TODO add real link to article */}
+                            <span
+                              style={{
+                                color: '#ED9199',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                              }}>
+                              our announcement
+                            </span>
+                          </ExternalLink>
+                          .
+                        </Text>
+                      </Text>
+                    ) : (
+                      <Text
+                        type="p1"
+                        weight="500"
+                        color="secondary"
+                        align="center"
+                        style={{
+                          marginTop: '20px',
+                        }}>
+                        You have {tokenBalance.toString()} ENTR in wallet and you will burn {userData.tokens.toString()}{' '}
+                        ENTR.
+                      </Text>
+                    )}
                   </Text>
-                )}
-              </Text>
+                </>
+              )}
             </div>
             <Spin spinning={claiming}>
               <Button type="primary" onClick={() => claimPermitRedeem()} className={s.redeem__modal__button}>
