@@ -150,7 +150,7 @@ const Redeem: FC = () => {
             className="mb-32"
             style={{ width: '480px', color: 'white', marginTop: '32px' }}>
             Use the ENTR Redemption Portal to redeem your ETH for ENTR. You can redeem your ETH at a fixed rate of
-            0.0025376 ETH per 1 ENTR until November 2nd 2024 at 23h59 UTC.
+            0.00001133 ETH per 1 ENTR until November 2nd 2024 at 23h59 UTC.
           </Text>
           <ExternalLink
             type="button"
