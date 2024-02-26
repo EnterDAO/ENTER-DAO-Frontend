@@ -161,8 +161,7 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                             lineHeight: '18px',
                           }}>
                           For detailed information on the redeem mechanism please check{' '}
-                          <ExternalLink type="button" href="https://medium.com/enterdao">
-                            {/* TODO add real link to article */}
+                          <ExternalLink type="button" href="https://medium.com/enterdao/a-next-step-for-enterdao-2b8714bc0122">
                             <span
                               style={{
                                 color: '#ED9199',

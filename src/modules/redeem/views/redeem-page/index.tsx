@@ -156,8 +156,7 @@ const Redeem: FC = () => {
             type="button"
             className="button-ghost"
             style={{ height: '44px', width: '215px', fontSize: '16px' }}
-            href="https://medium.com/enterdao">
-            {/* TODO add real link to article */}
+            href="https://medium.com/enterdao/a-next-step-for-enterdao-2b8714bc0122">
             <span
               style={{ fontSize: '16px', fontWeight: '500', fontFamily: 'Poppins, sans-serif', textTransform: 'none' }}>
               Read Medium Article

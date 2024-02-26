@@ -14,7 +14,6 @@ const config = {
   },
   tokens: {
     usdc: toLowerCase(process.env.REACT_APP_TOKEN_USDC_ADDR),
-    //TODO change to real ENTR addr for prod
     entr: toLowerCase(process.env.REACT_APP_TOKEN_ENTR_ADDR),
     mana: toLowerCase(process.env.REACT_APP_TOKEN_MANA_ADDR),
     bond: toLowerCase(process.env.REACT_APP_TOKEN_BOND_ADDR),
