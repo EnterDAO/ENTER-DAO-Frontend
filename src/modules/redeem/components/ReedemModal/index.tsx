@@ -10,6 +10,7 @@ import Spin from 'components/antd/spin';
 import ExternalLink from 'components/custom/externalLink';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
+import { EnterToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import warning from 'resources/svg/warning-2.svg';
 
@@ -139,7 +140,11 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                           margin: '16px 0',
                         }}>
                         You are about to burn
-                        <span style={{ fontWeight: '700' }}> {tokenBalance.toString()}</span> ENTR to redeem
+                        <span style={{ fontWeight: '700' }}>
+                          {' '}
+                          {tokenBalance.unscaleBy(EnterToken.decimals)?.toFixed(4)}
+                        </span>{' '}
+                        ENTR to redeem
                         <span style={{ fontWeight: '700' }}> {redeemableAmountETH?.toString()}</span> ETH.{' '}
                         <span style={{ fontWeight: '800', color: '#fff' }}>
                           You will miss out on{' '}
@@ -147,7 +152,10 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                         </span>{' '}
                         Collect{' '}
                         <span style={{ fontWeight: '700' }}>
-                          {new BigNumber(userData.tokens).minus(tokenBalance!).toString()}{' '}
+                          {new BigNumber(userData.tokens)
+                            .minus(tokenBalance!)
+                            .unscaleBy(EnterToken.decimals)
+                            ?.toFixed(4)}{' '}
                         </span>
                         ENTR to redeem the full <span style={{ fontWeight: '700' }}>{allocatedEth} </span>ETH amount you
                         are eligible for.
@@ -161,7 +169,9 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                             lineHeight: '18px',
                           }}>
                           For detailed information on the redeem mechanism please check{' '}
-                          <ExternalLink type="button" href="https://medium.com/enterdao/a-next-step-for-enterdao-2b8714bc0122">
+                          <ExternalLink
+                            type="button"
+                            href="https://medium.com/enterdao/a-next-step-for-enterdao-2b8714bc0122">
                             <span
                               style={{
                                 color: '#ED9199',
