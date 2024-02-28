@@ -150,7 +150,7 @@ const Redeem: FC = () => {
             className="mb-32"
             style={{ width: '480px', color: 'white', marginTop: '32px' }}>
             Use the ENTR Redemption Portal to redeem your ETH for ENTR. You can redeem your ETH at a fixed rate of
-            0.00001133 ETH per 1 ENTR until February 22nd 2025 at 23h59 UTC.
+            0.00001133 ETH per 1 ENTR until February 21st 2025 at 23h59 UTC.
           </Text>
           <ExternalLink
             type="button"
@@ -345,7 +345,7 @@ const Redeem: FC = () => {
               WHO IS ELIGIBLE
             </Text>
             <Text type="h3">
-              All addresses holding ENTR tokens on October 31, 2023 are eligible to redeem. The snapshot includes:
+              All addresses holding ENTR tokens on February 06, 2024 are eligible to redeem. The snapshot includes:
               <ol>
                 <li>ENTR balance in wallet</li>
                 <li> tokens staked in the DAO</li>

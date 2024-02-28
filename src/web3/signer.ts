@@ -58,7 +58,8 @@ export class User {
   constructor() {
     this.spenderAddress = '';
     this.chainId = -1;
-    this.deadline = +new Date() + 60 * 60;
+    this.deadline = +new Date() + 60 * 60 * 1000;
+    // this.deadline = +new Date() + 60 * 60;
     this.address = '';
   }
 
@@ -84,7 +85,7 @@ export class User {
 
   async getPermitData(value: number | string) {
     const domain = {
-      name: await this.erc20.name(),
+      name: "ENTR",//await this.erc20.name(),
       version: '1',
       chainId: this.chainId,
       verifyingContract: this.erc20.address,

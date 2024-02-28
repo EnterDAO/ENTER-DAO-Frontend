@@ -89,7 +89,7 @@ const FAQs: FC = () => {
           }}>
           Funds can be withdrawn from the pools. We are aware that the liquidity pools get stuck due to inactivity and
           once this happens they request a disproportionate amount of gas. We have outlined how this can be fixed in{' '}
-          <ExternalLink type="button" href="https://medium.com/enterdao/a-next-step-for-enterdao-2b8714bc0122">
+          <ExternalLink type="button" href="https://medium.com/enterdao/how-to-withdraw-funds-from-enterdaos-liquidity-pools-20d5f0325309">
             <span
               style={{
                 color: '#ED9199',
