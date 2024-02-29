@@ -12,7 +12,7 @@ import Grid from 'components/custom/grid';
 import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
 import { Hint } from 'components/custom/typography';
-import { EthToken } from 'components/providers/known-tokens-provider';
+import { EnterToken, EthToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
 import BalanceTree from 'merkle-distributor/balance-redeem-tree';
 import FAQs from 'modules/redeem/components/FAQs';
@@ -32,8 +32,14 @@ import TextAndImage from '../../components/TextAndImage';
 
 import s from './redeem.module.scss';
 
-export const formatBigNumber = (number: _BigNumber, decimalPlaces = 5) => {
-  if (!number) return '0';
+export const formatBigNumber = (number: _BigNumber, decimalPlaces = 4) => {
+  const threshold = new _BigNumber(1).div(new _BigNumber(10).pow(decimalPlaces));
+
+  if (number.absoluteValue().lt(threshold)) {
+    return `0.${'0'.repeat(decimalPlaces)}`;
+  }
+
+  if (number.isZero()) return `0.${'0'.repeat(decimalPlaces)}`;
 
   return parseFloat(number.toFixed(decimalPlaces)).toString();
 };
@@ -106,7 +112,7 @@ const Redeem: FC = () => {
     tokens: redeemAmountENTR,
     eth: redeemAmountETH,
     merkleProof: merkleProof,
-    actualBalance: tokenBalance.toString(),
+    actualBalance: tokenBalance.toFixed(),
     library: library,
     erc20: erc20TokenContract,
   };
@@ -122,7 +128,9 @@ const Redeem: FC = () => {
   );
   const redeemedAmountTokens = new _BigNumber(merkleDistributorContract?.redeemedAmountTokens ?? 0);
   const txHash = merkleDistributorContract?.txHash ?? '';
-  const redeemableAmountTokens = new _BigNumber(merkleDistributorContract?.redeemableAmountTokens ?? 0);
+  const redeemableAmountTokens = new _BigNumber(merkleDistributorContract?.redeemableAmountTokens ?? 0).unscaleBy(
+    EnterToken.decimals,
+  );
   const redeemableAmountETH = new _BigNumber(merkleDistributorContract?.redeemableAmountETH ?? 0).unscaleBy(
     EthToken.decimals,
   );
@@ -184,9 +192,9 @@ const Redeem: FC = () => {
                   ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
                     <Spin />
                   ) : merkleDistributorContract?.isRedeemClaimed ? (
-                    formatBigNumber(redeemedAmountETH!, 5)
+                    formatBigNumber(redeemedAmountETH!)
                   ) : (
-                    '0'
+                    '0.000'
                   )}
                 </Text>
                 &nbsp;
@@ -211,7 +219,7 @@ const Redeem: FC = () => {
                   ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
                     <Spin />
                   ) : merkleDistributorContract?.isRedeemClaimed ? (
-                    '0'
+                    '0.0000'
                   ) : (
                     formatBigNumber(allocatedEth!)
                   )}
@@ -239,8 +247,8 @@ const Redeem: FC = () => {
             ) : merkleDistributorContract?.isRedeemClaimed ? (
               <div className={s.card__empty}>
                 <AlreadyRedeemed
-                  entrAmount={redeemedAmountTokens?.toString()}
-                  ethAmount={formatBigNumber(redeemedAmountETH!, 5)}
+                  entrAmount={formatBigNumber(redeemedAmountTokens!)}
+                  ethAmount={formatBigNumber(redeemedAmountETH!)}
                   txHash={txHash}
                 />
               </div>
@@ -262,7 +270,7 @@ const Redeem: FC = () => {
                       ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
                         <Spin />
                       ) : merkleDistributorContract?.isRedeemClaimed ? (
-                        '0'
+                        '0.0000'
                       ) : (
                         formatBigNumber(allocatedEth!)
                       )}
@@ -285,19 +293,25 @@ const Redeem: FC = () => {
                       marginTop: '20px',
                     }}>
                     You must burn
-                    <span style={{ fontWeight: '700' }}> {userData.tokens.toString()}</span> ENTR to redeem
-                    <span style={{ fontWeight: '700' }}> {allocatedEth?.toString()} </span> ETH
-                    <br />
-                    Your wallet's ENTR balance is: <span style={{ fontWeight: '700' }}>
+                    <span style={{ fontWeight: '700' }}>
                       {' '}
-                      {tokenBalance.toString()}
+                      {formatBigNumber(new _BigNumber(userData.tokens.toString()).unscaleBy(EnterToken.decimals)!)}
+                    </span>{' '}
+                    ENTR to redeem
+                    <span style={{ fontWeight: '700' }}> {formatBigNumber(allocatedEth!)} </span> ETH
+                    <br />
+                    Your wallet's ENTR balance is:{' '}
+                    <span style={{ fontWeight: '700' }}>
+                      {' '}
+                      {formatBigNumber(tokenBalance.unscaleBy(EnterToken.decimals)!)}
                     </span>{' '}
                     ENTR
                   </Text>
                 </div>
                 <div className={s.redeem__button_container}>
                   <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                    Burn {redeemableAmountTokens?.toString()} ENTR to redeem {formatBigNumber(redeemableAmountETH!)} ETH
+                    Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
+                    {formatBigNumber(redeemableAmountETH!)} ETH
                   </button>
                   <div className={s.warning__container}>
                     <div style={{ marginTop: '-3px' }}>

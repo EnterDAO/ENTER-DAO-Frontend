@@ -10,7 +10,9 @@ import Spin from 'components/antd/spin';
 import ExternalLink from 'components/custom/externalLink';
 import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
+import { EnterToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
+import { formatBigNumber } from 'modules/redeem/views/redeem-page';
 import warning from 'resources/svg/warning-2.svg';
 
 import tokenAbi from '../../../../ABI/ENTR_TOKEN_ABI.json';
@@ -139,15 +141,22 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                           margin: '16px 0',
                         }}>
                         You are about to burn
-                        <span style={{ fontWeight: '700' }}> {tokenBalance.toString()}</span> ENTR to redeem
+                        <span style={{ fontWeight: '700' }}>
+                          {' '}
+                          {formatBigNumber(tokenBalance.unscaleBy(EnterToken.decimals)!)}
+                        </span>{' '}
+                        ENTR to redeem
                         <span style={{ fontWeight: '700' }}> {redeemableAmountETH?.toString()}</span> ETH.{' '}
                         <span style={{ fontWeight: '800', color: '#fff' }}>
                           You will miss out on{' '}
-                          {new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)).toString()} ETH.
+                          {formatBigNumber(new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)))}{' '}
+                          ETH.
                         </span>{' '}
                         Collect{' '}
                         <span style={{ fontWeight: '700' }}>
-                          {new BigNumber(userData.tokens).minus(tokenBalance!).toString()}{' '}
+                          {formatBigNumber(
+                            new BigNumber(userData.tokens).minus(tokenBalance!).unscaleBy(EnterToken.decimals)!,
+                          )}{' '}
                         </span>
                         ENTR to redeem the full <span style={{ fontWeight: '700' }}>{allocatedEth} </span>ETH amount you
                         are eligible for.
@@ -161,7 +170,9 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                             lineHeight: '18px',
                           }}>
                           For detailed information on the redeem mechanism please check{' '}
-                          <ExternalLink type="button" href="https://medium.com/enterdao/a-next-step-for-enterdao-2b8714bc0122">
+                          <ExternalLink
+                            type="button"
+                            href="https://medium.com/enterdao/a-next-step-for-enterdao-2b8714bc0122">
                             <span
                               style={{
                                 color: '#ED9199',
@@ -183,7 +194,8 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                         style={{
                           marginTop: '20px',
                         }}>
-                        You have {tokenBalance.toString()} ENTR in wallet and you will burn {userData.tokens.toString()}{' '}
+                        You have {formatBigNumber(tokenBalance.unscaleBy(EnterToken.decimals)!)} ENTR in wallet and you
+                        will burn {formatBigNumber(new BigNumber(userData.tokens).unscaleBy(EnterToken.decimals)!)}{' '}
                         ENTR.
                       </Text>
                     )}

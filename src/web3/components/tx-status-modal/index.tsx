@@ -1,5 +1,6 @@
 import React from 'react';
 import Spin from 'antd/lib/spin';
+import { BigNumber } from 'bignumber.js';
 import { getEtherscanTxUrl } from 'web3/utils';
 import { Web3SendState } from 'web3/web3Contract';
 
@@ -8,6 +9,8 @@ import Modal, { ModalProps } from 'components/antd/modal';
 import ExternalLink from 'components/custom/externalLink';
 import Icon from 'components/custom/icon';
 import { Text } from 'components/custom/typography';
+import { EnterToken } from 'components/providers/known-tokens-provider';
+import { formatBigNumber } from 'modules/redeem/views/redeem-page';
 import etherscanLink from 'resources/png/etherscan-link.svg';
 import success from 'resources/svg/success.svg';
 import warning from 'resources/svg/warning-3.svg';
@@ -68,7 +71,12 @@ const TxStatusModal: React.FC<Props> = props => {
                   weight="semibold"
                   color="secondary"
                   className="mb-16 text-center">
-                  You have successfully redeemed {redeemableAmountTokens === '0' ? <Spin /> : redeemableAmountTokens}{' '}
+                  You have successfully redeemed{' '}
+                  {redeemableAmountTokens === '0' ? (
+                    <Spin />
+                  ) : (
+                    formatBigNumber(new BigNumber(redeemableAmountTokens!).unscaleBy(EnterToken.decimals)!)
+                  )}{' '}
                   ENTR for {redeemableAmountETH === '0' ? <Spin /> : redeemableAmountETH} ETH
                 </Text>
                 <ExternalLink
