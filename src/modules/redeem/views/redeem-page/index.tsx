@@ -126,7 +126,9 @@ const Redeem: FC = () => {
   const redeemedAmountETH = new _BigNumber(merkleDistributorContract?.redeemedAmountETH ?? 0).unscaleBy(
     EthToken.decimals,
   );
-  const redeemedAmountTokens = new _BigNumber(merkleDistributorContract?.redeemedAmountTokens ?? 0);
+  const redeemedAmountTokens = new _BigNumber(merkleDistributorContract?.redeemedAmountTokens ?? 0).unscaleBy(
+    EnterToken.decimals,
+  );
   const txHash = merkleDistributorContract?.txHash ?? '';
   const redeemableAmountTokens = new _BigNumber(merkleDistributorContract?.redeemableAmountTokens ?? 0).unscaleBy(
     EnterToken.decimals,
