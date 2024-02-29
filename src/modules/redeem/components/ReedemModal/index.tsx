@@ -12,6 +12,7 @@ import Grid from 'components/custom/grid';
 import { Text } from 'components/custom/typography';
 import { EnterToken } from 'components/providers/known-tokens-provider';
 import config from 'config';
+import { formatBigNumber } from 'modules/redeem/views/redeem-page';
 import warning from 'resources/svg/warning-2.svg';
 
 import tokenAbi from '../../../../ABI/ENTR_TOKEN_ABI.json';
@@ -142,20 +143,20 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                         You are about to burn
                         <span style={{ fontWeight: '700' }}>
                           {' '}
-                          {tokenBalance.unscaleBy(EnterToken.decimals)?.toFixed(4)}
+                          {formatBigNumber(tokenBalance.unscaleBy(EnterToken.decimals)!)}
                         </span>{' '}
                         ENTR to redeem
                         <span style={{ fontWeight: '700' }}> {redeemableAmountETH?.toString()}</span> ETH.{' '}
                         <span style={{ fontWeight: '800', color: '#fff' }}>
                           You will miss out on{' '}
-                          {new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)).toString()} ETH.
+                          {formatBigNumber(new BigNumber(allocatedEth!).minus(new BigNumber(redeemableAmountETH!)))}{' '}
+                          ETH.
                         </span>{' '}
                         Collect{' '}
                         <span style={{ fontWeight: '700' }}>
-                          {new BigNumber(userData.tokens)
-                            .minus(tokenBalance!)
-                            .unscaleBy(EnterToken.decimals)
-                            ?.toFixed(4)}{' '}
+                          {formatBigNumber(
+                            new BigNumber(userData.tokens).minus(tokenBalance!).unscaleBy(EnterToken.decimals)!,
+                          )}{' '}
                         </span>
                         ENTR to redeem the full <span style={{ fontWeight: '700' }}>{allocatedEth} </span>ETH amount you
                         are eligible for.

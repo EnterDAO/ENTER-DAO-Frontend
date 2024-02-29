@@ -33,7 +33,13 @@ import TextAndImage from '../../components/TextAndImage';
 import s from './redeem.module.scss';
 
 export const formatBigNumber = (number: _BigNumber, decimalPlaces = 4) => {
-  if (!number) return '0';
+  const threshold = new _BigNumber(1).div(new _BigNumber(10).pow(decimalPlaces));
+
+  if (number.absoluteValue().lt(threshold)) {
+    return `0.${'0'.repeat(decimalPlaces)}`;
+  }
+
+  if (number.isZero()) return `0.${'0'.repeat(decimalPlaces)}`;
 
   return parseFloat(number.toFixed(decimalPlaces)).toString();
 };
@@ -188,7 +194,7 @@ const Redeem: FC = () => {
                   ) : merkleDistributorContract?.isRedeemClaimed ? (
                     formatBigNumber(redeemedAmountETH!)
                   ) : (
-                    '0'
+                    '0.000'
                   )}
                 </Text>
                 &nbsp;
@@ -213,7 +219,7 @@ const Redeem: FC = () => {
                   ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
                     <Spin />
                   ) : merkleDistributorContract?.isRedeemClaimed ? (
-                    '0'
+                    '0.0000'
                   ) : (
                     formatBigNumber(allocatedEth!)
                   )}
@@ -241,7 +247,7 @@ const Redeem: FC = () => {
             ) : merkleDistributorContract?.isRedeemClaimed ? (
               <div className={s.card__empty}>
                 <AlreadyRedeemed
-                  entrAmount={redeemedAmountTokens?.toString()}
+                  entrAmount={formatBigNumber(redeemedAmountTokens!)}
                   ethAmount={formatBigNumber(redeemedAmountETH!)}
                   txHash={txHash}
                 />
@@ -264,7 +270,7 @@ const Redeem: FC = () => {
                       ) : merkleDistributorContract?.isRedeemClaimed === undefined ? (
                         <Spin />
                       ) : merkleDistributorContract?.isRedeemClaimed ? (
-                        '0'
+                        '0.0000'
                       ) : (
                         formatBigNumber(allocatedEth!)
                       )}
@@ -289,15 +295,15 @@ const Redeem: FC = () => {
                     You must burn
                     <span style={{ fontWeight: '700' }}>
                       {' '}
-                      {new _BigNumber(userData.tokens.toString()).unscaleBy(EnterToken.decimals)?.toFixed(4)}
+                      {formatBigNumber(new _BigNumber(userData.tokens.toString()).unscaleBy(EnterToken.decimals)!)}
                     </span>{' '}
                     ENTR to redeem
-                    <span style={{ fontWeight: '700' }}> {allocatedEth?.toFixed(4)} </span> ETH
+                    <span style={{ fontWeight: '700' }}> {formatBigNumber(allocatedEth!)} </span> ETH
                     <br />
                     Your wallet's ENTR balance is:{' '}
                     <span style={{ fontWeight: '700' }}>
                       {' '}
-                      {tokenBalance.unscaleBy(EnterToken.decimals)?.toFixed(4)}
+                      {formatBigNumber(tokenBalance.unscaleBy(EnterToken.decimals)!)}
                     </span>{' '}
                     ENTR
                   </Text>
