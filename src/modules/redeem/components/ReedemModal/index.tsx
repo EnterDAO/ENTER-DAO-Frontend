@@ -194,7 +194,8 @@ const RedeemModal: FC<RedeemModalProps> = props => {
                         style={{
                           marginTop: '20px',
                         }}>
-                        You have {tokenBalance.toString()} ENTR in wallet and you will burn {userData.tokens.toString()}{' '}
+                        You have {formatBigNumber(tokenBalance.unscaleBy(EnterToken.decimals)!)} ENTR in wallet and you
+                        will burn {formatBigNumber(new BigNumber(userData.tokens).unscaleBy(EnterToken.decimals)!)}{' '}
                         ENTR.
                       </Text>
                     )}
