@@ -16,7 +16,7 @@ import LedgerWalletConfig from 'wallets/connectors/ledger';
 import MetaMaskWalletConfig from 'wallets/connectors/metamask';
 import PortisWalletConfig from 'wallets/connectors/portis';
 import TrezorWalletConfig from 'wallets/connectors/trezor';
-import WalletConnectConfig from 'wallets/connectors/wallet-connect';
+// import WalletConnectConfig from 'wallets/connectors/wallet-connect';
 
 import { WalletConnector } from 'wallets/types';
 
@@ -26,7 +26,7 @@ export const WalletConnectors: WalletConnector[] = [
   PortisWalletConfig,
   TrezorWalletConfig,
   CoinbaseWalletConfig,
-  WalletConnectConfig,
+  // WalletConnectConfig,
 ];
 
 type WalletData = {
