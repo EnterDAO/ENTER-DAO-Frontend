@@ -1,6 +1,6 @@
 import { ConnectorUpdate } from '@web3-react/types'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { EthereumProviderOptions } from '@walletconnect/ethereum-provider';
+import { EthereumProviderOptions, OPTIONAL_METHODS, REQUIRED_METHODS, REQUIRED_EVENTS, OPTIONAL_EVENTS } from '@walletconnect/ethereum-provider';
 import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 
 const MAX_LISTENERS = 100;
@@ -15,7 +15,9 @@ export class WalletConnectConnector extends AbstractConnector {
     constructor(options: EthereumProviderOptions) {
         super({ supportedChainIds: options.chains });
 
-        options.events = ["accountsChanged", "chainChanged", "disconnect", "display_uri"];
+        options.events = [...REQUIRED_EVENTS, ...OPTIONAL_EVENTS];
+        options.methods = [...REQUIRED_METHODS, ...OPTIONAL_METHODS];
+        
         this.options = options;
 
         this.handleChainChanged = this.handleChainChanged.bind(this)
