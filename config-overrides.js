@@ -18,31 +18,43 @@ module.exports = override(
             },
         },
     }),
-    (config) => {
-        /*
-            Babel transpiles the destr module as static assets for some reason, so we need to exclude it from the file-loader
-            The module is dependency of:
-            @walletconnect/ethereum-provider
-            │ └─┬ @walletconnect/types
-            │   └─┬ @walletconnect/keyvaluestorage
-            │     └─┬ unstorage
-            │       ├── destr
-        */
-        return excludePathFromLoader(config, "file-loader", /node_modules\/destr/);
-    }
+    setOptimization(),
+    /*
+        Babel transpiles the destr module as static assets for some reason, so we need to exclude it from the file-loader
+        The module is dependency of:
+        @walletconnect/ethereum-provider
+        │ └─┬ @walletconnect/types
+        │   └─┬ @walletconnect/keyvaluestorage
+        │     └─┬ unstorage
+        │       ├── destr
+    */
+    excludePathFromLoader("file-loader", /node_modules\/destr/)
 );
 
-function excludePathFromLoader(config, loaderName, excludePath) {
-    const oneOfRule = config.module.rules.find((rule) => rule.oneOf);
-    if (oneOfRule) {
-        const rule = oneOfRule.oneOf.find((rule) => rule.loader && rule.loader.includes(loaderName));
+function excludePathFromLoader(loaderName, pathToExclude) {
+    return function (config) {
+        const oneOfRule = config.module.rules.find((rule) => rule.oneOf);
 
-        if (rule) {
-            rule.exclude = rule.exclude || [];
-            rule.exclude.push(excludePath);
+        if (oneOfRule) {
+            const rule = oneOfRule.oneOf.find((rule) => rule.loader && rule.loader.includes(loaderName));
+
+            if (rule) {
+                rule.exclude = rule.exclude || [];
+                rule.exclude.push(pathToExclude);
+            }
         }
+
+        // the rule is modified by reference, so it is automatically updated inside the config object
+        return config;
+    };
+}
+
+function setOptimization () {
+    return function (config) {
+        if (process.env.NON_SPLIT === 'true') {
+            config.optimization.minimize = false;
+        }
+
+        return config;
     }
-    
-    // the rule is modified by reference, so it is automatically updated inside the config object
-    return config;
 }
