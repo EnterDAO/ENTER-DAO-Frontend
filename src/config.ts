@@ -66,7 +66,9 @@ const config = {
         id: String(process.env.REACT_APP_WEB3_PORTIS_APP_ID),
       },
       walletConnect: {
-        bridge: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_BRIDGE),
+        appName: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_NAME),
+        appId: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_ID),
+        appUrl: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_URL),
       },
       coinbase: {
         appName: String(process.env.REACT_APP_WEB3_COINBASE_APP_NAME),

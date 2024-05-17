@@ -16,7 +16,7 @@ import LedgerWalletConfig from 'wallets/connectors/ledger';
 import MetaMaskWalletConfig from 'wallets/connectors/metamask';
 import PortisWalletConfig from 'wallets/connectors/portis';
 import TrezorWalletConfig from 'wallets/connectors/trezor';
-// import WalletConnectConfig from 'wallets/connectors/wallet-connect';
+import WalletConnectConfig, { UnsupportedChainsWalletConnectError } from 'wallets/connectors/wallet-connect';
 
 import { WalletConnector } from 'wallets/types';
 
@@ -26,7 +26,7 @@ export const WalletConnectors: WalletConnector[] = [
   PortisWalletConfig,
   TrezorWalletConfig,
   CoinbaseWalletConfig,
-  // WalletConnectConfig,
+  WalletConnectConfig,
 ];
 
 type WalletData = {
@@ -106,20 +106,27 @@ const WalletProvider: React.FC = props => {
       function onError(error: Error) {
         console.error('Wallet::Connect().onError', { error });
 
-        if (error instanceof NoEthereumProviderError) {
-          setInstallMetaMaskModal(true);
-          disconnect();
-        } else if (error instanceof UnsupportedChainIdError) {
-          setUnsupportedChainModal(true);
-          disconnect();
-        } else {
-          const err = walletConnector.onError?.(error);
+        const isNativeError = [NoEthereumProviderError, UnsupportedChainIdError].some(
+          nativeError => error instanceof nativeError,
+        );
 
-          if (err) {
-            Antd.notification.error({
-              message: err.message,
-            });
-          }
+        // if the error is not native, we call the onError method of the connector.
+        // UnsupportedChainsWalletConnectError is a custom error thrown by WalletConnectConnector
+        const err = isNativeError ? error : walletConnector.onError?.(error);
+
+        if (err instanceof NoEthereumProviderError) {
+          setInstallMetaMaskModal(true);
+          return disconnect();
+        }
+        if (err instanceof UnsupportedChainIdError || err instanceof UnsupportedChainsWalletConnectError) {
+          setUnsupportedChainModal(true);
+          return disconnect();
+        }
+
+        if (err) {
+          Antd.notification.error({
+            message: err.message,
+          });
         }
       }
 
