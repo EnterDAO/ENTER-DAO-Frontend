@@ -14,7 +14,7 @@ import UnsupportedChainModal from 'wallets/components/unsupported-chain-modal';
 import CoinbaseWalletConfig from 'wallets/connectors/coinbase';
 import LedgerWalletConfig from 'wallets/connectors/ledger';
 import MetaMaskWalletConfig from 'wallets/connectors/metamask';
-import PortisWalletConfig from 'wallets/connectors/portis';
+// import PortisWalletConfig from 'wallets/connectors/portis';
 import TrezorWalletConfig from 'wallets/connectors/trezor';
 import WalletConnectConfig, { UnsupportedChainsWalletConnectError } from 'wallets/connectors/wallet-connect';
 
@@ -23,7 +23,7 @@ import { WalletConnector } from 'wallets/types';
 export const WalletConnectors: WalletConnector[] = [
   MetaMaskWalletConfig,
   LedgerWalletConfig,
-  PortisWalletConfig,
+  // PortisWalletConfig,
   TrezorWalletConfig,
   CoinbaseWalletConfig,
   WalletConnectConfig,

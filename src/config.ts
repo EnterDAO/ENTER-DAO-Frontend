@@ -62,9 +62,9 @@ const config = {
       url: String(process.env.REACT_APP_OPENSEA_URL),
     },
     wallets: {
-      portis: {
-        id: String(process.env.REACT_APP_WEB3_PORTIS_APP_ID),
-      },
+      // portis: {
+      //   id: String(process.env.REACT_APP_WEB3_PORTIS_APP_ID),
+      // },
       walletConnect: {
         appName: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_NAME),
         appId: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_ID),
