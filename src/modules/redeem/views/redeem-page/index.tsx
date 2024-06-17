@@ -16,6 +16,7 @@ import { EnterToken, EthToken } from 'components/providers/known-tokens-provider
 import config from 'config';
 import BalanceTree from 'merkle-distributor/balance-redeem-tree';
 import FAQs from 'modules/redeem/components/FAQs';
+import RedeemWithApproveModal from 'modules/redeem/components/RedeemWithApproveModal';
 import RedeemModal from 'modules/redeem/components/ReedemModal';
 import { useRedeem } from 'modules/redeem/providers/redeem-provider';
 import warning from 'resources/svg/warning.svg';
@@ -56,6 +57,7 @@ const Redeem: FC = () => {
   }, [library, config.tokens.entr, tokenAbi]);
 
   const [redeemModalVisible, showRedeemModal] = useState(false);
+  const [redeemWithApproveModalVisible, showRedeemWithApproveModal] = useState(false);
   const merkleDistributorContract = redeemCtx.merkleDistributor;
 
   const wallet = useWallet();
@@ -143,6 +145,10 @@ const Redeem: FC = () => {
 
   const handleRedeem = () => {
     showRedeemModal(true);
+  };
+
+  const handleRedeemWithApprove = () => {
+    showRedeemWithApproveModal(true);
   };
 
   return (
@@ -315,6 +321,9 @@ const Redeem: FC = () => {
                     Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
                     {formatBigNumber(redeemableAmountETH!)} ETH
                   </button>
+                  <button className={cn('button-ghost', s.redeem__button)} onClick={handleRedeemWithApprove}>
+                    <span style={{ textTransform: 'none' }}>Approve and Redeem</span>
+                  </button>
                   <div className={s.warning__container}>
                     <div style={{ marginTop: '-3px' }}>
                       <img src={warning} alt="" style={{ marginRight: '10px' }} />
@@ -384,6 +393,17 @@ const Redeem: FC = () => {
           redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
           allocatedEth={formatBigNumber(allocatedEth!)}
           onCancel={() => showRedeemModal(false)}
+          className="redeem__modal"
+        />
+      )}
+
+      {redeemWithApproveModalVisible && (
+        <RedeemWithApproveModal
+          userData={userData}
+          merkleDistributor={merkleDistributorContract}
+          redeemableAmountETH={redeemableAmountETH && formatBigNumber(redeemableAmountETH!)}
+          redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
+          onCancel={() => showRedeemWithApproveModal(false)}
           className="redeem__modal"
         />
       )}

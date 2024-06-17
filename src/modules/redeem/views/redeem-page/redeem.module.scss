@@ -4,7 +4,6 @@
   border-radius: 8px;
   padding: 12px;
   position: relative;
-  height: 448px;
 
   &__empty {
     padding-top: 30px;
@@ -366,20 +365,18 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  height: 316px;
+  position: relative;
 }
 
 .redeem__button {
   width: 100%;
-  margin: 0 auto;
+  margin: 10px auto;
   background: var(--Linear, linear-gradient(93deg, #ef9c92 0%, #dd3dcb 100%)) !important;
   box-shadow: 0px 4px 8px 0px rgba(221, 61, 203, 0.3803921569);
 }
 
 .redeem__button_container {
   width: 100%;
-  position: absolute;
-  bottom: 0;
 }
 
 .warning__container {

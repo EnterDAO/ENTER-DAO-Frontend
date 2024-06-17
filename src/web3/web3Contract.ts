@@ -228,6 +228,12 @@ class Web3Contract extends EventEmitter {
         return Promise.reject(error);
       });
   }
+
+  public static async isContract(address: string): Promise<boolean> {
+    const code = await DEFAULT_WEB3.eth.getCode(address)
+
+    return code !== '0x' && code !== '0x0';
+  }
 }
 
 export default Web3Contract;

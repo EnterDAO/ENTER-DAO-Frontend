@@ -116,6 +116,30 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     this.emit(Web3Contract.UPDATE_DATA);
   }
 
+  async redeem(): Promise<void> {
+    const actualBalance = BigNumber.from(this.userData.actualBalance);
+    const allocatedTokens = BigNumber.from(this.allocatedTokens ?? 0);
+
+    const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
+    this.userData.tokens = amountToRedeem.toString();
+
+    const txHashListener = (txHash: string) => {
+      localStorage.setItem('transactionHash', txHash);
+      this.off('tx:hash', txHashListener);
+    };
+    this.on('tx:hash', txHashListener);
+
+    return this.send('redeem', [this.userData, amountToRedeem.toString()], {
+      from: this.account,
+    }).then(() => {
+      this.isRedeemClaimed = true;
+      this.redeemIndex = -1;
+      this.allocatedTokens = undefined;
+      this.allocatedEth = undefined;
+      this.emit(Web3Contract.UPDATE_DATA);
+    });
+  }
+
   async permitRedeem(): Promise<void> {
     const buildObj = {
       owner: this.userData.library.getSigner(this.account),
