@@ -17,7 +17,7 @@ import config from 'config';
 import BalanceTree from 'merkle-distributor/balance-redeem-tree';
 import FAQs from 'modules/redeem/components/FAQs';
 import RedeemWithApproveModal from 'modules/redeem/components/RedeemWithApproveModal';
-import RedeemModal from 'modules/redeem/components/ReedemModal';
+import RedeemWithPermitModal from 'modules/redeem/components/ReedemWithPermitModal';
 import { useRedeem } from 'modules/redeem/providers/redeem-provider';
 import warning from 'resources/svg/warning.svg';
 import { useWallet } from 'wallets/wallet';
@@ -56,7 +56,8 @@ const Redeem: FC = () => {
     }
   }, [library, config.tokens.entr, tokenAbi]);
 
-  const [redeemModalVisible, showRedeemModal] = useState(false);
+  const [tokenApproved, setTokenApproved] = useState<_BigNumber>(new _BigNumber(0));
+  const [redeemWithPermitModalVisible, showRedeemWithPermitModal] = useState(false);
   const [redeemWithApproveModalVisible, showRedeemWithApproveModal] = useState(false);
   const merkleDistributorContract = redeemCtx.merkleDistributor;
 
@@ -90,13 +91,15 @@ const Redeem: FC = () => {
 
   useEffect(() => {
     if (account && library && erc20TokenContract && walletCtx.account) {
-      const fetchBalance = async () => {
+      const fetchERC20DataOfAccount = async () => {
         const balance = await erc20TokenContract?.balanceOf(account);
+        const allowance = await erc20TokenContract.allowance(account, merkleDistributorContract?.address);
         setTokenBalance(new _BigNumber(balance.toString()));
+        setTokenApproved(new _BigNumber(allowance.toString()));
       };
       merkleDistributorContract?.loadCommonFor(walletCtx.account).catch(Error);
 
-      fetchBalance().catch(console.error);
+      fetchERC20DataOfAccount().catch(console.error);
     }
   }, [
     account,
@@ -120,6 +123,7 @@ const Redeem: FC = () => {
   };
   merkleDistributorContract!.loadUserData(userData);
 
+  const isAlreadyApproved = tokenApproved.gte(new _BigNumber(redeemAmountENTR));
   const lockedRedeem =
     merkleDistributorContract?.redeemIndex === -1 || merkleDistributorContract?.redeemIndex === undefined;
 
@@ -144,7 +148,7 @@ const Redeem: FC = () => {
   }
 
   const handleRedeem = () => {
-    showRedeemModal(true);
+    showRedeemWithPermitModal(true);
   };
 
   const handleRedeemWithApprove = () => {
@@ -317,13 +321,22 @@ const Redeem: FC = () => {
                   </Text>
                 </div>
                 <div className={s.redeem__button_container}>
-                  <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                    Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
-                    {formatBigNumber(redeemableAmountETH!)} ETH
+                  {isAlreadyApproved === false && (
+                    <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
+                      Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
+                      {formatBigNumber(redeemableAmountETH!)} ETH
+                    </button>
+                  )}
+                  <button className={cn(isAlreadyApproved ? 'button-primary' : 'button-ghost', s.redeem__button)} onClick={handleRedeemWithApprove}>
+                    <span style={{ textTransform: 'none' }}>
+                      {isAlreadyApproved
+                        ? `Burn ${formatBigNumber(redeemableAmountTokens!)} ENTR to redeem ${formatBigNumber(
+                            redeemableAmountETH!,
+                          )} ETH`
+                        : 'Approve and Redeem'}
+                    </span>
                   </button>
-                  <button className={cn('button-ghost', s.redeem__button)} onClick={handleRedeemWithApprove}>
-                    <span style={{ textTransform: 'none' }}>Approve and Redeem</span>
-                  </button>
+
                   <div className={s.warning__container}>
                     <div style={{ marginTop: '-3px' }}>
                       <img src={warning} alt="" style={{ marginRight: '10px' }} />
@@ -385,14 +398,14 @@ const Redeem: FC = () => {
         </TextAndImage>
       </div>
       <FAQs />
-      {redeemModalVisible && (
-        <RedeemModal
+      {redeemWithPermitModalVisible && (
+        <RedeemWithPermitModal
           userData={userData}
           merkleDistributor={merkleDistributorContract}
           redeemableAmountETH={redeemableAmountETH && formatBigNumber(redeemableAmountETH!)}
           redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
           allocatedEth={formatBigNumber(allocatedEth!)}
-          onCancel={() => showRedeemModal(false)}
+          onCancel={() => showRedeemWithPermitModal(false)}
           className="redeem__modal"
         />
       )}
