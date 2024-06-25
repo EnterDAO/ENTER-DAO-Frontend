@@ -123,15 +123,20 @@ export default class MerkleRedeemDistributor extends Web3Contract {
     const amountToRedeem = actualBalance.lt(allocatedTokens) ? actualBalance : allocatedTokens;
     this.userData.tokens = amountToRedeem.toString();
 
+    const txHashListener = (txHash: string) => {
+      localStorage.setItem('transactionHash', txHash);
+      this.off('tx:hash', txHashListener);
+    };
+
+    let web3ContractMethod: 'send' | 'sendSilent' = 'sendSilent';
+
+    // Listen for transaciton status 
     if (watchTx) {
-      const txHashListener = (txHash: string) => {
-        localStorage.setItem('transactionHash', txHash);
-        this.off('tx:hash', txHashListener);
-      };
+      web3ContractMethod = 'send';
       this.on('tx:hash', txHashListener);
     }
 
-    return this.send('redeem', [this.userData, amountToRedeem.toString()], {
+    return this[web3ContractMethod]('redeem', [this.userData, amountToRedeem.toString()], {
       from: this.account,
     }).then(() => {
       this.isRedeemClaimed = true;
