@@ -17,7 +17,7 @@ import warning from 'resources/svg/warning-2.svg';
 
 import tokenAbi from '../../../../ABI/ENTR_TOKEN_ABI.json';
 
-import s from './RedeemModal.module.scss';
+import s from './RedeemWithPermitModal.module.scss';
 
 export type RedeemModalProps = ModalProps & {
   merkleDistributor?: MerkleRedeemDistributor;

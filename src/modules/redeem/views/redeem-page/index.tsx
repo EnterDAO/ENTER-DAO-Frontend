@@ -5,6 +5,7 @@ import { BigNumber as _BigNumber } from 'bignumber.js';
 import cn from 'classnames';
 import { BigNumber } from 'ethers';
 import { shortenAddr } from 'web3/utils';
+import Web3Contract from 'web3/web3Contract';
 
 import Spin from 'components/antd/spin';
 import ExternalLink from 'components/custom/externalLink';
@@ -16,7 +17,8 @@ import { EnterToken, EthToken } from 'components/providers/known-tokens-provider
 import config from 'config';
 import BalanceTree from 'merkle-distributor/balance-redeem-tree';
 import FAQs from 'modules/redeem/components/FAQs';
-import RedeemModal from 'modules/redeem/components/ReedemModal';
+import RedeemWithApproveModal from 'modules/redeem/components/RedeemWithApproveModal';
+import RedeemWithPermitModal from 'modules/redeem/components/ReedemWithPermitModal';
 import { useRedeem } from 'modules/redeem/providers/redeem-provider';
 import warning from 'resources/svg/warning.svg';
 import { useWallet } from 'wallets/wallet';
@@ -55,7 +57,10 @@ const Redeem: FC = () => {
     }
   }, [library, config.tokens.entr, tokenAbi]);
 
-  const [redeemModalVisible, showRedeemModal] = useState(false);
+  const [isMultiSigWallet, setIsMultiSigWallet] = useState(false);
+  const [tokenApproved, setTokenApproved] = useState<_BigNumber>(new _BigNumber(0));
+  const [redeemWithPermitModalVisible, showRedeemWithPermitModal] = useState(false);
+  const [redeemWithApproveModalVisible, showRedeemWithApproveModal] = useState(false);
   const merkleDistributorContract = redeemCtx.merkleDistributor;
 
   const wallet = useWallet();
@@ -88,13 +93,18 @@ const Redeem: FC = () => {
 
   useEffect(() => {
     if (account && library && erc20TokenContract && walletCtx.account) {
-      const fetchBalance = async () => {
+      const fetchERC20DataOfAccount = async () => {
         const balance = await erc20TokenContract?.balanceOf(account);
+        const allowance = await erc20TokenContract.allowance(account, merkleDistributorContract?.address);
+        const isMultiSig = await Web3Contract.isContract(account);
+
+        setIsMultiSigWallet(isMultiSig);
         setTokenBalance(new _BigNumber(balance.toString()));
+        setTokenApproved(new _BigNumber(allowance.toString()));
       };
       merkleDistributorContract?.loadCommonFor(walletCtx.account).catch(Error);
 
-      fetchBalance().catch(console.error);
+      fetchERC20DataOfAccount().catch(console.error);
     }
   }, [
     account,
@@ -118,6 +128,7 @@ const Redeem: FC = () => {
   };
   merkleDistributorContract!.loadUserData(userData);
 
+  const isAlreadyApproved = tokenApproved.gte(new _BigNumber(redeemAmountENTR));
   const lockedRedeem =
     merkleDistributorContract?.redeemIndex === -1 || merkleDistributorContract?.redeemIndex === undefined;
 
@@ -142,7 +153,11 @@ const Redeem: FC = () => {
   }
 
   const handleRedeem = () => {
-    showRedeemModal(true);
+    showRedeemWithPermitModal(true);
+  };
+
+  const handleRedeemWithApprove = () => {
+    showRedeemWithApproveModal(true);
   };
 
   return (
@@ -311,10 +326,21 @@ const Redeem: FC = () => {
                   </Text>
                 </div>
                 <div className={s.redeem__button_container}>
-                  <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                    Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
-                    {formatBigNumber(redeemableAmountETH!)} ETH
-                  </button>
+                  {isMultiSigWallet ? (
+                    <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeemWithApprove}>
+                      {isAlreadyApproved
+                        ? `Burn ${formatBigNumber(redeemableAmountTokens!)} ENTR to redeem ${formatBigNumber(
+                            redeemableAmountETH!,
+                          )} ETH`
+                        : 'Approve and Redeem'}
+                    </button>
+                  ) : (
+                    <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
+                      Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
+                      {formatBigNumber(redeemableAmountETH!)} ETH
+                    </button>
+                  )}
+
                   <div className={s.warning__container}>
                     <div style={{ marginTop: '-3px' }}>
                       <img src={warning} alt="" style={{ marginRight: '10px' }} />
@@ -376,14 +402,25 @@ const Redeem: FC = () => {
         </TextAndImage>
       </div>
       <FAQs />
-      {redeemModalVisible && (
-        <RedeemModal
+      {redeemWithPermitModalVisible && (
+        <RedeemWithPermitModal
           userData={userData}
           merkleDistributor={merkleDistributorContract}
           redeemableAmountETH={redeemableAmountETH && formatBigNumber(redeemableAmountETH!)}
           redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
           allocatedEth={formatBigNumber(allocatedEth!)}
-          onCancel={() => showRedeemModal(false)}
+          onCancel={() => showRedeemWithPermitModal(false)}
+          className="redeem__modal"
+        />
+      )}
+
+      {redeemWithApproveModalVisible && (
+        <RedeemWithApproveModal
+          userData={userData}
+          merkleDistributor={merkleDistributorContract}
+          redeemableAmountETH={redeemableAmountETH && formatBigNumber(redeemableAmountETH!)}
+          redeemableAmountTokens={redeemableAmountTokens && formatBigNumber(redeemableAmountTokens!)}
+          onCancel={() => showRedeemWithApproveModal(false)}
           className="redeem__modal"
         />
       )}
