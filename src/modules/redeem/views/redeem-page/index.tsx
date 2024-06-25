@@ -5,6 +5,7 @@ import { BigNumber as _BigNumber } from 'bignumber.js';
 import cn from 'classnames';
 import { BigNumber } from 'ethers';
 import { shortenAddr } from 'web3/utils';
+import Web3Contract from 'web3/web3Contract';
 
 import Spin from 'components/antd/spin';
 import ExternalLink from 'components/custom/externalLink';
@@ -56,6 +57,7 @@ const Redeem: FC = () => {
     }
   }, [library, config.tokens.entr, tokenAbi]);
 
+  const [isContract, setIsContract] = useState(false);
   const [tokenApproved, setTokenApproved] = useState<_BigNumber>(new _BigNumber(0));
   const [redeemWithPermitModalVisible, showRedeemWithPermitModal] = useState(false);
   const [redeemWithApproveModalVisible, showRedeemWithApproveModal] = useState(false);
@@ -94,6 +96,9 @@ const Redeem: FC = () => {
       const fetchERC20DataOfAccount = async () => {
         const balance = await erc20TokenContract?.balanceOf(account);
         const allowance = await erc20TokenContract.allowance(account, merkleDistributorContract?.address);
+        const isContract = await Web3Contract.isContract(account);
+
+        setIsContract(isContract);
         setTokenBalance(new _BigNumber(balance.toString()));
         setTokenApproved(new _BigNumber(allowance.toString()));
       };
@@ -321,21 +326,20 @@ const Redeem: FC = () => {
                   </Text>
                 </div>
                 <div className={s.redeem__button_container}>
-                  {isAlreadyApproved === false && (
-                    <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
-                      Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
-                      {formatBigNumber(redeemableAmountETH!)} ETH
-                    </button>
-                  )}
-                  <button className={cn(isAlreadyApproved ? 'button-primary' : 'button-ghost', s.redeem__button)} onClick={handleRedeemWithApprove}>
-                    <span style={{ textTransform: 'none' }}>
+                  {isContract ? (
+                    <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeemWithApprove}>
                       {isAlreadyApproved
                         ? `Burn ${formatBigNumber(redeemableAmountTokens!)} ENTR to redeem ${formatBigNumber(
                             redeemableAmountETH!,
                           )} ETH`
                         : 'Approve and Redeem'}
-                    </span>
-                  </button>
+                    </button>
+                  ) : (
+                    <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeem}>
+                      Burn {formatBigNumber(redeemableAmountTokens!)} ENTR to redeem{' '}
+                      {formatBigNumber(redeemableAmountETH!)} ETH
+                    </button>
+                  )}
 
                   <div className={s.warning__container}>
                     <div style={{ marginTop: '-3px' }}>
