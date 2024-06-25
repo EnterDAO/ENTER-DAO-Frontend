@@ -57,7 +57,7 @@ const Redeem: FC = () => {
     }
   }, [library, config.tokens.entr, tokenAbi]);
 
-  const [isContract, setIsContract] = useState(false);
+  const [isMultiSigWallet, setIsMultiSigWallet] = useState(false);
   const [tokenApproved, setTokenApproved] = useState<_BigNumber>(new _BigNumber(0));
   const [redeemWithPermitModalVisible, showRedeemWithPermitModal] = useState(false);
   const [redeemWithApproveModalVisible, showRedeemWithApproveModal] = useState(false);
@@ -96,9 +96,9 @@ const Redeem: FC = () => {
       const fetchERC20DataOfAccount = async () => {
         const balance = await erc20TokenContract?.balanceOf(account);
         const allowance = await erc20TokenContract.allowance(account, merkleDistributorContract?.address);
-        const isContract = await Web3Contract.isContract(account);
+        const isMultiSig = await Web3Contract.isContract(account);
 
-        setIsContract(isContract);
+        setIsMultiSigWallet(isMultiSig);
         setTokenBalance(new _BigNumber(balance.toString()));
         setTokenApproved(new _BigNumber(allowance.toString()));
       };
@@ -326,7 +326,7 @@ const Redeem: FC = () => {
                   </Text>
                 </div>
                 <div className={s.redeem__button_container}>
-                  {isContract ? (
+                  {isMultiSigWallet ? (
                     <button className={cn('button-primary', s.redeem__button)} onClick={handleRedeemWithApprove}>
                       {isAlreadyApproved
                         ? `Burn ${formatBigNumber(redeemableAmountTokens!)} ENTR to redeem ${formatBigNumber(
