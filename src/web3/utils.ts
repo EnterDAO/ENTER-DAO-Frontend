@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-
+import * as ethers from 'ethers';
 import config from 'config';
 
 BigNumber.prototype.scaleBy = function (decimals?: number): BigNumber | undefined {
@@ -127,8 +127,8 @@ export function getHumanValue(value?: BigNumber, decimals = 0): BigNumber | unde
   return value?.div(getExponentValue(decimals));
 }
 
-export function getNonHumanValue(value: BigNumber | number, decimals = 0): BigNumber {
-  return new BigNumber(value).multipliedBy(getExponentValue(decimals));
+export function getNonHumanValue(value: BigNumber | number, decimals = 0): ethers.BigNumber {
+  return ethers.utils.parseUnits(value.toString(), decimals);
 }
 
 export function getGasValue(price: number): number {
