@@ -63,7 +63,9 @@ const WalletWithdrawView: React.FC = () => {
       form.setFieldsValue(InitialFormValues);
       daoCtx.daoBarn.reload();
       (EnterToken.contract as Erc20Contract).loadBalance().catch(Error);
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
 
     setState({ saving: false });
   }
