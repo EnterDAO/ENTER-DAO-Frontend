@@ -42,7 +42,7 @@ const WalletWithdrawView: React.FC = () => {
   const [form] = Antd.Form.useForm<WithdrawFormData>();
 
   const [state, setState] = useMergeState<WalletWithdrawViewState>(InitialState);
-    daoCtx.daoBarn.balance = new BigNumber(100);
+
   const { balance: stakedBalance, userLockedUntil } = daoCtx.daoBarn;
   const entrBalance = (EnterToken.contract as Erc20Contract).balance?.unscaleBy(EnterToken.decimals);
   const isLocked = (userLockedUntil ?? 0) > Date.now();
@@ -50,26 +50,21 @@ const WalletWithdrawView: React.FC = () => {
   const formDisabled = !hasStakedBalance || isLocked;
 
   async function handleSubmit(values: WithdrawFormData) {
-    console.log('Contract vars', { stakedBalance, userLockedUntil, isLocked });
     const { amount, gasPrice } = values;
-    console.log(`Withdrawing ${amount} with gas price ${gasPrice}`);
 
     if (!amount || !gasPrice) {
-      console.log(`Amount or gas price is not defined, so do nothing`);
       return;
     }
 
     setState({ saving: true });
 
     try {
-      console.log(`Initiating withdrawal`);
       await daoCtx.daoBarn.actions.withdraw(amount, gasPrice.value);
-      console.log(`Withdrawal initiated successfully`);
       form.setFieldsValue(InitialFormValues);
       daoCtx.daoBarn.reload();
       (EnterToken.contract as Erc20Contract).loadBalance().catch(Error);
     } catch (error) {
-      console.error(`Failed to initiate withdrawal`, error);
+      console.error(error);
     }
 
     setState({ saving: false });
