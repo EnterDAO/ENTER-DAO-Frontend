@@ -42,7 +42,7 @@ const WalletWithdrawView: React.FC = () => {
   const [form] = Antd.Form.useForm<WithdrawFormData>();
 
   const [state, setState] = useMergeState<WalletWithdrawViewState>(InitialState);
-
+    daoCtx.daoBarn.balance = new BigNumber(100);
   const { balance: stakedBalance, userLockedUntil } = daoCtx.daoBarn;
   const entrBalance = (EnterToken.contract as Erc20Contract).balance?.unscaleBy(EnterToken.decimals);
   const isLocked = (userLockedUntil ?? 0) > Date.now();
@@ -50,7 +50,7 @@ const WalletWithdrawView: React.FC = () => {
   const formDisabled = !hasStakedBalance || isLocked;
 
   async function handleSubmit(values: WithdrawFormData) {
-    console.log('Contact vars', { stakedBalance, userLockedUntil, isLocked });
+    console.log('Contract vars', { stakedBalance, userLockedUntil, isLocked });
     const { amount, gasPrice } = values;
     console.log(`Withdrawing ${amount} with gas price ${gasPrice}`);
 
