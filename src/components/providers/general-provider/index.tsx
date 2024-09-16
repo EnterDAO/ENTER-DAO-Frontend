@@ -20,14 +20,9 @@ type Props = {
 
 const GeneralContextProvider: React.FC<Props> = ({ children }) => {
   const [navOpen, setNavOpen] = React.useState<boolean>(false);
-  const [theme, setTheme] = useLocalStorage('bb_theme', defaultTheme);
-
+  const [theme, setTheme] = useLocalStorage('bb_theme', 'dark');
   React.useEffect(() => {
-    if (theme) {
-      document.body.setAttribute('data-theme', theme);
-    } else {
-      document.body.removeAttribute('data-theme');
-    }
+    document.body.setAttribute('data-theme', theme ?? 'dark');
   }, [theme]);
 
   React.useEffect(() => {

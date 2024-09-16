@@ -117,18 +117,17 @@
   flex-direction: row;
   align-items: center;
   column-gap: 8px;
+  justify-content: center;
 
   .tooltip {
     align-self: start;
   }
 
   .icon {
-    &:hover {
-      color: var(--theme-grey900-color);
+    color: #ed9199;
 
-      [data-theme='dark'] & {
-        color: var(--theme-white-color);
-      }
+    &:hover {
+      color: var(--theme-grey400-color);
     }
   }
 }
