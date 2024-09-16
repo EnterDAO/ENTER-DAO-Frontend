@@ -1,4 +1,5 @@
 import React from 'react';
+import { BigNumber as _BigNumber } from 'bignumber.js';
 import TxStatusModal from 'web3/components/tx-status-modal';
 import UserRejectedModal from 'web3/components/user-rejected-modal';
 import Web3Contract, { Web3SendMeta, Web3SendState } from 'web3/web3Contract';
@@ -7,6 +8,8 @@ type Props = {
   contract?: Web3Contract;
   renderProgress?: (meta?: Web3SendMeta) => React.ReactNode;
   renderSuccess?: (meta?: Web3SendMeta) => React.ReactNode;
+  redeemableAmountETH?: string;
+  redeemableAmountTokens?: string;
 };
 
 type TxStatus = {
@@ -16,9 +19,9 @@ type TxStatus = {
 };
 
 const ContractListener: React.FC<Props> = props => {
-  const { contract, renderProgress, renderSuccess } = props;
+  const { contract, renderProgress, renderSuccess, redeemableAmountETH, redeemableAmountTokens } = props;
 
-  const [userRejectedVisible, setUserRejected] = React.useState(false);
+  const [userRejected, setUserRejected] = React.useState(false);
 
   const [txStatus, setTxStatus] = React.useState<TxStatus>({
     visible: false,
@@ -35,7 +38,7 @@ const ContractListener: React.FC<Props> = props => {
       setTxStatus(prevState => ({
         ...prevState,
         visible: true,
-        state: meta.state,
+        state: meta?.state,
         meta,
       }));
     }
@@ -92,14 +95,17 @@ const ContractListener: React.FC<Props> = props => {
 
   return (
     <>
-      {userRejectedVisible && <UserRejectedModal onCancel={handleUserRejectedCancel} />}
+      {userRejected && <UserRejectedModal onCancel={handleUserRejectedCancel} />}
       {txStatus.visible && (
         <TxStatusModal
           state={txStatus.state}
           txHash={txStatus.meta?.txHash}
           renderProgress={() => renderProgress?.(txStatus.meta)}
           renderSuccess={() => renderSuccess?.(txStatus.meta)}
+          redeemableAmountETH={redeemableAmountETH}
+          redeemableAmountTokens={redeemableAmountTokens}
           onCancel={handleStatusModalCancel}
+          isRedeem={!!redeemableAmountTokens}
         />
       )}
     </>

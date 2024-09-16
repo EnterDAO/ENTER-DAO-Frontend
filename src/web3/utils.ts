@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-
+import * as ethers from 'ethers';
 import config from 'config';
 
 BigNumber.prototype.scaleBy = function (decimals?: number): BigNumber | undefined {
@@ -64,6 +64,10 @@ export function getEtherscanTxUrl(txHash?: string, chainId = config.web3.chainId
         return `https://rinkeby.etherscan.io/tx/${txHash}`;
       case 42:
         return `https://kovan.etherscan.io/tx/${txHash}`;
+      case 80001:
+        return `https://mumbai.polygonscan.com/tx/${txHash}`;
+      case 11155111:
+        return `https://sepolia.etherscan.io/tx/${txHash}`;
       default:
     }
   }
@@ -80,6 +84,10 @@ export function getEtherscanAddressUrl(address?: string, chainId = config.web3.c
         return `https://rinkeby.etherscan.io/address/${address}`;
       case 42:
         return `https://kovan.etherscan.io/address/${address}`;
+      case 80001:
+        return `https://mumbai.polygonscan.com/address/${address}`;
+      case 11155111:
+        return `https://sepolia.etherscan.io/address/${address}`;
       default:
     }
   }
@@ -100,6 +108,10 @@ export function getEtherscanABIUrl(
         return `https://api-rinkeby.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
       case 42:
         return `https://api-kovan.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
+      case 80001:
+        return `https://api-testnet.polygonscan.com/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
+      case 11155111:
+        return `https://api-sepolia.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
       default:
     }
   }
@@ -115,8 +127,8 @@ export function getHumanValue(value?: BigNumber, decimals = 0): BigNumber | unde
   return value?.div(getExponentValue(decimals));
 }
 
-export function getNonHumanValue(value: BigNumber | number, decimals = 0): BigNumber {
-  return new BigNumber(value).multipliedBy(getExponentValue(decimals));
+export function getNonHumanValue(value: BigNumber | number, decimals = 0): ethers.BigNumber {
+  return ethers.utils.parseUnits(value.toString(), decimals);
 }
 
 export function getGasValue(price: number): number {

@@ -14,6 +14,7 @@ import s from './s.module.scss';
 const YieldFarmingView = lazy(() => import('modules/yield-farming'));
 const GovernanceView = lazy(() => import('modules/governance'));
 const AirDropView = lazy(() => import('modules/airdrop'));
+const RedeemView = lazy(() => import('modules/redeem'));
 
 const LayoutView: React.FC = () => {
   return (
@@ -29,13 +30,14 @@ const LayoutView: React.FC = () => {
                   <Route path="/governance/:vt(\w+)" component={GovernanceView} />
                   <Route path="/governance" component={GovernanceView} />
                   <Route path="/airdrop" component={AirDropView} />
+                  <Route path="/redeem" component={RedeemView} />
                   <Redirect from="/" to="/yield-farming" />
                 </Switch>
               </Suspense>
             </ErrorBoundary>
           </main>
           <LayoutFooter />
-          <ThemeSwitcher />
+          {/* <ThemeSwitcher /> */}
         </WarningProvider>
       </div>
     </div>

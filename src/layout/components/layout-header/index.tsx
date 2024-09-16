@@ -52,6 +52,7 @@ const LayoutHeader: React.FC = () => {
 
   const isGovernancePage = useRouteMatch('/governance');
   const isAirdropPage = useRouteMatch('/airdrop');
+  const isRedeemPage = useRouteMatch('/redeem');
 
   async function handleAddProjectToken() {
     if (wallet.connector?.id === 'metamask') {
@@ -78,7 +79,9 @@ const LayoutHeader: React.FC = () => {
         <Icon name="png/enterdao" width="auto" height="auto" className={s.logo} />
       </ExternalLink>
       <div className={s.titleDelimiter} />
-      <h1 className={s.title}>{isGovernancePage ? 'Governance' : isAirdropPage ? 'Airdrop' : 'Yield Farming'}</h1>
+      <h1 className={s.title}>
+        {isGovernancePage ? 'Governance' : isAirdropPage ? 'Airdrop' : isRedeemPage ? 'Redeem' : 'Yield Farming'}
+      </h1>
 
       <nav className={s.nav}>
         <Popover
@@ -158,6 +161,11 @@ const LayoutHeader: React.FC = () => {
           </button>
         </div>
       )}
+      <div className={s.addTokenWrapper}>
+        <Link to="/redeem" className={s.redeem}>
+          Redeem ETH
+        </Link>
+      </div>
       <ConnectedWallet />
       <Button type="link" className={s.burger} onClick={() => setNavOpen(prevState => !prevState)}>
         <Icon name={navOpen ? 'burger-close' : 'burger'} style={{ color: 'var(--theme-primary-color)' }} />
@@ -228,7 +236,7 @@ const LayoutHeader: React.FC = () => {
                         wallet.showWalletsModal();
                       }}
                       style={{ margin: '20px auto 0' }}>
-                      <span>Sign in</span>
+                      <span>Connect</span>
                     </button>
                   </div>
                 ) : null}

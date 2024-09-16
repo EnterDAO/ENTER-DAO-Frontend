@@ -7,12 +7,7 @@ const config = {
   isDev: String(process.env.REACT_APP_ENV) === 'development',
   isProd: String(process.env.REACT_APP_ENV) === 'production',
   isTestnet: String(process.env.REACT_APP_ENV) === 'testnet',
-  graph: {
-    primaryUrl: String(process.env.REACT_APP_PRIMARY_GRAPH_URL),
-    fallbackUrl: String(process.env.REACT_APP_FALLBACK_GRAPH_URL),
-    landworks: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),
-    landworksFallback: String(process.env.REACT_APP_LANDWORKS_GRAPH_URL),
-  },
+  graph: String(process.env.REACT_APP_GRAPH_URL),
   zapper: {
     baseUrl: String(process.env.REACT_APP_ZAPPER_URL),
     apiKey: String(process.env.REACT_APP_ZAPPER_API_KEY),
@@ -50,7 +45,8 @@ const config = {
       barn: toLowerCase(process.env.REACT_APP_CONTRACT_DAO_BARN_ADDR),
       reward: toLowerCase(process.env.REACT_APP_CONTRACT_DAO_REWARD_ADDR),
     },
-    merkleDistributor: toLowerCase(process.env.REACT_APP_CONTRACT_MERKLE_DISTRIBUTOR_ADDR),
+    merkleRedeemDistributor: toLowerCase(process.env.REACT_APP_CONTRACT_REDEEM_MERKLE_DISTRIBUTOR_ADDR),
+    merkleAirdropDistributor: toLowerCase(process.env.REACT_APP_CONTRACT_AIRDROP_MERKLE_DISTRIBUTOR_ADDR),
   },
   web3: {
     chainId: Number(process.env.REACT_APP_WEB3_CHAIN_ID),
@@ -66,11 +62,13 @@ const config = {
       url: String(process.env.REACT_APP_OPENSEA_URL),
     },
     wallets: {
-      portis: {
-        id: String(process.env.REACT_APP_WEB3_PORTIS_APP_ID),
-      },
+      // portis: {
+      //   id: String(process.env.REACT_APP_WEB3_PORTIS_APP_ID),
+      // },
       walletConnect: {
-        bridge: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_BRIDGE),
+        appName: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_NAME),
+        appId: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_ID),
+        appUrl: String(process.env.REACT_APP_WEB3_WALLET_CONNECT_APP_URL),
       },
       coinbase: {
         appName: String(process.env.REACT_APP_WEB3_COINBASE_APP_NAME),

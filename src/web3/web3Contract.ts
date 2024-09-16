@@ -167,7 +167,7 @@ class Web3Contract extends EventEmitter {
     });
   }
 
-  send(method: string, methodArgs: any[] = [], sendArgs: Record<string, any> = {}, gasPrice?: number): Promise<any> {
+  _send(method: string, methodArgs: any[] = [], sendArgs: Record<string, any> = {}, cb?: (err: Error, txHash: string) => void): Promise<any> {
     this.assertAccount();
 
     const contractMethod = this._sendContract.methods[method];
@@ -176,6 +176,21 @@ class Web3Contract extends EventEmitter {
       return Promise.reject(new Error(`Unknown method "${method}" in contract.`));
     }
 
+    return contractMethod(...methodArgs)
+      .send(sendArgs, async (err: Error, txHash: string) => { cb?.(err, txHash); });
+  }
+
+  sendSilent(method: string, methodArgs: any[] = [], sendArgs: Record<string, any> = {}, gasPrice?: number): Promise<any> {
+    const _sendArgs = {
+      from: this.account,
+      gasPrice: gasPrice !== undefined ? getGasValue(gasPrice) : undefined,
+      ...sendArgs,
+    };
+
+    return this._send(method, methodArgs, _sendArgs);
+  }
+
+  send(method: string, methodArgs: any[] = [], sendArgs: Record<string, any> = {}, gasPrice?: number): Promise<any> {
     Web3Contract.sendIncNumber += 1;
 
     const _sendArgs = {
@@ -192,18 +207,17 @@ class Web3Contract extends EventEmitter {
       sendArgs: _sendArgs,
     };
 
-    return contractMethod(...methodArgs)
-      .send(_sendArgs, async (err: Error, txHash: string) => {
-        if (err) {
-          return;
-        }
+    return this._send(method, methodArgs, _sendArgs, async (err: Error, txHash: string) => {
+      if (err) {
+        return;
+      }
 
-        this.emit('tx:hash', txHash, {
-          ...meta,
-          state: 'progress',
-          txHash,
-        });
-      })
+      this.emit('tx:hash', txHash, {
+        ...meta,
+        state: 'progress',
+        txHash,
+      });
+    })
       .then((result: any) => {
         this.emit('tx:success', result, {
           ...meta,
@@ -227,6 +241,12 @@ class Web3Contract extends EventEmitter {
 
         return Promise.reject(error);
       });
+  }
+
+  public static async isContract(address: string): Promise<boolean> {
+    const code = await DEFAULT_WEB3.eth.getCode(address)
+
+    return code !== '0x' && code !== '0x0';
   }
 }
 
